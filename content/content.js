@@ -98,6 +98,7 @@ export const outcomes = [
 export const projects = [
   {
     slug: "velotech",
+    format: { en: "Web app", nl: "Webapp" },
     colour: "var(--c-velotech)",
     year: "2025 — 2026",
     title:      { en: "VeloTech.AI", nl: "VeloTech.AI" },
@@ -142,6 +143,7 @@ export const projects = [
 
   {
     slug: "dentara",
+    format: { en: "Mobile app", nl: "Mobiele app" },
     colour: "var(--c-dentara)",
     year: "2026",
     title:      { en: "Dentara", nl: "Dentara" },
@@ -162,17 +164,18 @@ export const projects = [
       result: { en: "Patients understood the app quickly and valued the preparation feature most. The practice confirmed it would save time and strengthen the patient relationship.",
                 nl: "Patiënten begrepen de app snel en waardeerden de voorbereidingsfunctie het meest. De praktijk bevestigde dat het tijd zou besparen en de band met de patiënt zou versterken." },
     },
+    coverDevice: "phone",
     cover: { src: "assets/work/dentara-home.png",
              alt: { en: "Dentara's home screen: a personal greeting above the next appointment and a treatment progress summary",
                     nl: "Het startscherm van Dentara: een persoonlijke begroeting boven de volgende afspraak en een overzicht van de behandelvoortgang" } },
     shots: [
-      { src: "assets/work/dentara-gebit.png", span: "half",
+      { src: "assets/work/dentara-gebit.png", span: "half", device: "phone",
         alt: { en: "The interactive tooth map, where each tooth carries its own treatment history", nl: "De interactieve gebitskaart, waar elke tand zijn eigen behandelgeschiedenis draagt" } },
-      { src: "assets/work/dentara-voorbereiden.png", span: "half",
+      { src: "assets/work/dentara-voorbereiden.png", span: "half", device: "phone",
         alt: { en: "The appointment preparation flow — the feature patients valued most", nl: "De voorbereidingsflow voor afspraken — de functie die patiënten het meest waardeerden" } },
-      { src: "assets/work/dentara-historie.png", span: "half",
+      { src: "assets/work/dentara-historie.png", span: "half", device: "phone",
         alt: { en: "Treatment history, ordered by visit", nl: "Behandelgeschiedenis, geordend per bezoek" } },
-      { src: "assets/work/dentara-holistisch.png", span: "half",
+      { src: "assets/work/dentara-holistisch.png", span: "half", device: "phone",
         alt: { en: "The holistic care section", nl: "De holistische zorgsectie" } },
     ],
     details: [
@@ -192,6 +195,7 @@ export const projects = [
 
   {
     slug: "pubhubs",
+    format: { en: "Web app", nl: "Webapp" },
     colour: "var(--c-pubhubs)",
     year: "2024 — 2025",
     title:      { en: "PubHubs", nl: "PubHubs" },
@@ -232,6 +236,7 @@ export const projects = [
 
   {
     slug: "medialab",
+    format: { en: "Mobile + web", nl: "Mobiel + web" },
     colour: "var(--c-medialab)",
     year: "2024 — 2025",
     title:      { en: "MediaLab", nl: "MediaLab" },
@@ -256,13 +261,13 @@ export const projects = [
              alt: { en: "The redesigned MediaLab dashboard: connections, workflows and recent activity in one view",
                     nl: "Het herontworpen MediaLab-dashboard: connecties, workflows en recente activiteit in één weergave" } },
     shots: [
-      { src: "assets/work/medialab-folders.png", span: "half",
+      { src: "assets/work/medialab-folders.png", span: "half", device: "phone",
         alt: { en: "Folder navigation after the redesign", nl: "Mapnavigatie na het herontwerp" } },
-      { src: "assets/work/medialab-info.png", span: "half",
+      { src: "assets/work/medialab-info.png", span: "half", device: "phone",
         alt: { en: "A file's detail panel", nl: "Het detailpaneel van een bestand" } },
-      { src: "assets/work/medialab.png", span: "half",
+      { src: "assets/work/medialab.png", span: "half", device: "phone",
         alt: { en: "The mobile app's media grid", nl: "Het mediaraster van de mobiele app" } },
-      { src: "assets/work/medialab-2.png", span: "half",
+      { src: "assets/work/medialab-2.png", span: "half", device: "phone",
         alt: { en: "Mobile file browsing", nl: "Bestanden bekijken op mobiel" } },
     ],
     details: [
@@ -380,6 +385,10 @@ export const ui = {
                    nl: "Je apparaat vroeg hier al om." },
   detailHint:    { en: "Look closer",       nl: "Kijk beter" },
   viewCase:      { en: "Read the case \u2192", nl: "Lees de case \u2192" },
+  screens:       { en: "Screens",            nl: "Schermen" },
+  railHint:      { en: "Scroll or use the arrows", nl: "Scroll of gebruik de pijlen" },
+  prevShot:      { en: "Previous screen",    nl: "Vorig scherm" },
+  nextShot:      { en: "Next screen",        nl: "Volgend scherm" },
   nextCase:      { en: "Next case",          nl: "Volgende case" },
   cursorRead:    { en: "Read",               nl: "Lees" },
   skip:          { en: "Skip to content",   nl: "Naar de inhoud" },

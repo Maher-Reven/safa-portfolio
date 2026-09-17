@@ -218,6 +218,32 @@ still form a list you can navigate by.
 The index is the one place a cover is cropped — a card is a thumbnail and wants
 a consistent shape. The case page shows the screenshot whole.
 
+## Phone screens and desktop screens are different objects
+
+Measured from the source images rather than guessed: Dentara is five 390×844
+phone captures, MediaLab is genuinely mixed — four 440×956 phone shots plus a
+1920px dashboard — and VeloTech and PubHubs are all 1280–1440px wide screens.
+
+So the split is **per shot, not per project**:
+
+- **Phone captures** go in a rail, at phone size, side by side — which is also
+  how you would hold them. At desktop width all four fit at once; narrower,
+  it becomes a real carousel with scroll-snap and arrows.
+- **Desktop captures** keep the wide/half grid they were built for.
+- A **format label** on the card and the case page says which kind of product
+  it was, because a phone UI and a dashboard are not the same discipline.
+- A portrait cover is *contained* on a tinted ground, never cropped to a
+  landscape thumbnail, and shown near the size a phone actually is rather
+  than as a billboard of one.
+
+Native scroll-snap does the scrolling — a JS carousel that hijacks the wheel
+and swallows touch is a worse version of what the browser already does well.
+The arrows sit on top for people who cannot swipe, and **disappear when the
+rail does not scroll**, along with the counter: a control that moves nothing
+is lying, and "01 / 04" is meaningless when all four are on screen at once.
+The rail is a focusable labelled region, since a scrollable box that cannot be
+focused cannot be scrolled by keyboard at all.
+
 ## Both languages, all the way down
 
 **EN / NL sits in the header**, visible without opening anything. It was only

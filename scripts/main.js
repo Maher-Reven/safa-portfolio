@@ -128,9 +128,15 @@ function caseCard(p) {
   /* The pointer-target overlay is decoration; the link is the control. */
   link.addEventListener("click", () => markSharedCover(article));
 
+  const cover = el("figure", { className: "case-card__cover", style: "margin:0" },
+    el("img", { src: p.cover.src, alt: t(p.cover.alt), loading: "lazy", decoding: "async" }));
+  /* A portrait phone capture must not be cropped to a landscape thumbnail:
+     it gets contained on a tinted ground instead of filling the frame. */
+  if (p.coverDevice === "phone") cover.dataset.device = "phone";
+  if (p.format) cover.append(el("span", { className: "case-card__format", textContent: t(p.format) }));
+
   article.append(
-    el("figure", { className: "case-card__cover", style: "margin:0" },
-      el("img", { src: p.cover.src, alt: t(p.cover.alt), loading: "lazy", decoding: "async" })),
+    cover,
     el("div", { className: "case-card__body" },
       el("p", { className: "project__meta" },
         el("span", { textContent: p.year }),
@@ -166,12 +172,15 @@ function caseDetail(slug) {
 
   const cover = el("figure", { className: "case__cover", style: "margin:0" },
     el("img", { src: p.cover.src, alt: t(p.cover.alt), decoding: "async" }));
+  if (p.coverDevice === "phone") cover.dataset.device = "phone";
   cover.style.viewTransitionName = "case-cover";
 
   wrap.append(
     el("p", { className: "case__back" },
       el("a", { href: "#/work", textContent: `\u2190 ${t(C.ui.sections.work)}` })),
     el("h2", { className: "case__title", textContent: t(p.title) }),
+    p.format ? el("p", { className: "case__format" },
+      el("span", { className: "case-card__format", textContent: t(p.format) })) : null,
     el("dl", { className: "case__facts" },
       fact(C.ui.caseFacts.year, p.year),
       fact(C.ui.caseFacts.role, t(p.role)),
@@ -192,8 +201,20 @@ function caseDetail(slug) {
     ...p.details.flatMap((d) => detailPair(d, p.slug)),
   );
 
-  if (p.shots?.length) {
-    wrap.append(el("ul", { className: "shots" }, p.shots.map((sh) => {
+  /* Phone captures and desktop captures are different objects and want
+     different furniture. A 390x844 screenshot dropped into a grid built for
+     1440x900 dashboards either gets cropped to nonsense or stretches a
+     column to the height of a phone. So they are split by what they
+     actually are — measured from the source images, not guessed — and the
+     phones go in a rail you scroll sideways, at phone size, side by side,
+     which is also how you would hold them. */
+  const phones = (p.shots || []).filter((sh) => sh.device === "phone");
+  const screens = (p.shots || []).filter((sh) => sh.device !== "phone");
+
+  if (phones.length) wrap.append(deviceRail(phones, p.slug));
+
+  if (screens.length) {
+    wrap.append(el("ul", { className: "shots" }, screens.map((sh) => {
       const li = el("li", {},
         el("img", { src: sh.src, alt: t(sh.alt), loading: "lazy", decoding: "async" }));
       li.dataset.span = sh.span || "half";
@@ -208,6 +229,88 @@ function caseDetail(slug) {
         el("span", { className: "case__next-name", textContent: t(next.title) }))));
 
   return wrap;
+}
+
+/* A horizontal rail of phone screens.
+
+   Native scrolling with scroll-snap does the work — a JS carousel that
+   hijacks the wheel and swallows touch is a worse version of what the
+   browser already does well. The arrows are added on top for people who
+   cannot swipe and for anyone who would not guess the rail scrolls.
+
+   The rail is a labelled region with tabindex 0, because a scrollable box
+   that cannot be focused cannot be scrolled by keyboard at all. */
+function deviceRail(shots, slug) {
+  const railId = `screens-${slug}`;
+  const list = el("ul", { className: "screens__track", id: railId },
+    shots.map((sh) =>
+      el("li", { className: "screens__item" },
+        el("img", { src: sh.src, alt: t(sh.alt), loading: "lazy", decoding: "async" }))));
+
+  const region = el("div", { className: "screens__scroll" }, list);
+  region.tabIndex = 0;
+  region.setAttribute("role", "region");
+  region.setAttribute("aria-label", `${t(C.ui.screens)} — ${t(C.ui.railHint)}`);
+
+  const step = (dir) => {
+    const first = list.querySelector(".screens__item");
+    const by = first ? first.getBoundingClientRect().width + 16 : region.clientWidth * 0.8;
+    region.scrollBy({ left: dir * by, behavior: prefersStill() ? "auto" : "smooth" });
+  };
+
+  const arrow = (dir, label, glyph) => {
+    const b = el("button", { type: "button", className: "screens__arrow", textContent: glyph });
+    b.setAttribute("aria-label", label);
+    b.setAttribute("aria-controls", railId);
+    b.addEventListener("click", () => step(dir));
+    return b;
+  };
+
+  const head = el("div", { className: "screens__head" },
+    el("p", { className: "screens__label" },
+      el("span", { className: "screens__chip", textContent: t(C.ui.screens) }),
+      el("span", { className: "screens__count", textContent: `01 / ${String(shots.length).padStart(2, "0")}` })),
+    el("div", { className: "screens__arrows" },
+      arrow(-1, t(C.ui.prevShot), "\u2190"),
+      arrow(1, t(C.ui.nextShot), "\u2192")));
+
+  /* Arrows only exist while there is somewhere to go. At a desktop width all
+     four phones fit side by side, so the rail does not scroll and a pair of
+     arrows that move nothing is a control lying about what it does. The
+     counter goes with them, since "01 / 04" is meaningless when all four are
+     on screen at once. */
+  const syncAffordance = () => {
+    const scrollable = region.scrollWidth > region.clientWidth + 2;
+    head.querySelector(".screens__arrows").hidden = !scrollable;
+    head.querySelector(".screens__count").hidden = !scrollable;
+    /* Nothing to scroll means nothing to focus, and a focus stop that does
+       nothing is a keyboard user's dead end. */
+    region.tabIndex = scrollable ? 0 : -1;
+    region.dataset.scrollable = String(scrollable);
+  };
+  addEventListener("resize", syncAffordance, { passive: true });
+  /* Images arrive after layout, so measure once they have. */
+  requestAnimationFrame(syncAffordance);
+  list.querySelectorAll("img").forEach((img) =>
+    img.addEventListener("load", syncAffordance, { once: true }));
+
+  /* The counter follows the rail rather than a click count, so dragging,
+     swiping and arrow-pressing all report the same position. */
+  const counter = head.querySelector(".screens__count");
+  region.addEventListener("scroll", () => {
+    const first = list.querySelector(".screens__item");
+    if (!first) return;
+    const by = first.getBoundingClientRect().width + 16;
+    const i = Math.min(shots.length, Math.round(region.scrollLeft / by) + 1);
+    counter.textContent = `${String(i).padStart(2, "0")} / ${String(shots.length).padStart(2, "0")}`;
+  }, { passive: true });
+
+  return el("div", { className: "screens" }, head, region);
+}
+
+function prefersStill() {
+  return document.documentElement.dataset.mode === "calm" ||
+         matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
 function fact(label, value) {

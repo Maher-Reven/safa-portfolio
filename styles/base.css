@@ -106,6 +106,17 @@ a:hover { text-decoration-color: currentColor; color: var(--accent); }
    Note the 1px clip rather than display:none — display:none removes it
    from the accessibility tree entirely, which defeats the purpose.
    ------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------
+   THE hidden ATTRIBUTE MUST WIN
+   The UA stylesheet applies [hidden] { display: none }, but that is a
+   type-selector-strength rule, so ANY class that sets display beats it —
+   `.screens__arrows { display: flex }` left the arrows on screen while the
+   attribute said they were gone. Setting hidden and having it silently do
+   nothing is the kind of bug that hides a broken control in plain sight,
+   so the attribute is made non-negotiable once, here.
+   ------------------------------------------------------------------------- */
+[hidden] { display: none !important; }
+
 .sr-only {
   position: absolute;
   width: 1px; height: 1px;

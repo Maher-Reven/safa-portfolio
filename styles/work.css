@@ -157,3 +157,145 @@
 @media (max-width: 52rem) {
   .work-index { grid-template-columns: 1fr; }
 }
+
+/* =========================================================================
+   THE DEVICE RAIL  (.screens — NOT .rail, which is the page layout container:
+   every case section carries class="case rail", so naming the carousel .rail
+   turned every page wrapper into a carousel.)
+   Phone captures shown at phone size, side by side, scrolled sideways —
+   which is how you would hold them. Native scroll-snap does the scrolling;
+   the arrows exist for people who cannot swipe and for anyone who would not
+   guess the rail moves.
+   ========================================================================= */
+.screens {
+  margin-block-start: var(--s-md);
+  /* A grid child defaults to min-width: auto — "never narrower than my
+     content" — so the 624px track refused to shrink and pushed the whole
+     page wide instead of scrolling inside itself. An overflow container has
+     to be allowed to be smaller than what is in it. Same failure as the tab
+     strip; worth fixing at the parent so it cannot recur per component. */
+  min-width: 0;
+}
+.case > * { min-width: 0; }
+
+.screens__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-sm);
+  margin-block-end: var(--s-xs);
+}
+.screens__label { display: flex; align-items: center; gap: var(--s-2xs); margin: 0; max-width: none; }
+.screens__count {
+  font-family: var(--face-detail);
+  font-size: var(--t-detail);
+  color: var(--text-faint);
+  font-variant-numeric: tabular-nums;   /* or the counter jitters as it counts */
+}
+
+.screens__arrows { display: flex; gap: var(--s-3xs); }
+.screens__arrow {
+  display: grid;
+  place-items: center;
+  width: 44px;                          /* fingertip, not the 24px minimum */
+  height: 44px;
+  border: var(--rule);
+  border-radius: 50%;
+  color: var(--text-soft);
+  transition: color var(--dur-quick) var(--ease-out),
+              border-color var(--dur-quick) var(--ease-out);
+}
+.screens__arrow:hover { color: var(--accent); border-color: var(--accent); }
+
+.screens__scroll {
+  min-width: 0;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;       /* no accidental back-navigation swipes */
+  scroll-snap-type: x mandatory;
+  scrollbar-width: thin;
+  /* A scrollable box that cannot be focused cannot be scrolled by keyboard,
+     so it is focusable — and therefore needs a visible ring. */
+  border-radius: var(--radius-md);
+}
+.screens__scroll:focus-visible { outline: 3px solid var(--focus); outline-offset: 4px; }
+
+.screens__track {
+  display: flex;
+  gap: var(--s-sm);
+  margin: 0;
+  padding: 0 0 var(--s-2xs);
+  list-style: none;
+}
+.screens__item {
+  flex: 0 0 auto;
+  max-width: none;
+  margin: 0;
+  scroll-snap-align: start;
+  /* Phone width, capped so a tall screenshot never becomes a tower. */
+  width: clamp(9rem, 26vw, 13.5rem);
+}
+.screens__item img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border: var(--rule);
+  /* A phone screenshot with square corners reads as a cropped poster. */
+  border-radius: 14px;
+  background: var(--surface);
+}
+
+/* =========================================================================
+   FORMAT LABEL
+   Says what kind of product this was before you have parsed the picture —
+   a phone UI and a dashboard are not the same discipline.
+   ========================================================================= */
+.case-card__format {
+  position: absolute;
+  inset-block-end: var(--s-2xs);
+  inset-inline-start: var(--s-2xs);
+  padding: 0.25em 0.6em;
+  font-family: var(--face-detail);
+  font-size: var(--t-detail);
+  letter-spacing: 0.06em;
+  border-radius: var(--radius-pill);
+  background: color-mix(in oklab, var(--ground) 82%, transparent);
+  backdrop-filter: blur(6px);
+  border: 1px solid color-mix(in oklab, var(--text) 22%, transparent);
+  color: var(--text);
+}
+.case__format { margin: 0; }
+.case__format .case-card__format { position: static; display: inline-block; }
+.screens__chip {
+  font-family: var(--face-detail);
+  font-size: var(--t-detail);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-faint);
+}
+
+/* A portrait capture is contained on a tinted ground rather than cropped to
+   a landscape thumbnail, which would throw away most of the screen. */
+.case-card__cover[data-device="phone"] { background: var(--surface); }
+.case-card__cover[data-device="phone"] img {
+  object-fit: contain;
+  object-position: center;
+  padding: var(--s-2xs) 0;
+}
+.case__cover[data-device="phone"] {
+  display: grid;
+  place-items: center;
+  padding-block: var(--s-lg);
+  background: var(--surface);
+}
+.case__cover[data-device="phone"] img {
+  width: auto;
+  /* A phone screenshot at 68vh is a billboard of a phone. Shown near the
+     size the thing actually is, the interface reads the way its designer
+     meant it to be read — at arm's length, in one hand. */
+  max-height: min(44vh, 26rem);
+  border-radius: 18px;
+  border: var(--rule);
+}
+
+[data-mode="calm"] .screens__item img,
+[data-mode="calm"] .case__cover[data-device="phone"] img { border-radius: 0; border: var(--rule-strong); }
