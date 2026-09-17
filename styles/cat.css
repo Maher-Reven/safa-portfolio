@@ -2,24 +2,58 @@
    cat.css — presentation for the home page companion.
    ========================================================================= */
 
+/* -------------------------------------------------------------------------
+   THE SCROLL STAGE
+   The companion morphs through three shapes, so it needs scroll to morph
+   through. A hero one viewport tall gave it nowhere to go: the figure was
+   sticky inside a short container, so it scrolled away and the paw and the
+   cursor both played off-screen where nobody saw them.
+
+   So the stage is deliberately tall. The headline and the figure are both
+   sticky inside it, which pins them while the scroll runs the morph, and
+   releases them together at the bottom. Full mode only — a printed page
+   does not have two viewports of nothing in it.
+   ------------------------------------------------------------------------- */
 .cat-stage {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 0.42fr);
-  align-items: end;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.8fr);
+  align-items: start;
   gap: var(--s-lg);
+}
+[data-mode="full"] .cat-stage { min-height: 230vh; }
+[data-mode="full"] .cat-stage__words {
+  position: sticky;
+  top: 20vh;
+  /* The words must not be taller than their sticky window, or the browser
+     has nothing to hold them by. */
+  max-height: 70vh;
 }
 .cat-stage__figure {
   position: sticky;
-  bottom: var(--s-xl);
+  top: 11vh;
   justify-self: end;
-  width: min(100%, 22rem);
+  width: 100%;
+  /* The swarm needs real height to be worth rendering. A square-ish stage
+     gives the cat room to sit and the cursor room to point. */
+  aspect-ratio: 1 / 1.05;
+  height: 78vh;
+  max-height: 78vh;
   margin: 0;
   color: var(--accent);
-  /* Decoration must never intercept a click meant for the page behind it. */
+  /* Decoration must never intercept a click meant for the page behind it —
+     but pointerdown still reaches the window, so the burst still fires. */
   pointer-events: none;
 }
-.cat-stage__figure svg { width: 100%; height: auto; overflow: visible; }
+.cat-stage__figure svg,
+.cat-stage__figure canvas { display: block; width: 100%; height: 100%; }
+.cat-stage__figure svg { overflow: visible; }
+
+/* three.js is downloading. Nothing is shown rather than a spinner: the page
+   is already complete without it, and a loading state for decoration tells
+   the visitor to wait for something that does not matter. */
+.cat-stage__figure[data-swarm="loading"] { opacity: 0; }
+.cat-stage__figure[data-swarm="ready"] { opacity: 1; transition: opacity 600ms var(--ease-out); }
 
 /* -------------------------------------------------------------------------
    TRANSFORM ORIGINS
@@ -65,7 +99,8 @@
   .cat-stage__figure {
     position: static;
     justify-self: center;
-    width: min(60%, 15rem);
+    width: min(88%, 22rem);
+    aspect-ratio: 1 / 1;
     margin-block-start: var(--s-lg);
   }
 }

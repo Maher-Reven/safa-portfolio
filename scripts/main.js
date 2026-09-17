@@ -231,7 +231,7 @@ function renderTabs() {
 /* The intro is a section like any other, so that home is composed the same
    way every other page is. */
 SECTIONS.intro = () => {
-  const words = el("div", {},
+  const words = el("div", { className: "cat-stage__words" },
     el("p", { className: "intro__kicker", textContent: t(C.intro.kicker) }),
     heroHeading(),
     el("p", { className: "intro__sub", textContent: t(C.intro.sub) }));
@@ -271,6 +271,54 @@ function heroHeading() {
 
 let cat = null;
 let paws = null;
+let swarm = null;
+
+/* The home page companion.
+
+   Full mode gets the particle swarm: three.js, ~24k points, morphing cat →
+   paw → cursor as you scroll, parting around your pointer and turning to
+   face you. Calm mode and reduced motion get the drawn cat, still, as an
+   engraving — the same thing the two modes mean everywhere else here.
+
+   The swarm is imported lazily inside start(), so a visitor who lands in
+   calm mode never downloads 331 KB of three.js to look at a page they asked
+   to hold still. If it cannot start — no WebGL, a failed import, a lost
+   context — the drawn cat takes over and nothing is said about it, because
+   nothing was lost. */
+async function mountCompanion(host) {
+  const still = document.documentElement.dataset.mode === "calm" ||
+                matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  if (still) {
+    cat = new Cat(host);
+    cat.start();
+    return;
+  }
+
+  paws = new PawTrail().mount(document.body);
+  host.dataset.swarm = "loading";
+
+  try {
+    const { Swarm } = await import("./gl/swarm.js");
+    /* The route may have changed while three.js was downloading. */
+    if (!host.isConnected) return;
+    swarm = new Swarm(host);
+    host.addEventListener("swarm:lost", () => fallBackToDrawing(host), { once: true });
+    await swarm.start();
+    host.dataset.swarm = "ready";
+  } catch (err) {
+    console.warn("swarm unavailable, falling back to the drawing:", err);
+    fallBackToDrawing(host);
+  }
+}
+
+function fallBackToDrawing(host) {
+  swarm?.destroy(); swarm = null;
+  if (!host.isConnected) return;
+  host.dataset.swarm = "off";
+  cat = new Cat(host);
+  cat.start();
+}
 
 function renderRoute(id) {
   const route = ROUTES.find((r) => r.id === id) ?? ROUTES[0];
@@ -280,16 +328,13 @@ function renderRoute(id) {
      or its listeners keep running against elements that no longer exist. */
   cat?.destroy(); cat = null;
   paws?.destroy(); paws = null;
+  swarm?.destroy(); swarm = null;
 
   view.replaceChildren(...route.sections.map((key) => SECTIONS[key]?.()).filter(Boolean));
   document.title = `${t(route.label)} — ${C.meta.name}, ${t(C.meta.role)}`;
 
   const host = view.querySelector(".cat-stage__figure");
-  if (host) {
-    cat = new Cat(host);
-    cat.start();
-    paws = new PawTrail().mount(document.body);
-  }
+  if (host) mountCompanion(host);
 }
 
 /* =========================================================================

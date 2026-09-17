@@ -35,39 +35,47 @@ first time you open it.
 The home page counts its figures up — the one effect Safa wrote in 2023 and
 couldn't get working. It works now.
 
-## The cat
+## The cat, as 24,000 particles
 
-Safa is a cat person, and a cat is the right animal for *this* site rather than
-a decorative one: the whole thesis here is "design that notices the person using
-them", and a cat watching you is the most honest picture of that there is.
+Safa is a cat person, and a cat happens to be the right animal for *this*
+site: the thesis is "design that notices the person using them", and a cat
+watching you is the most honest picture of that there is.
 
-It is a **rig**, not a morph — head, ears, eyes, pupils, whiskers, body, tail
-and paws are separate groups, each driven by something different:
+It is a three.js particle system, and it never stops moving.
 
-- **scroll → waking.** Ears lift, eyes open, posture rises, the tail wakes up.
-  It wakes because you arrived, which is the right causality for an animal and
-  for an interface.
-- **pointer → where it looks.** Pupils track you and the head turns with them,
-  because eyes alone always look like a cardboard cut-out.
-- **time → breathing, tail sway, and the slow blink.**
+**CAT → PAW → CURSOR.** Scroll the home page and the swarm morphs through
+three shapes — the thing you are looking at notices you, reaches for you, and
+ends up being the cursor you have been moving the whole time.
 
-Eye openness is `scaleY`, so a shut eye is a horizontal line — which is how a
-closed cat eye is actually drawn.
+Everything you do changes it:
 
-**The slow blink** is the detail the whole thing is for. A cat closing its eyes
-slowly at you is not sleepiness, it is trust; cat people call it a cat kiss. It
-happens about every twelve seconds and responds to nothing at all. Leave the
-pointer alone for six seconds and the cat loses interest and looks at the lime
-full stop instead, the way a real one gives up on a laser dot.
+| | |
+|---|---|
+| always | every particle drifts on its own noise phase, so the shape breathes rather than sitting there |
+| pointer | a repulsion field parts the cloud around you and it springs back — displacement is recomputed each frame, never integrated, so the shape is always the truth it returns to |
+| pointer | the whole swarm turns toward you in real 3D, which is why every particle was sampled with a z spread |
+| click | a burst impulse blows the shape apart and it reassembles |
+| scroll | morphs continuously across a deliberately tall stage, with the headline pinned beside it |
 
-In **print mode** it becomes an engraving: ink instead of lime, thinner stroke,
-awake, still. Exactly what the two modes mean everywhere else here.
+The shapes are **not modelled**. They are drawn once to an offscreen 2D canvas
+and the particles sample the opaque pixels — so the cat is authored as a
+drawing, with its eyes and muzzle punched out as real holes, and the GPU never
+needs to know what a cat is.
 
-It is `aria-hidden` and carries nothing the text does not. Delete it and the
-page reads identically.
+Three weights that always sum to one drive the morph, so the cloud never loses
+or gains mass mid-transition.
 
-The scroll indicator is a **trail of paw prints** that fill in as you pass them,
-alternating left and right of the line the way an animal actually walks.
+**What it costs, and who pays.** three.js is vendored (708 KB across two
+files, no CDN, works offline) and imported lazily — full mode on the home page
+only. A visitor in calm mode downloads **zero bytes** of it and gets the cat as
+a still engraving instead. Particle count scales 9k → 24k by screen width, the
+pixel ratio caps at 2, and the loop stops when the tab is hidden. If WebGL is
+missing or the context is lost, the drawn cat takes over silently.
+
+`aria-hidden` throughout. Delete the whole thing and the page reads identically.
+
+The scroll indicator is a trail of paw prints, alternating either side of the
+line the way an animal actually walks.
 
 ## Two modes, both signed
 
@@ -115,7 +123,9 @@ scripts/attune.js     the six adaptation axes, persistence, announcements
 scripts/router.js     hash routing, focus management, route announcements
 scripts/transitions.js one choreography per page
 scripts/main.js       rendering, route composition, disclosure
-scripts/cat.js        the rigged cat and the paw-print scroll trail
+scripts/cat.js        the drawn cat (calm mode + fallback) and paw trail
+scripts/gl/swarm.js   the three.js particle swarm: cat → paw → cursor
+vendor/three.*        three.js r180, vendored so there is no CDN dependency
 scripts/gl/field.js   the WebGL ground (raw WebGL2, no library)
 ```
 
