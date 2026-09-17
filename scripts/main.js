@@ -4,6 +4,8 @@
    ========================================================================= */
 
 import { attune, AXES } from "./attune.js";
+import { Router } from "./router.js";
+import { makeTransition } from "./transitions.js";
 import * as C from "../content/content.js";
 
 /* ---- i18n -------------------------------------------------------------
@@ -178,67 +180,90 @@ function detailPair(d, slug) {
 }
 
 /* =========================================================================
-   FLOW — order the sections for whoever is reading.
+   ROUTES — six pages. Each is a list of sections, composed from the same
+   renderers the single-scroll version used, so nothing was rewritten to
+   become routable: the sections never knew where they were.
    ========================================================================= */
-const DEFAULT_ORDER = ["work", "outcomes", "about", "process", "accessibility", "skills", "detail-index", "contact"];
+export const ROUTES = [
+  { id: "home",    label: { en: "Home",     nl: "Start" },   sections: ["intro", "outcomes"] },
+  { id: "work",    label: { en: "Work",     nl: "Werk" },    sections: ["work"] },
+  { id: "about",   label: { en: "About",    nl: "Over" },    sections: ["about", "process"] },
+  { id: "access",  label: { en: "Access",   nl: "Toegang" }, sections: ["accessibility", "detail-index"] },
+  { id: "skills",  label: { en: "Skills",   nl: "Kunde" },   sections: ["skills"] },
+  { id: "contact", label: { en: "Contact",  nl: "Contact" }, sections: ["contact"] },
+];
 
-function renderFlow() {
-  const flow = $("#flow");
+const ROUTE_IDS = ROUTES.map((r) => r.id);
+
+/* Who the visitor said they were still decides order — it now orders the
+   tabs rather than a scroll. Home and Contact are pinned: the first is
+   where you land, the last is the thing every path should end at. */
+function routesForAudience() {
   const audience = C.audiences.find((a) => a.id === attune.get("audience"));
-  const order = (audience?.order ?? DEFAULT_ORDER).filter((k) => k !== "intro");
+  if (!audience) return ROUTES;
 
-  /* Anything the chosen order leaves out is appended rather than dropped.
-     A reordering that quietly deletes content is not a reordering. */
-  const full = [...order, ...DEFAULT_ORDER.filter((k) => !order.includes(k))];
+  const priority = new Map();
+  audience.order.forEach((section, i) => {
+    const route = ROUTES.find((r) => r.sections.includes(section));
+    if (route && !priority.has(route.id)) priority.set(route.id, i);
+  });
 
-  flow.replaceChildren(...full.map((key) => SECTIONS[key]?.()).filter(Boolean));
-  armArrivals(flow);
+  const middle = ROUTES.filter((r) => r.id !== "home" && r.id !== "contact");
+  middle.sort((a, b) => (priority.get(a.id) ?? 99) - (priority.get(b.id) ?? 99));
+
+  return [ROUTES[0], ...middle, ROUTES.find((r) => r.id === "contact")];
 }
 
-/* =========================================================================
-   ARRIVALS — full mode only, and only for people who did not ask for
-   stillness. Elements start visible in the markup and are hidden here, so
-   a JS failure leaves a complete, readable page rather than a blank one.
-   ========================================================================= */
-let arrivalObserver;
-function armArrivals(root) {
-  arrivalObserver?.disconnect();
-  if (attune.get("mode") !== "full") {
-    $$("[data-arrive]", root).forEach((n) => n.removeAttribute("data-arrive"));
-    return;
-  }
-  const targets = $$(".section, .project", root);
-  targets.forEach((n) => (n.dataset.arrive = ""));
-
-  arrivalObserver = new IntersectionObserver((entries, obs) => {
-    entries.forEach((entry, i) => {
-      if (!entry.isIntersecting) return;
-      entry.target.style.setProperty("--arrive-delay", `${Math.min(i, 4) * 70}ms`);
-      entry.target.dataset.arrive = "in";
-      obs.unobserve(entry.target);
-    });
-  }, { rootMargin: "0px 0px -12% 0px" });
-
-  targets.forEach((n) => arrivalObserver.observe(n));
-}
-
-/* =========================================================================
-   THE OPENING QUESTION
-   ========================================================================= */
-function renderAsk() {
-  const ask = $("#ask");
-  const list = $("#ask-options");
-  list.replaceChildren(...C.audiences.map((a) => {
-    const btn = el("button", { type: "button" },
-      el("strong", { textContent: t(a.label) }),
-      el("span", { textContent: t(a.detail) }));
-    btn.addEventListener("click", () => {
-      attune.set("audience", a.id);
-      $("#flow").scrollIntoView({ behavior: attune.get("mode") === "calm" ? "auto" : "smooth" });
-    });
-    return el("li", {}, btn);
+function renderTabs() {
+  const nav = document.getElementById("tabs");
+  nav.replaceChildren(...routesForAudience().map((r) => {
+    const a = el("a", { href: `#/${r.id}`, textContent: t(r.label) });
+    a.dataset.route = r.id;
+    if (router?.current === r.id) {
+      a.classList.add("is-active");
+      a.setAttribute("aria-current", "page");
+    }
+    return a;
   }));
-  ask.hidden = false;   // only shown once JS can make it work
+}
+
+/* The intro is a section like any other, so that home is composed the same
+   way every other page is. */
+SECTIONS.intro = () => {
+  const wrap = el("section", { className: "intro rail", id: "intro" },
+    el("p", { className: "intro__kicker", textContent: t(C.intro.kicker) }),
+    heroHeading(),
+    el("p", { className: "intro__sub", textContent: t(C.intro.sub) }));
+
+  const ask = el("div", { className: "ask" },
+    el("p", { className: "ask__lead", textContent: t(C.ui.audienceLabel) }),
+    el("ul", { className: "ask__options" }, C.audiences.map((a) => {
+      const btn = el("button", { type: "button" },
+        el("strong", { textContent: t(a.label) }),
+        el("span", { textContent: t(a.detail) }));
+      btn.addEventListener("click", () => attune.set("audience", a.id));
+      return el("li", {}, btn);
+    })),
+    el("p", { className: "ask__note", textContent: t(C.intro.invitation) }));
+
+  wrap.append(ask);
+  return wrap;
+};
+
+/* The headline carries one lime full stop — the whole brand mark, and the
+   only place the accent is used purely as identity. Built from text nodes
+   rather than innerHTML, so content.js can never become an injection
+   surface. */
+function heroHeading() {
+  const line = t(C.intro.statement).replace(/\.$/, "");
+  return el("h1", { id: "intro-h" }, line, el("span", { className: "stop", textContent: "." }));
+}
+
+function renderRoute(id) {
+  const route = ROUTES.find((r) => r.id === id) ?? ROUTES[0];
+  const view = document.getElementById("view");
+  view.replaceChildren(...route.sections.map((key) => SECTIONS[key]?.()).filter(Boolean));
+  document.title = `${t(route.label)} — ${C.meta.name}, ${t(C.meta.role)}`;
 }
 
 /* =========================================================================
@@ -361,16 +386,6 @@ function renderStatic() {
     if (fn) node.textContent = fn();
   });
 
-  /* The headline gets one lime full stop — the entire brand mark, and the
-     only place on the site where the accent is used purely as identity.
-     Built from text nodes rather than innerHTML, so content.js can never
-     become an injection surface. */
-  const h1 = $("#intro-h");
-  if (h1) {
-    const line = t(C.intro.statement).replace(/\.$/, "");
-    h1.replaceChildren(line, el("span", { className: "stop", textContent: "." }));
-  }
-
   const banner = $("#banner");
   if (banner) {
     banner.replaceChildren(
@@ -405,19 +420,29 @@ async function syncField() {
 /* =========================================================================
    BOOT
    ========================================================================= */
-function render() {
-  renderStatic();
-  renderAsk();
-  renderFlow();
-}
+let router;
 
-render();
+renderStatic();
 renderAttune();
 syncField();
 
+router = new Router({
+  ids: ROUTE_IDS,
+  fallback: "home",
+  render: renderRoute,
+  announce: (message) => attune.say(message),
+  transition: makeTransition({ announce: (m) => attune.say(m), t }),
+});
+
+/* Tabs are painted before the first resolve so the active mark is correct
+   on the very first frame, not one frame late. */
+router.addEventListener("navigate", renderTabs);
+renderTabs();
+router.start();
+
 attune.addEventListener("change", (e) => {
   const { changed } = e.detail;
-  if (changed === "lang") { render(); renderAttune(); }
-  else if (changed === "audience") renderFlow();
-  else if (changed === "mode") { armArrivals(document); syncField(); }
+  if (changed === "lang") { renderStatic(); renderAttune(); renderTabs(); renderRoute(router.current); }
+  else if (changed === "audience") renderTabs();
+  else if (changed === "mode") syncField();
 });

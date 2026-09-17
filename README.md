@@ -11,6 +11,30 @@ Three things about Safa are not three features here. They are one behaviour.
 | **Extreme detail** | anything can be opened one level deeper — a hex and why, a margin and why, the draft that was rejected |
 | **Accessibility** | every adaptation is also an access affordance, and the site says out loud what it changed |
 
+## Six pages, each with its own arrival
+
+Routes are hash-based (`#/work`), so every page has a shareable URL, the back
+button works, and it deploys to GitHub Pages with no rewrite rules.
+
+A transition is the last thing a visitor is told before they read anything, so
+each one argues its own page's point rather than decorating the gap:
+
+| page | crossing | what it says |
+|---|---|---|
+| **Home** | the page settles out of the lime mark; outcome figures count up | the site attuning itself — its whole thesis |
+| **Work** | covers snap from scatter into alignment | interfaces are assembled out of parts |
+| **About** | paragraphs rise one line at a time | the cadence of someone talking, not a page loading |
+| **Access** | **nothing at all** | the page about access refuses to make anyone wait |
+| **Skills** | rows sweep in and their numbers count | an inventory being counted, not a list revealed |
+| **Contact** | the address settles toward you, the mark pulses once | an invitation, offered rather than displayed |
+
+**Access** is the only page identical in both modes, because it was always
+designed for everyone. That is the point, and the site says so out loud the
+first time you open it.
+
+The home page counts its figures up — the one effect Safa wrote in 2023 and
+couldn't get working. It works now.
+
 ## Two modes, both signed
 
 **Full** — a live WebGL ground that warms where your pointer is, display type at
@@ -54,7 +78,9 @@ styles/calm.css       art direction two — the printed piece
 styles/attune.css     the panel
 styles/detail.css     the annotation layer
 scripts/attune.js     the six adaptation axes, persistence, announcements
-scripts/main.js       rendering, ordering, disclosure, arrivals
+scripts/router.js     hash routing, focus management, route announcements
+scripts/transitions.js one choreography per page
+scripts/main.js       rendering, route composition, disclosure
 scripts/gl/field.js   the WebGL ground (raw WebGL2, no library)
 ```
 
@@ -69,6 +95,12 @@ scripts/gl/field.js   the WebGL ground (raw WebGL2, no library)
    — the page stays complete and readable.
 4. **Contrast is not negotiable.** The shader is clamped to 6% of the distance
    between paper and the warm tone, so body copy never drops below 15:1.
-5. **No value is off-scale, and no decision is unexplained.** The comments in
+5. **Navigation is links, not a tablist.** These look like tabs but they are
+   destinations with addresses, so they are real `<a href>`: middle-click,
+   copy-link, history and the announcement "link" all come free and correct.
+6. **Every route change moves focus and is announced.** Without it a screen
+   reader user hears nothing and stays on the link they pressed — the most
+   common way a JavaScript-routed site locks somebody out.
+7. **No value is off-scale, and no decision is unexplained.** The comments in
    `tokens.css` are not notes for developers — they are the source text for the
    detail layer.

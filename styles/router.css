@@ -1,0 +1,148 @@
+/* =========================================================================
+   router.css — the tab bar, and the crossings between pages.
+   ========================================================================= */
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-3xs);
+  margin-inline: auto var(--s-sm);
+}
+.tabs a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;              /* fingertip, not the 24px minimum */
+  padding-inline: var(--s-xs);
+  border-radius: var(--radius-pill);
+  font-family: var(--face-detail);
+  font-size: var(--t-sm);
+  text-decoration: none;
+  color: var(--text-faint);
+  transition: color var(--dur-quick) var(--ease-out),
+              background var(--dur-quick) var(--ease-out);
+}
+.tabs a:hover { color: var(--text); background: var(--surface); }
+
+/* The current page is marked three ways, because any one alone fails
+   somebody: a lime dot (fails colour-blind readers), full-strength text
+   against faint siblings (fails at small sizes), and a raised surface
+   (fails nobody). aria-current carries it to screen readers.
+
+   An inset shadow was the obvious choice here and the wrong one: on a pill
+   the bottom rule follows the border radius and curls up the sides, so it
+   reads as a half-drawn ring rather than an underline. */
+.tabs a.is-active {
+  color: var(--text);
+  background: var(--surface);
+}
+.tabs a.is-active::before {
+  content: "";
+  width: 0.4em;
+  height: 0.4em;
+  margin-inline-end: 0.5em;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+@media (max-width: 62rem) {
+  .site-head { flex-wrap: wrap; row-gap: var(--s-2xs); }
+  .tabs { order: 3; width: 100%; margin-inline: 0; overflow-x: auto; flex-wrap: nowrap;
+          scrollbar-width: none; }
+  .tabs::-webkit-scrollbar { display: none; }
+}
+
+/* =========================================================================
+   CROSSINGS
+   The View Transitions API handles the move between two pages; each route
+   crosses differently, in the direction its own content argues for.
+   ========================================================================= */
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: var(--dur-calm);
+  animation-timing-function: var(--ease-out);
+}
+
+/* HOME — a plain dissolve. The page is settling, not travelling. */
+[data-transition="home"]::view-transition-old(root) { animation-name: fade-out; }
+[data-transition="home"]::view-transition-new(root) { animation-name: fade-in; }
+
+/* WORK — the new page rises into place, the way its covers will. */
+[data-transition="work"]::view-transition-old(root) { animation-name: fade-out; animation-duration: 160ms; }
+[data-transition="work"]::view-transition-new(root) { animation-name: rise-in; animation-duration: 520ms; }
+
+/* ABOUT — a slow dissolve at reading pace. */
+[data-transition="about"]::view-transition-old(root) { animation-name: fade-out; }
+[data-transition="about"]::view-transition-new(root) { animation-name: fade-in; animation-duration: 560ms; }
+
+/* SKILLS — a sweep from the start edge, like a column being counted.
+   Logical properties, so it sweeps the other way in a right-to-left script. */
+[data-transition="skills"]::view-transition-old(root) { animation-name: fade-out; animation-duration: 140ms; }
+[data-transition="skills"]::view-transition-new(root) { animation-name: sweep-in; }
+
+/* CONTACT — the page comes toward you. */
+[data-transition="contact"]::view-transition-old(root) { animation-name: fade-out; animation-duration: 160ms; }
+[data-transition="contact"]::view-transition-new(root) { animation-name: near-in; }
+
+/* NONE — calm mode, reduced motion, and the accessibility page always.
+   A duration of zero rather than a fast animation: this is a cut. */
+[data-transition="none"]::view-transition-old(root),
+[data-transition="none"]::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+@keyframes fade-out { to   { opacity: 0; } }
+@keyframes fade-in  { from { opacity: 0; } }
+@keyframes rise-in  { from { opacity: 0; transform: translateY(20px); } }
+@keyframes sweep-in { from { opacity: 0; transform: translateX(-24px); } }
+@keyframes near-in  { from { opacity: 0; transform: scale(0.985); } }
+
+/* The hard floor, again, at the level the API works at. The choreography in
+   transitions.js already checks this, but a media query cannot be raced by
+   a script and this is the layer that must never fail. */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) { animation: none !important; }
+}
+
+/* =========================================================================
+   THE LANDING HEADING
+   -------------------------------------------------------------------------
+   On every route change focus moves to the new page's heading, so that a
+   screen-reader user is put where they navigated to instead of being left
+   on the link they just pressed. That heading is a block element spanning
+   the column, so the default focus ring draws a box around the entire hero
+   — which reads as a rendering bug rather than as feedback.
+
+   The answer is not to remove the indicator. A heading used as a landing
+   target is not an operable control, but a keyboard visitor still deserves
+   to see where they were put. So it gets a different indicator: a lime bar
+   in the margin, the same mark the active tab carries. Unmistakable, and
+   designed rather than defaulted.
+   ========================================================================= */
+#view > section > h1:focus-visible,
+#view > section > h2:focus-visible {
+  outline: none;
+  position: relative;
+}
+#view > section > h1:focus-visible::before,
+#view > section > h2:focus-visible::before {
+  content: "";
+  position: absolute;
+  inset-inline-start: calc(var(--s-sm) * -1);
+  inset-block: 0.12em 0.12em;
+  width: 3px;
+  border-radius: 2px;
+  background: var(--accent);
+}
+/* At narrow widths there is no margin to put it in, so it goes underneath. */
+@media (max-width: 68rem) {
+  #view > section > h1:focus-visible::before,
+  #view > section > h2:focus-visible::before {
+    inset-inline: 0 auto;
+    inset-block: auto -0.18em;
+    width: 2.5rem;
+    height: 3px;
+  }
+}

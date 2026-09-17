@@ -18,6 +18,7 @@
 <link rel="stylesheet" href="styles/tokens.css">
 <link rel="stylesheet" href="styles/base.css">
 <link rel="stylesheet" href="styles/layout.css">
+<link rel="stylesheet" href="styles/router.css">
 <link rel="stylesheet" href="styles/attune.css">
 <link rel="stylesheet" href="styles/detail.css">
 <link rel="stylesheet" href="styles/full.css">
@@ -70,6 +71,8 @@
     <span class="wordmark__name">Safa Mohalaia</span>
     <span class="wordmark__role" data-i18n="role"></span>
   </a>
+  <nav class="tabs" id="tabs" aria-label="Sections"></nav>
+
   <button id="attune-open" type="button" aria-expanded="false" aria-controls="attune-panel">
     <span aria-hidden="true">◐</span>
     <span data-i18n="attuneTitle">Attune</span>
@@ -77,25 +80,9 @@
 </header>
 
 <main id="main" tabindex="-1">
-
-  <!-- ===== The opening question ===== -->
-  <section id="intro" class="intro rail" aria-labelledby="intro-h">
-    <p class="intro__kicker" data-i18n="intro.kicker"></p>
-    <h1 id="intro-h" data-i18n="intro.statement"></h1>
-    <p class="intro__sub" data-i18n="intro.sub"></p>
-
-    <div class="ask" id="ask" hidden>
-      <p class="ask__lead" data-i18n="ui.audienceLabel"></p>
-      <ul class="ask__options" id="ask-options"></ul>
-      <p class="ask__note" data-i18n="intro.invitation"></p>
-    </div>
-  </section>
-
-  <!-- Sections are rendered and ordered by JS according to the chosen
-       audience. Order is the only thing that changes — nothing is ever
-       removed, so every path reaches everything. -->
-  <div id="flow"></div>
-
+  <!-- One route at a time. Which sections land here, and in what order, is
+       decided by the route and by who the visitor said they were. -->
+  <div id="view"></div>
 </main>
 
 <footer class="site-foot rail">
@@ -104,8 +91,11 @@
 
 <noscript>
   <style>
-    #attune-open, #field { display: none; }
-    #flow::before { content: "This site normally rearranges itself for you. Without JavaScript it stays in one order — everything is still here."; }
+    #attune-open, #field, .tabs { display: none; }
+    #view::before {
+      content: "This site is built as six pages that rearrange themselves for you. Without JavaScript it cannot route — but nothing here is behind a login. Reach me at safamuh98@icloud.com.";
+      display: block; padding: 2rem 0; font-size: 1.1rem;
+    }
   </style>
 </noscript>
 
