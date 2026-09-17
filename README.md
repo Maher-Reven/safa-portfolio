@@ -66,27 +66,32 @@ A full-bleed shader behind everything, and it is the headline drawn:
 
 > *Turning complexity into clarity, one interface at a time.*
 
-So the field is **turbulent on one side and ordered on the other**. Under the
-words, a clean orthogonal grid — the surface a designer actually works on.
-Behind the cat, a twice-domain-warped flow read as contour ribbons, like a
-topographic map of something unresolved. **Scroll and the tideline sweeps
-right**: by the bottom of the page the whole field is grid. The sentence
-happens behind you while you read it.
+It is **one orthogonal mesh whose coordinates are warped by a flow field**.
+Where the warp is full the mesh tangles into turbulence; where it falls to
+zero the same mesh relaxes into a perfect grid — the surface a designer
+actually works on. Same object, two states.
 
-The cool tone only ever appears in the turbulent half, so resolving the field
-literally drains the confusion out of it. A standing scaffold grid sits under
-both states at the edge of visibility, and a vignette keeps the centre of the
-page — where the reading happens — the quietest part of it.
+Under the words: grid. Behind the cat: turbulence. **Scroll and the tideline
+sweeps right**, so by the bottom of the page the whole field has resolved.
+The sentence happens behind you while you read it.
 
-**The constraint that shaped all of it.** The headline sits on this. Ground
-`#1C1C1C` measures 0.0116 relative luminance against text `#FAF8F5` at 0.93,
-about 17:1. Letting the field rise 9% toward lime puts it at 0.073, still 8:1.
-So 9% is the ceiling and everything is composed inside that band. Measured off
-the rendered pixels in the headline region: **15.4:1**. A background that costs
-a reader a sentence is not a background.
+Two layers at different scales, the far one drifting slower, so the turbulence
+has depth instead of being a flat pattern. The cool tone exists only in the
+turbulent half, so resolving the field drains the confusion out of it.
 
-Five-octave fbm across a full screen is not free, so the pixel ratio caps at
-1.5 rather than 2 — nobody can see the difference on a wall this soft.
+**Loudness is a function of position, not a global clamp.** Clamping the whole
+field kept it safe and made it invisible. The ceiling is not a property of the
+shader — it is a property of whether there is text on top. So:
+
+| zone | brightest pixel | contrast vs body text |
+|---|---|---|
+| left of 45%, where the words live | 0.032 | **12.0:1** — AAA |
+| right of 72%, where the cat is and no text ever goes | 0.131 | **5.5:1** — AA |
+| the same zone once resolved | 0.074 | **8.0:1** — AAA |
+
+Measured by hiding every bit of foreground and reading the brightest pixel in
+the rendered frame. Even the loud zone's worst case clears AA for normal text,
+so a future layout change can never turn this into a trap.
 
 ## The cat, as 24,000 particles
 

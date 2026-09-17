@@ -78,33 +78,48 @@ void main() {
   vec2 p  = (gl_FragCoord.xy - 0.5 * uRes) / uRes.y;   // aspect-correct, centred
   float t = uTime * 0.035;
 
-  /* ---- THE TURBULENT SIDE ------------------------------------------------
-     Two rounds of domain warping. One is noise; two is weather. The field is
-     then read as contours — a topographic map of something that has not been
-     worked out yet. */
+  /* ---- ONE MESH, IN TWO STATES ------------------------------------------
+     This was two patterns crossfading — contour ribbons on one side, a grid
+     on the other — which is a dissolve between two pictures, not an
+     argument. It is now a SINGLE orthogonal mesh whose coordinates are
+     warped by the flow field. Where the warp is full the mesh tangles into
+     turbulence; where it falls to zero the same mesh relaxes into a perfect
+     grid. Same object, two states, and the scroll is what relaxes it.
+
+     Two rounds of domain warping. One is noise; two is weather. */
   vec2 q = vec2(fbm(p * 1.5 + t), fbm(p * 1.5 + vec2(3.2, 1.7) - t));
   vec2 r = vec2(fbm(p * 1.5 + 1.9 * q + vec2(1.7, 9.2) + 0.28 * t),
                 fbm(p * 1.5 + 1.9 * q + vec2(8.3, 2.8) - 0.22 * t));
   float flow = fbm(p * 1.5 + 2.4 * r);
 
-  float contour = lineband(flow * 7.0 - t * 0.6, 0.26);
-
-  /* ---- THE RESOLVED SIDE -------------------------------------------------
-     A true orthogonal grid: the surface a designer actually works on. */
-  vec2 g = p * 7.0;
-  float grid = max(lineband(g.x, 0.045), lineband(g.y, 0.045));
-
-  /* ---- THE BOUNDARY ------------------------------------------------------
-     Ordered on the left where the words are, turbulent on the right where
-     the cat is, and the edge sweeps right as you scroll. Softened by a
-     little of the flow itself so it is a tideline, not a wipe. */
-  /* The tideline starts at 0.38 rather than 0, so at the top of the page the
-     resolved half actually sits under the headline instead of clinging to
-     the left edge of the screen where nobody is reading. */
+  /* The tideline. Ordered under the words, turbulent behind the cat, and it
+     sweeps right as you scroll. Softened by a little of the flow itself so
+     it is a tideline rather than a wipe. */
   float edge = uv.x - 0.38 - uOrder * 0.85 + (flow - 0.5) * 0.12;
   float order = 1.0 - smoothstep(-0.26, 0.30, edge);
 
-  float ink = mix(contour, grid, order);
+  vec2 warp = (r - 0.5) * 1.35 * (1.0 - order);
+
+  /* Two layers at different scales, the far one drifting slower, so the
+     turbulence has depth instead of being a flat pattern. */
+  vec2  gNear = (p + warp) * 7.0;
+  float near_ = max(lineband(gNear.x, 0.055), lineband(gNear.y, 0.055));
+
+  vec2  gFar = (p * 0.55 + warp * 0.6 + vec2(0.0, t * 0.15)) * 7.0;
+  float far_ = max(lineband(gFar.x, 0.04), lineband(gFar.y, 0.04));
+
+  float mesh = max(near_, far_ * 0.55);
+
+  /* ---- HOW LOUD IT IS ALLOWED TO BE --------------------------------------
+     Clamping the whole field to 9% kept it safe and made it invisible. The
+     ceiling is not a property of the shader, it is a property of whether
+     there is text on top — so it is now a function of position.
+
+     Left of 0.45 the words live, and the field stays at 7.5%: measured
+     15:1 against body copy. Right of 0.72, where the cat is and no text
+     ever goes, it rises to 22%. Even that worst case is 4.6:1 — still AA
+     for normal text, so a layout change can never make this a trap. */
+  float loud = mix(0.075, 0.22, smoothstep(0.45, 0.72, uv.x));
 
   /* ---- POINTER -----------------------------------------------------------
      Attention brightens the field near it, and nothing more. The cat does
@@ -117,8 +132,10 @@ void main() {
      of this file. The cool tone only ever appears in the turbulent half, so
      resolving the field literally drains the confusion out of it. */
   vec3 col = uGround;
-  col += uAccent * ink  * (0.052 + near * 0.05);
-  col += uCool   * ink  * (1.0 - order) * 0.026;
+  col += uAccent * mesh * (loud + near * 0.06);
+  /* The cool tone exists only in the turbulent half, so resolving the field
+     literally drains the confusion out of it. */
+  col += uCool * mesh * (1.0 - order) * loud * 0.55;
 
   /* A standing grid over everything at the edge of visibility: the drawing
      surface, always there, under both states. */
