@@ -218,6 +218,26 @@ still form a list you can navigate by.
 The index is the one place a cover is cropped — a card is a thumbnail and wants
 a consistent shape. The case page shows the screenshot whole.
 
+## Both languages, all the way down
+
+Every string is a `{ en, nl }` pair, and the toggle in the Attune panel
+switches the whole application, not just the prose:
+
+- Headings, body, case copy, card cues, next-case labels
+- The tab names and the document title
+- The **annotation layer's own kind labels** — an English "constraint" heading
+  over a Dutch note is worse than no heading
+- The contact field labels and the panel's own controls
+- The **skip link** and the meta description, which live in the markup rather
+  than being rendered and are therefore the easiest to forget
+- Every spoken announcement. The whole point of saying out loud what changed
+  is that the person understands it, so saying it in English to someone
+  reading Dutch defeats the feature entirely
+
+A Dutch-locale visitor lands in Dutch without touching anything, and the
+choice persists across reloads. `attune.js` keeps English fallbacks so it
+still works as a standalone module; the page supplies the translations.
+
 ## Two modes, both signed
 
 **Full** — a live WebGL ground that warms where your pointer is, display type at

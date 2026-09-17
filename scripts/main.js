@@ -82,7 +82,7 @@ const SECTIONS = {
       C.projects.flatMap((proj) => proj.details.map((d) =>
         el("div", { className: "detail-index__row" },
           el("span", { className: "detail-index__key",
-                       textContent: `${d.kind}${d.value ? " · " + d.value : ""}` }),
+                       textContent: `${t(C.ui.detailKinds[d.kind]) || d.kind}${d.value ? " · " + d.value : ""}` }),
           el("div", {},
             el("p", { textContent: t(d.note) }),
             el("p", { style: "color:var(--text-faint)", textContent: t(proj.title) }))))))),
@@ -91,14 +91,14 @@ const SECTIONS = {
     el("p", {}, el("a", { className: "contact__big",
                           href: `mailto:${C.meta.email}`, textContent: C.meta.email })),
     el("dl", { className: "contact__grid" },
-      el("dt", { textContent: "Email" }),
+      el("dt", { textContent: t(C.ui.contact.email) }),
       el("dd", {}, el("a", { href: `mailto:${C.meta.email}`, textContent: C.meta.email })),
-      el("dt", { textContent: "Phone" }),
+      el("dt", { textContent: t(C.ui.contact.phone) }),
       el("dd", {}, el("a", { href: `tel:${C.meta.phone.replace(/\s/g, "")}`,
                              textContent: C.meta.phone })),
-      el("dt", { textContent: t(C.ui.sections.contact) === "Contact" ? "Located" : "Locatie" }),
+      el("dt", { textContent: t(C.ui.contact.located) }),
       el("dd", { textContent: t(C.meta.located) }),
-      el("dt", { textContent: "Elsewhere" }),
+      el("dt", { textContent: t(C.ui.contact.elsewhere) }),
       el("dd", {}, C.meta.links.map((l, i) =>
         el("span", {}, i ? " · " : "", el("a", { href: l.href, textContent: l.label + " \u2197" })))))),
 };
@@ -232,8 +232,9 @@ function detailPair(d, slug) {
   trigger.setAttribute("aria-expanded", "false");
   trigger.setAttribute("aria-controls", id);
 
+  const kind = t(C.ui.detailKinds[d.kind]) || d.kind;
   const note = el("dl", { className: "detail-note", id, hidden: true },
-    el("dt", { textContent: d.kind }),
+    el("dt", { textContent: kind }),
     el("dd", { textContent: t(d.note) }));
 
   trigger.addEventListener("click", () => {
@@ -512,7 +513,8 @@ function renderAttune() {
       { value: "default", label: "A" }, { value: "large", label: "A+" }, { value: "larger", label: "A++" },
     ]),
     axisGroup("contrast", "contrastLabel", [
-      { value: "normal", label: "Warm" }, { value: "high", label: "High" },
+      { value: "normal", label: t(C.ui.contrastWarm) },
+      { value: "high", label: t(C.ui.contrastHigh) },
     ]),
     axisGroup("lang", "langLabel", [
       { value: "en", label: "English" }, { value: "nl", label: "Nederlands" },
@@ -567,7 +569,17 @@ const I18N_PATHS = {
   "attuneTitle": () => t(C.ui.attuneTitle),
 };
 
+/* Announcements come from content, so they follow the chosen language. */
+attune.describe = (axis, value) => t(C.ui.announce?.[axis]?.[value]) || null;
+
 function renderStatic() {
+  /* Chrome outside #view that is written in the markup rather than rendered,
+     and therefore easy to forget when the language changes. */
+  const skip = $(".skip");
+  if (skip) skip.textContent = t(C.ui.skip);
+  const desc = document.querySelector('meta[name="description"]');
+  if (desc) desc.setAttribute("content", t(C.ui.metaDescription));
+
   $$("[data-i18n]").forEach((node) => {
     const fn = I18N_PATHS[node.dataset.i18n];
     if (fn) node.textContent = fn();

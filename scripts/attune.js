@@ -99,6 +99,9 @@ class Attune extends EventTarget {
     /** what the machine told us, kept so the panel can show "your system asked for this" */
     this.systemDefaults = defaults;
 
+    /** (axis, value) => string. Set by the page to translate announcements. */
+    this.describe = null;
+
     this.state = {};
     for (const axis of Object.keys(AXES)) {
       const candidate = stored[axis];
@@ -153,7 +156,14 @@ class Attune extends EventTarget {
     }
     root.lang = this.state.lang;
 
-    if (announce && changed) this.say(AXES[changed].announce[this.state[changed]]);
+    if (announce && changed) {
+      /* The page can supply a translated line; the table below stays as the
+         English fallback so this module still works on its own. Announcing a
+         change in a language the reader did not choose defeats the feature. */
+      const spoken = this.describe?.(changed, this.state[changed])
+                  ?? AXES[changed].announce[this.state[changed]];
+      this.say(spoken);
+    }
 
     this.dispatchEvent(new CustomEvent("change", {
       detail: { state: { ...this.state }, changed },

@@ -382,6 +382,74 @@ export const ui = {
   viewCase:      { en: "Read the case \u2192", nl: "Lees de case \u2192" },
   nextCase:      { en: "Next case",          nl: "Volgende case" },
   cursorRead:    { en: "Read",               nl: "Lees" },
+  skip:          { en: "Skip to content",   nl: "Naar de inhoud" },
+  metaDescription: {
+    en: "Portfolio of Safa Mohalaia, a UX/UI designer in Amsterdam. Healthcare, civic infrastructure and community platforms.",
+    nl: "Portfolio van Safa Mohalaia, UX/UI-designer in Amsterdam. Zorg, publieke infrastructuur en communityplatforms.",
+  },
+
+  /* The annotation layer labels its own kinds, so they have to translate
+     too — an English "constraint" heading over a Dutch note is worse than
+     no heading. */
+  detailKinds: {
+    colour:     { en: "colour",     nl: "kleur" },
+    constraint: { en: "constraint", nl: "beperking" },
+    finding:    { en: "finding",    nl: "bevinding" },
+    decision:   { en: "decision",   nl: "keuze" },
+    rejected:   { en: "rejected",   nl: "afgewezen" },
+  },
+
+  contact: {
+    email:     { en: "Email",     nl: "E-mail" },
+    phone:     { en: "Phone",     nl: "Telefoon" },
+    located:   { en: "Located",   nl: "Locatie" },
+    elsewhere: { en: "Elsewhere", nl: "Elders" },
+  },
+
+  contrastWarm: { en: "Warm", nl: "Warm" },
+  contrastHigh: { en: "High", nl: "Hoog" },
+
+  /* What the site says out loud when it changes something. The whole point
+     of announcing a change is that the person understands it, so saying it
+     in English to someone reading Dutch defeats the feature entirely. */
+  announce: {
+    mode: {
+      full: { en: "Screen mode. Motion and the live canvas are on.",
+              nl: "Schermmodus. Beweging en het levende canvas staan aan." },
+      calm: { en: "Print mode. The canvas is off and the page is set as print.",
+              nl: "Printmodus. Het canvas staat uit en de pagina is als drukwerk gezet." },
+    },
+    audience: {
+      open:     { en: "Showing everything, in the default order.",
+                  nl: "Alles wordt getoond, in de standaardvolgorde." },
+      hiring:   { en: "Reordered for hiring: outcomes first, then the work.",
+                  nl: "Herschikt voor werving: eerst resultaten, dan het werk." },
+      designer: { en: "Reordered for designers: process, decisions and the accessibility work first.",
+                  nl: "Herschikt voor ontwerpers: eerst proces, keuzes en het toegankelijkheidswerk." },
+      client:   { en: "Reordered for clients: what I do, how I work, what it asks of you.",
+                  nl: "Herschikt voor opdrachtgevers: wat ik doe, hoe ik werk, wat het van je vraagt." },
+      curious:  { en: "No order imposed. Wander.", nl: "Geen volgorde opgelegd. Kijk rond." },
+    },
+    reading: {
+      default: { en: "Reading type back to DM Sans.", nl: "Leesletter terug naar DM Sans." },
+      legible: { en: "Reading type is now Atkinson Hyperlegible, with looser lines.",
+                 nl: "Leesletter is nu Atkinson Hyperlegible, met ruimere regels." },
+    },
+    textsize: {
+      default: { en: "Text at default size.", nl: "Tekst op standaardgrootte." },
+      large:   { en: "Text enlarged.",        nl: "Tekst vergroot." },
+      larger:  { en: "Text at the largest size.", nl: "Tekst op de grootste maat." },
+    },
+    contrast: {
+      normal: { en: "Contrast back to warm default.", nl: "Contrast terug naar warm standaard." },
+      high:   { en: "High contrast. Warmth removed, every pairing above 7 to 1.",
+                nl: "Hoog contrast. Warmte verwijderd, elke combinatie boven 7 op 1." },
+    },
+    lang: {
+      en: { en: "Language set to English.", nl: "Language set to English." },
+      nl: { en: "Taal ingesteld op Nederlands.", nl: "Taal ingesteld op Nederlands." },
+    },
+  },
   caseFacts: {
     year:    { en: "Year",    nl: "Jaar" },
     role:    { en: "Role",    nl: "Rol" },
