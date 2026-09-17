@@ -46,6 +46,26 @@ guards it, or a tap would leave a card lit up on a phone.
 In print the spotlight becomes a flat tint and the lift becomes a rule that
 thickens — the same information, stated the way a printed page states things.
 
+## How type arrives
+
+The headline says *turning complexity into clarity*, so the words do that:
+each one arrives **out of focus and resolves into sharpness**, left to right,
+with the last word landing about half a second after the first. Then the lime
+full stop on its own, because it is a mark rather than a word.
+
+Not a fade — a fade says "loading". Not a slide — a slide says "this came from
+somewhere else". Blur says the thing was always there and you are only now
+able to read it, which is the whole claim of the sentence it is setting.
+
+- **The text is never withheld.** Words are wrapped and then animated by
+  script that has already confirmed it can un-hide them, so a failed script
+  leaves a readable page and a screen reader never waits on an effect.
+- **Nothing reflows.** Only opacity, transform and filter are touched.
+  Animating letter-spacing would relayout the paragraph every frame.
+- **Stillness skips it entirely** — no wrapping is applied at all.
+- The **Access page has no reveal**, like it has no transition. It still
+  refuses to make anyone wait.
+
 ## Six pages, each with its own arrival
 
 Routes are hash-based (`#/work`), so every page has a shareable URL, the back

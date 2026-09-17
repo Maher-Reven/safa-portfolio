@@ -1,3 +1,5 @@
+import { resolveView } from "./reveal.js";
+
 /* =========================================================================
    transitions.js — one choreography per page, each arguing that page's point.
    -------------------------------------------------------------------------
@@ -119,7 +121,8 @@ const CHOREO = {
      up, which is the one effect Safa wrote in 2023 that she could not get
      working. It works now. */
   home(view) {
-    rise(view.querySelectorAll(".intro__kicker, h1, .intro__sub"), { stagger: 90 });
+    rise(view.querySelectorAll(".intro__kicker"), { stagger: 0, duration: 500 });
+    resolveView(view);
     const marks = view.querySelectorAll(".stop");
     marks.forEach((m) => m.animate(
       [{ transform: "scale(0)", opacity: 0 }, { transform: "scale(1)", opacity: 1 }],
@@ -135,6 +138,8 @@ const CHOREO = {
   /* ASSEMBLE — the covers arrive from slightly different places and land
      square. Built from parts, then aligned. */
   work(view) {
+    resolveView(view);
+
     const covers = [...view.querySelectorAll(".project__cover")];
     covers.forEach((cover, i) => {
       const from = [-18, 14, -10, 20][i % 4];
@@ -149,6 +154,8 @@ const CHOREO = {
 
   /* SPEAK — one line at a time, at the pace of a person, not a loader. */
   about(view) {
+    resolveView(view);
+
     rise(view.querySelectorAll("p"), { distance: 10, stagger: 140, duration: 700 });
   },
 
@@ -163,13 +170,16 @@ const CHOREO = {
      name — so everything else just needs to arrive under it without
      competing. */
   case: (view) => {
-    rise(view.querySelectorAll(".case__back, .case__title, .case__facts"), { stagger: 60 });
+    resolveView(view);
+    rise(view.querySelectorAll(".case__back, .case__facts"), { stagger: 60 });
     rise(view.querySelectorAll(".case__lead, .case__section"), { stagger: 70, duration: 620 });
     rise(view.querySelectorAll(".shots li"), { stagger: 80, distance: 20 });
   },
 
   /* TALLY — an inventory being counted. */
   skills(view) {
+    resolveView(view);
+
     view.querySelectorAll(".skills li").forEach((row, i) => {
       row.animate(
         [{ opacity: 0, transform: "translateX(-10px)" }, { opacity: 1, transform: "none" }],
@@ -180,6 +190,8 @@ const CHOREO = {
 
   /* REACH — offered, not displayed. */
   contact(view) {
+    resolveView(view);
+
     const big = view.querySelector(".contact__big");
     big?.animate(
       [{ opacity: 0, transform: "translateY(22px) scale(0.97)" },
