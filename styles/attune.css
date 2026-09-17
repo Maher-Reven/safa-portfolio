@@ -1,0 +1,181 @@
+/* =========================================================================
+   attune.css — the panel.
+   -------------------------------------------------------------------------
+   Most sites bury this in a footer and call it a compliance feature. Here
+   it is the thesis, so it is designed like the thesis: full-height, typeset,
+   and it tells you what it did.
+   ========================================================================= */
+
+/* ---- The opener, in the header ---------------------------------------- */
+#attune-open {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2xs);
+  padding: var(--s-3xs) var(--s-xs);
+  font-family: var(--face-detail);
+  font-size: var(--t-sm);
+  letter-spacing: 0.02em;
+  border: var(--rule-ink);
+  border-radius: var(--radius-pill);
+  background: var(--paper-pure);
+  transition: background var(--dur-quick) var(--ease-out),
+              color var(--dur-quick) var(--ease-out);
+}
+#attune-open:hover { background: var(--ink); color: var(--paper-pure); }
+#attune-open[aria-expanded="true"] { background: var(--ink); color: var(--paper-pure); }
+
+/* ---- The panel --------------------------------------------------------- */
+.attune {
+  position: fixed;
+  inset-block: 0;
+  inset-inline-end: 0;
+  z-index: var(--z-attune);
+  width: min(100%, 27rem);
+  padding: max(var(--s-lg), env(safe-area-inset-top)) var(--s-lg)
+           max(var(--s-lg), env(safe-area-inset-bottom));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: var(--paper-pure);
+  border-inline-start: var(--rule-ink);
+  transform: translateX(101%);
+  transition: transform var(--dur-calm) var(--ease-out);
+}
+.attune[data-open="true"] { transform: translateX(0); }
+
+/* In calm mode the panel does not slide. It is simply there or not there —
+   the same decision, expressed as a cut instead of a move. */
+[data-mode="calm"] .attune { transition: none; }
+
+.attune__scrim {
+  position: fixed;
+  inset: 0;
+  z-index: calc(var(--z-attune) - 1);
+  background: color-mix(in oklab, var(--ink) 34%, transparent);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--dur-calm) var(--ease-out);
+}
+.attune__scrim[data-open="true"] { opacity: 1; pointer-events: auto; }
+
+.attune__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-sm);
+  padding-block-end: var(--s-sm);
+  border-block-end: var(--rule-ink);
+}
+.attune__title {
+  font-family: var(--face-display);
+  font-size: var(--t-lg);
+  font-variation-settings: "SOFT" var(--display-soft), "WONK" var(--display-wonk);
+}
+.attune__intro {
+  margin-block: var(--s-sm) var(--s-lg);
+  font-size: var(--t-sm);
+  color: var(--ink-soft);
+  max-width: 34ch;
+}
+
+/* ---- A group of choices ------------------------------------------------ */
+.axis { margin-block-end: var(--s-lg); border: none; padding: 0; }
+
+.axis__label {
+  display: block;
+  margin-block-end: var(--s-xs);
+  padding: 0;
+  font-family: var(--face-detail);
+  font-size: var(--t-detail);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink-faint);
+}
+
+/* "Your device already asked for this." — shown next to any axis where we
+   are following an OS preference rather than a choice made here. Telling
+   someone you listened is part of listening. */
+.axis__system {
+  display: block;
+  margin-block-start: var(--s-3xs);
+  font-family: var(--face-detail);
+  font-size: var(--t-detail);
+  line-height: 1.4;
+  color: var(--tide-deep);
+  text-transform: none;
+  letter-spacing: 0;
+  max-width: 30ch;
+}
+.axis__system::before { content: "↳ "; }
+
+.choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-3xs);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Radio inputs, restyled but never replaced — the native input keeps the
+   arrow-key group behaviour that screen-reader and keyboard users expect,
+   which a div with role="radio" only ever imitates badly. */
+.choice { position: relative; }
+.choice input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  margin: 0;
+  width: 100%;
+  height: 100%;
+}
+.choice label {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding-inline: var(--s-xs);
+  border: var(--rule);
+  border-radius: var(--radius-sm);
+  font-size: var(--t-sm);
+  line-height: 1.2;
+  cursor: pointer;
+  transition: background var(--dur-quick) var(--ease-out),
+              border-color var(--dur-quick) var(--ease-out);
+}
+.choice:hover label { border-color: var(--ink-soft); }
+.choice input:checked + label {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper-pure);
+}
+/* The ring goes on the label, because the input itself is invisible. */
+.choice input:focus-visible + label {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}
+
+/* The choice's own explanation, always visible — no tooltips. A tooltip is
+   a decision to hide information from anyone who cannot hover. */
+.choice__note {
+  display: block;
+  margin-block-start: var(--s-3xs);
+  font-size: var(--t-detail);
+  line-height: 1.45;
+  color: var(--ink-faint);
+  max-width: 30ch;
+}
+
+/* ---- What just changed ------------------------------------------------- */
+.attune__log {
+  margin-block-start: var(--s-xl);
+  padding-block-start: var(--s-sm);
+  border-block-start: var(--rule);
+  font-family: var(--face-detail);
+  font-size: var(--t-detail);
+  color: var(--ink-soft);
+}
+.attune__log li { margin-block-end: var(--s-3xs); max-width: none; }
+.attune__log li::before { content: "→ "; color: var(--tide); }
+
+@media (max-width: 30rem) {
+  .attune { width: 100%; border-inline-start: none; }
+}

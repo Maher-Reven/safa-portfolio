@@ -1,0 +1,55 @@
+/* =========================================================================
+   full.css — art direction one: the live surface.
+   -------------------------------------------------------------------------
+   A field sits behind everything and warms where the pointer is. Type is
+   set large and loose on it. Content arrives rather than appearing.
+   This is the mode that argues; calm is the mode that states.
+   ========================================================================= */
+
+[data-mode="full"] #field {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-canvas);
+  width: 100%;
+  height: 100%;
+  pointer-events: none;   /* the ground is never in the way of the content */
+}
+[data-mode="calm"] #field { display: none; }
+
+[data-mode="full"] body { background: var(--paper); }
+[data-mode="full"] main,
+[data-mode="full"] .site-head,
+[data-mode="full"] .site-foot { position: relative; z-index: var(--z-content); }
+
+/* Display type in full mode runs to the optical-size extreme of Fraunces,
+   where the serifs sharpen and the contrast opens up. It is a different
+   typeface at this size, and that is the point of a variable font. */
+[data-mode="full"] .intro h1 {
+  font-variation-settings: "opsz" 144, "SOFT" 8, "WONK" 1;
+  font-weight: 380;
+  letter-spacing: -0.035em;
+}
+
+/* Arrival. Elements are placed, not faded — a fade says "loading", a rise
+   says "this was always here, you have just reached it".
+   Everything starts visible and is hidden only once JS confirms it can
+   un-hide it, so a script failure never leaves a blank page. */
+[data-mode="full"] [data-arrive] {
+  opacity: 0;
+  transform: translateY(calc(18px * var(--motion-scale)));
+  transition: opacity var(--dur-slow) var(--ease-out),
+              transform var(--dur-slow) var(--ease-out);
+  transition-delay: var(--arrive-delay, 0ms);
+}
+[data-mode="full"] [data-arrive="in"] { opacity: 1; transform: none; }
+
+/* Covers hold a slow scale while in view. Bound to --motion-scale so calm
+   mode zeroes it without this rule knowing calm mode exists. */
+[data-mode="full"] .project__cover img {
+  transition: transform var(--dur-slow) var(--ease-soft);
+}
+[data-mode="full"] .project:hover .project__cover img {
+  transform: scale(calc(1 + 0.03 * var(--motion-scale)));
+}
+
+[data-mode="full"] .section + .section { border-block-start: var(--rule); }

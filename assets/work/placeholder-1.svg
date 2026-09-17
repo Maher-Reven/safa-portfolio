@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" role="img">
+  <rect width="1600" height="1000" fill="#e6e0d4"/>
+  <g stroke="#7d756b" stroke-width="2" opacity=".5">
+    <path d="M0 0 1600 1000M1600 0 0 1000"/>
+  </g>
+  <text x="800" y="520" text-anchor="middle" font-family="monospace" font-size="42" fill="#46403a">replace with real work</text>
+</svg>

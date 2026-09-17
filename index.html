@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en" data-mode="full" data-audience="open">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Safa Mohalaia — Digital designer, Amsterdam</title>
+<meta name="description" content="Portfolio of Safa Mohalaia, a digital designer in Amsterdam. Human-centred, detail-obsessed, accessible by construction. This site rearranges itself depending on who is reading it.">
+<meta name="color-scheme" content="light">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+
+<!-- Fonts. Four faces, each doing one job — see tokens.css for why each.
+     display=swap so text is readable before the webfont lands; the fallback
+     stacks are metric-close enough that the swap does not shift layout. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..700,0..100,0..1&family=Inter:wght@300..700&family=JetBrains+Mono:wght@400;500&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+
+<link rel="stylesheet" href="styles/tokens.css">
+<link rel="stylesheet" href="styles/base.css">
+<link rel="stylesheet" href="styles/layout.css">
+<link rel="stylesheet" href="styles/attune.css">
+<link rel="stylesheet" href="styles/detail.css">
+<link rel="stylesheet" href="styles/full.css">
+<link rel="stylesheet" href="styles/calm.css">
+
+<!-- Applied before first paint so nobody in calm mode ever sees one frame
+     of the thing they asked not to see. -->
+<script>
+  try {
+    const s = JSON.parse(localStorage.getItem("afstemmen.v1") || "{}");
+    const r = document.documentElement;
+    r.dataset.mode     = s.mode     || (matchMedia("(prefers-reduced-motion: reduce)").matches ? "calm" : "full");
+    r.dataset.contrast = s.contrast || (matchMedia("(prefers-contrast: more)").matches ? "high" : "normal");
+    r.dataset.reading  = s.reading  || "default";
+    r.dataset.textsize = s.textsize || "default";
+    r.dataset.audience = s.audience || "open";
+    r.lang = s.lang || ((navigator.language||"").toLowerCase().startsWith("nl") ? "nl" : "en");
+  } catch (e) {}
+</script>
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<!-- The site says out loud what it changed. Polite, so it never interrupts
+     a sentence in progress; atomic, so partial messages are never read. -->
+<div id="announcer" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
+
+<!-- =====================================================================
+     THE GROUND
+     In full mode this canvas is a live field that warms where the pointer
+     is: the page notices you before it says it does. In calm mode the
+     element is removed from the DOM entirely — not hidden, removed — and
+     a printed grain takes its place in CSS.
+     aria-hidden because it is decoration; it carries no information that
+     is not also in the text.
+     ===================================================================== -->
+<canvas id="field" aria-hidden="true" data-decorative></canvas>
+
+<!-- =====================================================================
+     ATTUNE — built in JS so that a no-JS visitor gets a plain, complete,
+     perfectly readable document rather than a panel full of dead controls.
+     ===================================================================== -->
+<div id="attune-root"></div>
+
+<header class="site-head rail">
+  <a class="wordmark" href="#main">
+    <span class="wordmark__name">Safa Mohalaia</span>
+    <span class="wordmark__role" data-i18n="role"></span>
+  </a>
+  <button id="attune-open" type="button" aria-expanded="false" aria-controls="attune-panel">
+    <span aria-hidden="true">◐</span>
+    <span data-i18n="attuneTitle">Attune</span>
+  </button>
+</header>
+
+<main id="main" tabindex="-1">
+
+  <!-- ===== The opening question ===== -->
+  <section id="intro" class="intro rail" aria-labelledby="intro-h">
+    <h1 id="intro-h" data-i18n="intro.statement"></h1>
+    <p class="intro__sub" data-i18n="intro.sub"></p>
+
+    <div class="ask" id="ask" hidden>
+      <p class="ask__lead" data-i18n="ui.audienceLabel"></p>
+      <ul class="ask__options" id="ask-options"></ul>
+      <p class="ask__note" data-i18n="intro.invitation"></p>
+    </div>
+  </section>
+
+  <!-- Sections are rendered and ordered by JS according to the chosen
+       audience. Order is the only thing that changes — nothing is ever
+       removed, so every path reaches everything. -->
+  <div id="flow"></div>
+
+</main>
+
+<footer class="site-foot rail">
+  <p class="colophon" id="colophon"></p>
+</footer>
+
+<noscript>
+  <style>
+    #attune-open, #field { display: none; }
+    #flow::before { content: "This site normally rearranges itself for you. Without JavaScript it stays in one order — everything is still here."; }
+  </style>
+</noscript>
+
+<script type="module" src="scripts/main.js"></script>
+</body>
+</html>

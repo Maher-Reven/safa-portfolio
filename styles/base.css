@@ -1,0 +1,148 @@
+/* =========================================================================
+   base.css — reset, typography, and the accessibility primitives that the
+   rest of the site is allowed to assume are already handled.
+   ========================================================================= */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  /* Never smooth-scroll someone who asked for stillness. */
+  scroll-behavior: smooth;
+  scroll-padding-top: var(--s-xl);
+}
+[data-mode="calm"] html, html:has([data-mode="calm"]) { scroll-behavior: auto; }
+
+body {
+  margin: 0;
+  min-height: 100svh;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--face-text);
+  font-size: var(--t-body);
+  line-height: var(--leading-body);
+  font-synthesis-weight: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  /* Horizontal scroll was one of the accessibility failures Safa found in
+     her own first site. It is structurally impossible here. */
+  overflow-x: clip;
+}
+
+h1, h2, h3, h4 {
+  margin: 0;
+  font-family: var(--face-display);
+  font-weight: 460;
+  line-height: var(--leading-snug);
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+  font-variation-settings: "SOFT" var(--display-soft, 0), "WONK" var(--display-wonk, 0);
+  transition: font-variation-settings var(--dur-calm) var(--ease-soft);
+}
+h1 { font-size: var(--t-xl); line-height: var(--leading-tight); letter-spacing: -0.03em; }
+h2 { font-size: var(--t-lg); }
+h3 { font-size: var(--t-md); }
+
+p, li { max-width: var(--measure); text-wrap: pretty; }
+p { margin: 0 0 var(--s-sm); }
+
+img, video, canvas, svg { display: block; max-width: 100%; height: auto; }
+img { background: var(--paper-deep); }   /* a visible placeholder while loading, never a white flash */
+
+/* -------------------------------------------------------------------------
+   LINKS
+   Underlines stay. An underline is the only link affordance that survives
+   colour blindness, greyscale printing, and a low-contrast screen.
+   ------------------------------------------------------------------------- */
+a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.22em;
+  text-decoration-color: color-mix(in oklab, currentColor 40%, transparent);
+  transition: text-decoration-color var(--dur-quick) var(--ease-out),
+              color var(--dur-quick) var(--ease-out);
+}
+a:hover { text-decoration-color: currentColor; color: var(--signal-deep); }
+
+/* -------------------------------------------------------------------------
+   FOCUS
+   One ring, one colour, never removed. :focus-visible so a mouse click
+   does not light it up, but every keyboard and switch user always sees it.
+   The outline sits outside the element with an offset, so it is legible
+   against both the element and the page behind it.
+   ------------------------------------------------------------------------- */
+:focus { outline: none; }
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+}
+
+/* -------------------------------------------------------------------------
+   SKIP LINK
+   Visible the instant it is focused. Placed first in the DOM so it is the
+   first stop of the first Tab press.
+   ------------------------------------------------------------------------- */
+.skip {
+  position: fixed;
+  top: var(--s-sm);
+  left: var(--s-sm);
+  z-index: var(--z-announce);
+  padding: var(--s-2xs) var(--s-sm);
+  background: var(--ink);
+  color: var(--paper-pure);
+  font-family: var(--face-detail);
+  font-size: var(--t-sm);
+  text-decoration: none;
+  border-radius: var(--radius-sm);
+  transform: translateY(calc(-100% - var(--s-lg)));
+  transition: transform var(--dur-quick) var(--ease-out);
+}
+.skip:focus-visible { transform: translateY(0); }
+
+/* -------------------------------------------------------------------------
+   Visually hidden, but present for screen readers.
+   Note the 1px clip rather than display:none — display:none removes it
+   from the accessibility tree entirely, which defeats the purpose.
+   ------------------------------------------------------------------------- */
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* -------------------------------------------------------------------------
+   TARGET SIZE
+   WCAG 2.2 (2.5.8) asks for 24×24 CSS px minimum. We use 44px, the figure
+   that actually matches a fingertip, for anything interactive.
+   ------------------------------------------------------------------------- */
+button, [role="button"], summary, input, select {
+  font: inherit;
+  color: inherit;
+  min-height: 44px;
+  cursor: pointer;
+}
+button { background: none; border: none; padding: 0; }
+
+/* -------------------------------------------------------------------------
+   THE HARD FLOOR
+   Whatever mode the site is in, whatever a script is doing, an operating
+   system request for reduced motion wins. This rule is last, unconditional,
+   and no component may override it.
+   ------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Layout rail, used by every section */
+.rail { width: var(--rail); margin-inline: auto; }

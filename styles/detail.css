@@ -1,0 +1,85 @@
+/* =========================================================================
+   detail.css — the annotation layer.
+   -------------------------------------------------------------------------
+   Anything on this site can be opened one level deeper: a hex with the
+   reason it was chosen, a spacing value, the draft that was rejected.
+   Depth is opt-in, so nothing is cluttered — but it is always there for
+   the person who looks closely. That person is the audience.
+
+   The layer speaks in blue and in monospace, always, so annotation is
+   never mistaken for emphasis.
+   ========================================================================= */
+
+.detail-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+  min-height: 0;
+  padding: 0.1em 0.45em;
+  font-family: var(--face-detail);
+  font-size: 0.82em;
+  color: var(--tide-deep);
+  border: 1px solid color-mix(in oklab, var(--tide) 40%, transparent);
+  border-radius: var(--radius-sm);
+  background: color-mix(in oklab, var(--tide) 7%, transparent);
+  transition: background var(--dur-quick) var(--ease-out);
+}
+.detail-trigger:hover { background: color-mix(in oklab, var(--tide) 16%, transparent); }
+.detail-trigger::before { content: "↘"; opacity: 0.7; }
+
+/* A colour detail carries its own swatch — the value shown as the thing
+   it is, not as a string describing the thing. */
+.detail-trigger[data-kind="colour"]::before {
+  content: "";
+  width: 0.7em;
+  height: 0.7em;
+  border-radius: 50%;
+  background: var(--swatch);
+  border: 1px solid color-mix(in oklab, var(--ink) 30%, transparent);
+  opacity: 1;
+}
+
+.detail-note {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--s-2xs) var(--s-xs);
+  margin-block: var(--s-2xs) var(--s-sm);
+  padding: var(--s-xs) var(--s-sm);
+  border-inline-start: 2px solid var(--tide);
+  background: color-mix(in oklab, var(--tide) 5%, transparent);
+  font-size: var(--t-sm);
+  color: var(--ink-soft);
+}
+.detail-note[hidden] { display: none; }
+.detail-note dt {
+  font-family: var(--face-detail);
+  font-size: var(--t-detail);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--tide-deep);
+}
+.detail-note dd { margin: 0; max-width: var(--measure); }
+
+/* The whole-site index of details — for the "I'm a designer" path, where
+   every decision on the site is listed in one place as a single document.
+   It is the most honest thing here: a portfolio's footnotes, promoted. */
+.detail-index { display: grid; gap: var(--s-sm); }
+.detail-index__row {
+  display: grid;
+  grid-template-columns: minmax(6rem, 10rem) 1fr;
+  gap: var(--s-sm);
+  padding-block-end: var(--s-sm);
+  border-block-end: var(--rule);
+}
+.detail-index__key {
+  font-family: var(--face-detail);
+  font-size: var(--t-detail);
+  color: var(--tide-deep);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.detail-index__row p { margin: 0; font-size: var(--t-sm); color: var(--ink-soft); }
+
+@media (max-width: 40rem) {
+  .detail-index__row { grid-template-columns: 1fr; gap: var(--s-3xs); }
+}

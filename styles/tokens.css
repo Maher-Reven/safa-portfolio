@@ -1,0 +1,182 @@
+/* =========================================================================
+   tokens.css — the vocabulary of the whole site
+   -------------------------------------------------------------------------
+   Every value here is a decision, and every decision has a reason written
+   next to it. The reasons are not comments for developers — they are the
+   source text for the detail layer, which surfaces them to visitors who
+   look closely. Nothing in this file is arbitrary. If you change a value,
+   change its reason too.
+   ========================================================================= */
+
+:root {
+  /* ---------------------------------------------------------------------
+     COLOUR
+     Warm neutrals, not greys. Pure #000 on pure #FFF measures 21:1 and
+     reads as glare: high-contrast to a meter, hostile to an eye. Warm ink
+     on warm paper keeps 16:1 and stays comfortable over long reading.
+     --------------------------------------------------------------------- */
+  --ink:        #14120f;   /* warm near-black. 16.1:1 on --paper */
+  --ink-soft:   #46403a;   /* secondary text.  7.4:1 on --paper */
+  --ink-faint:  #7d756b;   /* metadata only.   4.6:1 on --paper — AA, never smaller than 16px */
+
+  --paper:      #f4f0e8;   /* warm off-white, the default ground */
+  --paper-pure: #fbf9f4;   /* raised surfaces: cards, panels */
+  --paper-deep: #e6e0d4;   /* recessed: wells, rules, disabled */
+
+  --signal:      #e8402a;  /* 3.6:1 — large display type and UI marks ONLY */
+  --signal-deep: #b32718;  /* 5.7:1 — the same red, safe for body copy */
+
+  --tide:        #2c5f7c;  /* the detail layer speaks in blue, never in red, */
+  --tide-deep:   #1e4257;  /* so annotation is never confused with emphasis */
+
+  --focus:       #1b6ef3;  /* focus ring: one colour, used nowhere else,     */
+                           /* so a keyboard user always knows what it means  */
+
+  /* ---------------------------------------------------------------------
+     TYPE
+     Four faces, each doing one job. Loaded as variable fonts — one file
+     covers every weight we use, so the whole system costs less than two
+     static weights would.
+     --------------------------------------------------------------------- */
+
+  /* Fraunces — display. Has optical-size, SOFT and WONK axes: the letterforms
+     literally change shape as they grow. A typeface that rewards zooming in,
+     for a designer whose whole argument is that detail survives scrutiny. */
+  --face-display: "Fraunces", "Iowan Old Style", Georgia, serif;
+
+  /* Inter — text. Designed for screens at small sizes, huge x-height,
+     unambiguous 1/l/I. The workhorse: invisible on purpose. */
+  --face-text: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+  /* JetBrains Mono — the detail layer. Monospace signals "this is
+     measurement, not prose": hex values, ratios, spacing, alt text. */
+  --face-detail: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  /* Atkinson Hyperlegible — Braille Institute, drawn so that characters
+     stay distinguishable to low-vision readers. Offered in the attune
+     panel as "easier reading". Swaps --face-text at the root. */
+  --face-legible: "Atkinson Hyperlegible", var(--face-text);
+
+  /* Fluid scale, 4:5 ratio at the top end. clamp() means no layout jumps
+     at breakpoints — the type is continuous across every screen width. */
+  --t-display: clamp(3.25rem, 1.4rem + 8.2vw, 9rem);
+  --t-xl:      clamp(2.25rem, 1.3rem + 4.2vw, 4.5rem);
+  --t-lg:      clamp(1.6rem,  1.2rem + 1.8vw, 2.5rem);
+  --t-md:      clamp(1.25rem, 1.1rem + 0.7vw, 1.6rem);
+  --t-body:    clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem);
+  --t-sm:      0.9375rem;  /* never below this for anything a person reads */
+  --t-detail:  0.8125rem;  /* detail layer only, and always paired with --t-sm context */
+
+  --leading-tight: 0.96;   /* display only — tight leading needs large size to breathe */
+  --leading-snug:  1.22;
+  --leading-body:  1.62;   /* WCAG 1.4.12 asks for 1.5 minimum. We give more. */
+
+  --measure: 66ch;         /* ~66 characters. Longer lines lose the eye on return sweep. */
+
+  /* ---------------------------------------------------------------------
+     SPACE — a single 4px-rooted scale. Nothing off-scale is allowed.
+     --------------------------------------------------------------------- */
+  --s-3xs: 0.25rem;  --s-2xs: 0.5rem;   --s-xs: 0.75rem;
+  --s-sm:  1rem;     --s-md:  1.5rem;   --s-lg: 2.25rem;
+  --s-xl:  3.5rem;   --s-2xl: 5.5rem;   --s-3xl: 8.5rem;
+
+  --gutter: clamp(1.25rem, 5vw, 5rem);
+  --rail:   min(100% - (var(--gutter) * 2), 82rem);
+
+  /* ---------------------------------------------------------------------
+     MOTION — durations and easings live here so that calm mode can zero
+     every one of them from a single place, without any component knowing.
+     --------------------------------------------------------------------- */
+  --dur-instant: 90ms;
+  --dur-quick:   180ms;
+  --dur-calm:    340ms;
+  --dur-slow:    720ms;
+
+  --ease-out:  cubic-bezier(0.16, 1, 0.3, 1);      /* arrivals: fast in, long settle */
+  --ease-in:   cubic-bezier(0.7, 0, 0.84, 0);      /* exits: things leave decisively */
+  --ease-soft: cubic-bezier(0.34, 0.6, 0.24, 1);
+
+  /* Hairlines that survive a 4px-rooted scale on hidpi screens */
+  --rule: 1px solid var(--paper-deep);
+  --rule-ink: 1px solid var(--ink);
+
+  --radius-sm: 3px;
+  --radius-md: 6px;
+  --radius-pill: 999px;
+
+  --z-canvas: 0;
+  --z-content: 10;
+  --z-detail: 400;
+  --z-attune: 600;
+  --z-announce: 900;
+}
+
+/* =========================================================================
+   MODE: full
+   WebGL ground, motion on, type set large and loose. The canvas sits behind
+   everything and reacts to the pointer; content floats on it.
+   ========================================================================= */
+[data-mode="full"] {
+  --ground: transparent;          /* the WebGL canvas is the ground */
+  --motion-scale: 1;              /* multiplier every JS animation reads */
+  --section-rhythm: var(--s-3xl);
+  --display-wonk: 1;              /* Fraunces WONK axis on: quirky, alive */
+  --display-soft: 8;
+}
+
+/* =========================================================================
+   MODE: calm
+   No canvas, no parallax, no transforms on scroll. This is NOT full mode
+   with the effects stripped out — it is a printed piece: firmer grid,
+   tighter rhythm, rules instead of glow, type doing all the work.
+   Both modes are signed. Neither is an apology for the other.
+   ========================================================================= */
+[data-mode="calm"] {
+  --ground: var(--paper);
+  --motion-scale: 0;
+  --section-rhythm: var(--s-2xl);
+  --display-wonk: 0;              /* WONK off: steadier letterforms, print voice */
+  --display-soft: 0;
+  --dur-instant: 0ms;
+  --dur-quick: 0ms;
+  --dur-calm: 0ms;
+  --dur-slow: 0ms;
+}
+
+/* =========================================================================
+   PREFERENCE OVERLAYS
+   Each is an independent axis. They compose: a visitor can be in calm mode,
+   at large text, in high contrast, reading Atkinson, in Dutch — all at once.
+   ========================================================================= */
+
+/* Reading type — Atkinson Hyperlegible replaces the text face everywhere.
+   Display stays Fraunces: headings are looked at, not read at length. */
+[data-reading="legible"] {
+  --face-text: "Atkinson Hyperlegible", -apple-system, sans-serif;
+  --leading-body: 1.75;
+  --measure: 58ch;
+}
+
+/* Text size — scales the whole system, not just body copy, so rhythm holds */
+[data-textsize="large"]  { font-size: 112.5%; }
+[data-textsize="larger"] { font-size: 125%; --measure: 54ch; }
+
+/* High contrast — pushes every pairing past 7:1 (AAA) and removes the
+   warm cast, because warmth is a comfort for some eyes and a fog for others */
+[data-contrast="high"] {
+  --ink: #000000;
+  --ink-soft: #1a1a1a;
+  --ink-faint: #3d3d3d;      /* 10.9:1 — no longer "faint", by design */
+  --paper: #ffffff;
+  --paper-pure: #ffffff;
+  --paper-deep: #d4d4d4;
+  --signal: #c21807;
+  --signal-deep: #8f1105;
+  --tide: #14405a;
+  --rule: 2px solid var(--ink);
+}
+
+/* The system default, before anyone touches anything: believe the OS. */
+@media (prefers-contrast: more) {
+  :root:not([data-contrast="normal"]) { --rule: 2px solid var(--ink); }
+}

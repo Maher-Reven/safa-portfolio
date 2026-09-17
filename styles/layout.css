@@ -1,0 +1,189 @@
+/* =========================================================================
+   layout.css — structure shared by both modes.
+   The skeleton is identical in full and calm; only its art direction moves.
+   ========================================================================= */
+
+.site-head {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-content);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-sm);
+  padding-block: var(--s-xs);
+  padding-top: max(var(--s-xs), env(safe-area-inset-top, 0px));
+  background: color-mix(in oklab, var(--paper) 86%, transparent);
+  backdrop-filter: blur(14px);
+}
+
+.wordmark {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  line-height: 1.15;
+}
+.wordmark__name {
+  font-family: var(--face-display);
+  font-size: var(--t-md);
+  font-variation-settings: "SOFT" var(--display-soft), "WONK" var(--display-wonk);
+}
+.wordmark__role {
+  font-family: var(--face-detail);
+  font-size: var(--t-detail);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+/* ---- Intro ------------------------------------------------------------- */
+.intro {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 78svh;
+  padding-block: var(--s-2xl);
+}
+.intro h1 {
+  font-size: var(--t-display);
+  max-width: 16ch;
+  margin-block-end: var(--s-md);
+}
+.intro__sub {
+  font-size: var(--t-md);
+  color: var(--ink-soft);
+  max-width: 48ch;
+}
+
+/* ---- The opening question ---------------------------------------------- */
+.ask { margin-block-start: var(--s-xl); }
+.ask__lead {
+  font-family: var(--face-detail);
+  font-size: var(--t-detail);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink-faint);
+  margin-block-end: var(--s-xs);
+}
+.ask__options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: var(--s-xs);
+  margin: 0 0 var(--s-md);
+  padding: 0;
+  list-style: none;
+}
+.ask__options li { max-width: none; }
+.ask__options button {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: var(--s-xs) var(--s-sm);
+  text-align: start;
+  border: var(--rule-ink);
+  border-radius: var(--radius-md);
+  background: var(--paper-pure);
+  transition: transform var(--dur-quick) var(--ease-out),
+              background var(--dur-quick) var(--ease-out);
+}
+.ask__options button:hover {
+  background: var(--ink);
+  color: var(--paper-pure);
+  transform: translateY(calc(-2px * var(--motion-scale)));
+}
+.ask__options strong { display: block; font-size: var(--t-body); font-weight: 500; }
+.ask__options span {
+  display: block;
+  margin-block-start: var(--s-3xs);
+  font-size: var(--t-sm);
+  color: inherit;
+  opacity: 0.72;
+}
+.ask__note { font-size: var(--t-sm); color: var(--ink-faint); max-width: 44ch; }
+
+/* ---- Sections ---------------------------------------------------------- */
+.section {
+  padding-block: var(--section-rhythm);
+  scroll-margin-top: var(--s-xl);
+}
+.section__label {
+  font-family: var(--face-detail);
+  font-size: var(--t-detail);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink-faint);
+  margin-block-end: var(--s-sm);
+  padding-block-end: var(--s-2xs);
+  border-block-end: var(--rule);
+}
+
+/* ---- Work -------------------------------------------------------------- */
+.work-list { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--s-xl); }
+.work-list > li { max-width: none; }
+
+.project { display: grid; gap: var(--s-md); }
+.project__cover {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  background: var(--paper-deep);
+}
+.project__cover img { width: 100%; height: 100%; object-fit: cover; }
+.project__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2xs);
+  font-family: var(--face-detail);
+  font-size: var(--t-detail);
+  color: var(--ink-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+/* A hairline between facts, so "2025 interaction design design lead" does
+   not read as one run-on phrase. */
+.project__meta > span + span::before {
+  content: "";
+  display: inline-block;
+  width: 1px;
+  height: 0.85em;
+  margin-inline-end: var(--s-2xs);
+  vertical-align: -0.1em;
+  background: currentColor;
+  opacity: 0.4;
+}
+.project h3 { font-size: var(--t-xl); }
+.project__summary { color: var(--ink-soft); }
+
+/* A placeholder announces itself rather than pretending. */
+.project[data-placeholder="true"] .project__cover::after {
+  content: "placeholder";
+  position: absolute;
+  inset-block-end: var(--s-2xs);
+  inset-inline-start: var(--s-2xs);
+  padding: var(--s-3xs) var(--s-2xs);
+  font-family: var(--face-detail);
+  font-size: var(--t-detail);
+  background: var(--ink);
+  color: var(--paper-pure);
+  border-radius: var(--radius-sm);
+}
+
+/* ---- Process, services, cv --------------------------------------------- */
+.steps { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--s-lg);
+         grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); }
+.steps > li { max-width: none; }
+.steps h3 { margin-block-end: var(--s-2xs); }
+.steps p { color: var(--ink-soft); font-size: var(--t-sm); }
+
+.cv-rows { width: 100%; border-collapse: collapse; text-align: start; }
+.cv-rows th, .cv-rows td {
+  padding-block: var(--s-xs);
+  border-block-end: var(--rule);
+  vertical-align: baseline;
+  text-align: start;
+}
+.cv-rows th { font-family: var(--face-detail); font-weight: 400; color: var(--ink-faint); white-space: nowrap; }
+
+.site-foot { padding-block: var(--s-xl) var(--s-2xl); border-block-start: var(--rule); }
+.colophon { font-family: var(--face-detail); font-size: var(--t-detail); color: var(--ink-faint); max-width: 60ch; }
