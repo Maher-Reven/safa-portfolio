@@ -379,6 +379,14 @@ export const ui = {
   systemNote:    { en: "Your device already asked for this.",
                    nl: "Je apparaat vroeg hier al om." },
   detailHint:    { en: "Look closer",       nl: "Kijk beter" },
+  viewCase:      { en: "Read the case \u2192", nl: "Lees de case \u2192" },
+  nextCase:      { en: "Next case",          nl: "Volgende case" },
+  caseFacts: {
+    year:    { en: "Year",    nl: "Jaar" },
+    role:    { en: "Role",    nl: "Rol" },
+    company: { en: "Client",  nl: "Opdrachtgever" },
+    type:    { en: "Type",    nl: "Type" },
+  },
   closeLabel:    { en: "Close",             nl: "Sluiten" },
   sections: {
     work:          { en: "Work",           nl: "Werk" },

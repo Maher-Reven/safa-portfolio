@@ -158,6 +158,16 @@ const CHOREO = {
     rise(view.querySelectorAll(".steps > li"), { stagger: 95 });
   },
 
+  /* OPENING A CASE. The cover is already morphing from the card that was
+     clicked — the browser handles that through the shared view-transition
+     name — so everything else just needs to arrive under it without
+     competing. */
+  case: (view) => {
+    rise(view.querySelectorAll(".case__back, .case__title, .case__facts"), { stagger: 60 });
+    rise(view.querySelectorAll(".case__lead, .case__section"), { stagger: 70, duration: 620 });
+    rise(view.querySelectorAll(".shots li"), { stagger: 80, distance: 20 });
+  },
+
   /* TALLY — an inventory being counted. */
   skills(view) {
     view.querySelectorAll(".skills li").forEach((row, i) => {
@@ -205,7 +215,7 @@ export function makeTransition({ announce, t }) {
       return;
     }
 
-    root.dataset.transition = id;
+    root.dataset.transition = id.startsWith("work/") ? "case" : id;
 
     /* View Transitions handle the crossing between the two pages; the
        choreography below handles what the arriving page then does. Where
@@ -219,7 +229,13 @@ export function makeTransition({ announce, t }) {
     }
 
     const view = document.getElementById("view");
-    if (view) CHOREO[id]?.(view);
+    const key = id.startsWith("work/") ? "case" : id;
+    if (view) CHOREO[key]?.(view);
+
+    /* Release the shared name once the morph is done, or the next
+       transition finds two elements claiming it and refuses to run. */
+    document.querySelectorAll("[style*='view-transition-name']")
+      .forEach((n) => n.style.removeProperty("view-transition-name"));
     /* The about page carries the process list, so it gets both. */
     if (id === "about" && view) CHOREO.process(view);
   };

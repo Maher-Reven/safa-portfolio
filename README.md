@@ -47,6 +47,7 @@ each one argues its own page's point rather than decorating the gap:
 |---|---|---|
 | **Home** | the page settles out of the lime mark; outcome figures count up | the site attuning itself — its whole thesis |
 | **Work** | covers snap from scatter into alignment | interfaces are assembled out of parts |
+| **A case** | the clicked cover morphs into the page hero | you opened *this* one, and it is the same object |
 | **About** | paragraphs rise one line at a time | the cadence of someone talking, not a page loading |
 | **Access** | **nothing at all** | the page about access refuses to make anyone wait |
 | **Skills** | rows sweep in and their numbers count | an inventory being counted, not a list revealed |
@@ -121,6 +122,27 @@ missing or the context is lost, the drawn cat takes over silently.
 
 The scroll indicator is a trail of paw prints, alternating either side of the
 line the way an animal actually walks.
+
+## Work, and the cases
+
+Work is an index of four cards; each case is its own page at its own address
+(`#/work/velotech`), so one project can be sent to someone on its own.
+
+Clicking a card **morphs its cover into the case hero** — both carry the same
+`view-transition-name`, so the browser tweens the real element rather than
+crossfading two unrelated pictures. The name is applied to exactly one element
+on click and released once the transition ends, because a duplicate name makes
+the next transition refuse to run.
+
+The card is **not** wrapped in a link. A link containing a cover, four metadata
+fields, a heading and a summary is announced as one enormous run-on link and
+takes the heading out of the page's outline. The heading holds the only real
+link and a pseudo-element stretches its hit area over the card: a pointer gets
+the whole card, a screen reader gets "VeloTech.AI, link", and the headings
+still form a list you can navigate by.
+
+The index is the one place a cover is cropped — a card is a thumbnail and wants
+a consistent shape. The case page shows the screenshot whole.
 
 ## Two modes, both signed
 

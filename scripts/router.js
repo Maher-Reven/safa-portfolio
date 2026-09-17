@@ -106,7 +106,10 @@ export class Router extends EventTarget {
     if (!isFirstLoad) scrollTo({ top: 0, behavior: "auto" });
 
     document.querySelectorAll("[data-route]").forEach((link) => {
-      const active = link.dataset.route === id;
+      /* A case lives under Work, so Work stays the current tab while you are
+         reading one. Otherwise the nav claims you are nowhere. */
+      const active = link.dataset.route === id ||
+                     id.startsWith(`${link.dataset.route}/`);
       link.classList.toggle("is-active", active);
       /* aria-current="page" is how a screen reader is told which of six
          links is the one you are standing on. Colour alone cannot say it. */

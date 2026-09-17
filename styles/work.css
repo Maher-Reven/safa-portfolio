@@ -1,0 +1,159 @@
+/* =========================================================================
+   work.css — the index of cases, and a case itself.
+   ========================================================================= */
+
+.work-index {
+  display: grid;
+  /* Two columns, not auto-fit. auto-fit gave three across and left the
+     fourth case stranded on a row by itself, which reads as an afterthought
+     rather than as one of four. */
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--s-md);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.work-index > li { max-width: none; }
+
+.case-card {
+  position: relative;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  height: 100%;
+  overflow: hidden;
+  border: var(--rule);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+}
+.case-card__cover {
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  border-block-end: var(--rule);
+  background: var(--ground);
+}
+/* The index is the one place a cover IS cropped. A card is a thumbnail and
+   wants a consistent shape; the case page shows the screenshot whole. */
+.case-card__cover img { width: 100%; height: 100%; object-fit: cover; object-position: top left; }
+
+.case-card__body {
+  display: grid;
+  align-content: start;
+  gap: var(--s-2xs);
+  padding: var(--s-sm);
+}
+.case-card h3 { font-size: var(--t-md); }
+
+/* Year and discipline, spaced rather than punctuated. The shared separator
+   put a "·" at the head of the line whenever the row wrapped, which reads
+   as a stray character rather than as a divider. */
+.case-card .project__meta { display: grid; gap: 0; }
+.case-card .project__meta > span + span::before { content: none; }
+.case-card .project__meta > span:first-child { color: var(--case, var(--accent)); }
+
+/* The heading holds the only link; this stretches its hit area over the whole
+   card, so a pointer gets the card and a screen reader gets one clean link. */
+.case-card__link { text-decoration: none; }
+.case-card__link::after { content: ""; position: absolute; inset: 0; }
+.case-card__link:hover { color: inherit; }
+
+.case-card__summary,
+.case-card .project__summary { font-size: var(--t-sm); color: var(--text-soft); }
+
+.case-card__cue {
+  margin: var(--s-2xs) 0 0;
+  font-family: var(--face-detail);
+  font-size: var(--t-detail);
+  letter-spacing: 0.06em;
+  color: var(--accent);
+}
+
+/* A colour bar per case, so the four are told apart before they are read.
+   It is a border rather than a pseudo-element: ::after is already the hover
+   sweep and ::before the spotlight, and the later stylesheet was silently
+   winning — the bar never rendered at all. */
+.case-card { border-block-start: 3px solid var(--case, var(--accent)); }
+
+/* =========================================================================
+   A CASE
+   ========================================================================= */
+.case { display: grid; gap: var(--s-md); }
+.case__back a {
+  font-family: var(--face-detail);
+  font-size: var(--t-sm);
+  text-decoration: none;
+}
+.case__back a:hover { color: var(--accent); }
+
+.case__title {
+  font-size: var(--t-xl);
+  max-width: 18ch;
+  /* The case colour, as a rule under the title rather than as the type
+     colour: several of the four do not carry text at any size. */
+  padding-block-end: var(--s-xs);
+  border-block-end: 3px solid var(--case, var(--accent));
+}
+
+.case__facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  gap: var(--s-sm);
+  margin: 0;
+  padding-block-end: var(--s-sm);
+}
+.case__facts dt {
+  font-family: var(--face-detail);
+  font-size: var(--t-detail);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-faint);
+}
+.case__facts dd { margin: var(--s-3xs) 0 0; font-size: var(--t-sm); }
+
+.case__cover {
+  overflow: hidden;
+  border: var(--rule);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+}
+.case__cover img { width: 100%; height: auto; }
+
+.case__lead { font-size: var(--t-md); color: var(--text-soft); }
+
+.case__next {
+  display: flex;
+  justify-content: flex-end;
+  padding-block-start: var(--s-md);
+  border-block-start: var(--rule);
+}
+.case__next a {
+  display: grid;
+  gap: var(--s-3xs);
+  text-align: end;
+  text-decoration: none;
+  padding: var(--s-xs) 0;
+}
+.case__next-label {
+  font-family: var(--face-detail);
+  font-size: var(--t-detail);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-faint);
+}
+.case__next-name { font-size: var(--t-lg); font-family: var(--face-display); }
+.case__next a:hover .case__next-name { color: var(--accent); }
+
+/* The morph between a card's cover and the case hero. Both carry the same
+   view-transition-name, so the browser tweens the real element rather than
+   crossfading two unrelated pictures. */
+::view-transition-old(case-cover),
+::view-transition-new(case-cover) {
+  animation-duration: var(--dur-slow);
+  animation-timing-function: var(--ease-out);
+}
+
+[data-mode="calm"] .case-card,
+[data-mode="calm"] .case__cover { border-radius: 0; }
+
+@media (max-width: 52rem) {
+  .work-index { grid-template-columns: 1fr; }
+}

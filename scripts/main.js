@@ -37,7 +37,7 @@ const SECTIONS = {
         el("span", { className: "outcome__label", textContent: t(o.label) }))))),
 
   work: () => section("work",
-    el("ul", { className: "work-list" }, C.projects.map(projectCard))),
+    el("ul", { className: "work-index" }, C.projects.map(caseCard))),
 
   about: () => section("about",
     C.about.body[attune.get("lang")].map((para) => el("p", { textContent: para }))),
@@ -108,47 +108,109 @@ function section(id, ...children) {
     ...children);
 }
 
-/* Each project renders as a full case: cover, the four written sections,
-   then the gallery. Nothing is behind a click — a portfolio that hides its
-   own work behind navigation is asking the visitor to do its job. */
-function projectCard(p) {
-  const article = el("article", { className: "project" });
+/* ONE CARD PER PROJECT.
+   The whole card is not wrapped in a link. A link containing a cover image,
+   four metadata fields, a heading and a summary is announced as one enormous
+   run-on link, and it takes the heading out of the page's outline. Instead
+   the heading holds the only real link and a pseudo-element stretches its
+   hit area over the card — so a pointer gets the whole card, a screen reader
+   gets "VeloTech.AI, link", and the headings still form a list you can
+   navigate by. */
+function caseCard(p) {
+  const article = el("article", { className: "case-card hoverable" });
   article.style.setProperty("--case", p.colour);
 
-  const cover = el("figure", { className: "project__cover", style: "margin:0" },
-    el("img", { src: p.cover.src, alt: t(p.cover.alt), loading: "lazy", decoding: "async" }));
+  const link = el("a", { href: `#/work/${p.slug}`, className: "case-card__link" },
+    t(p.title));
+  /* The pointer-target overlay is decoration; the link is the control. */
+  link.addEventListener("click", () => markSharedCover(article));
 
-  const body = el("div", {},
-    el("p", { className: "project__meta" },
-      el("span", { textContent: p.year }),
-      el("span", { textContent: t(p.company) }),
-      el("span", { textContent: t(p.discipline) })),
-    el("h3", { textContent: t(p.title) }),
-    el("p", { className: "project__summary", textContent: t(p.summary) }),
-    ...p.details.flatMap((d) => detailPair(d, p.slug)));
+  article.append(
+    el("figure", { className: "case-card__cover", style: "margin:0" },
+      el("img", { src: p.cover.src, alt: t(p.cover.alt), loading: "lazy", decoding: "async" })),
+    el("div", { className: "case-card__body" },
+      el("p", { className: "project__meta" },
+        el("span", { textContent: p.year }),
+        el("span", { textContent: t(p.discipline) })),
+      el("h3", {}, link),
+      el("p", { className: "project__summary", textContent: t(p.summary) }),
+      el("p", { className: "case-card__cue", textContent: t(C.ui.viewCase) })));
 
-  const written = el("div", { className: "case__sections" },
-    ["role", "process", "solution", "result"].map((key) => {
-      const copy = p.sections?.[key];
-      if (!copy) return null;
-      const block = el("div", { className: "case__section" },
-        el("h4", { textContent: t(C.ui.caseLabels[key]) }),
-        el("p", { textContent: t(copy) }));
-      block.dataset.key = key;
-      return block;
-    }));
-
-  const gallery = p.shots?.length
-    ? el("ul", { className: "shots" }, p.shots.map((sh) => {
-        const li = el("li", {},
-          el("img", { src: sh.src, alt: t(sh.alt), loading: "lazy", decoding: "async" }));
-        li.dataset.span = sh.span || "half";
-        return li;
-      }))
-    : null;
-
-  article.append(cover, body, written, ...(gallery ? [gallery] : []));
   return el("li", {}, article);
+}
+
+/* The clicked cover and the case page's hero share a view-transition-name,
+   so the browser morphs one into the other rather than crossfading two
+   unrelated pictures. The name must be unique in a snapshot, so it is put
+   on exactly one element and taken off as soon as the transition is over. */
+function markSharedCover(scope) {
+  document.querySelectorAll("[style*='view-transition-name']")
+    .forEach((n) => n.style.removeProperty("view-transition-name"));
+  const cover = scope.querySelector(".case-card__cover, .case__cover");
+  if (cover) cover.style.viewTransitionName = "case-cover";
+}
+
+/* The full case. */
+function caseDetail(slug) {
+  const p = C.projects.find((x) => x.slug === slug);
+  if (!p) return SECTIONS.work();
+
+  const wrap = el("section", { className: "case rail", id: "case" });
+  wrap.style.setProperty("--case", p.colour);
+
+  const index = C.projects.indexOf(p);
+  const next = C.projects[(index + 1) % C.projects.length];
+
+  const cover = el("figure", { className: "case__cover", style: "margin:0" },
+    el("img", { src: p.cover.src, alt: t(p.cover.alt), decoding: "async" }));
+  cover.style.viewTransitionName = "case-cover";
+
+  wrap.append(
+    el("p", { className: "case__back" },
+      el("a", { href: "#/work", textContent: `\u2190 ${t(C.ui.sections.work)}` })),
+    el("h2", { className: "case__title", textContent: t(p.title) }),
+    el("dl", { className: "case__facts" },
+      fact(C.ui.caseFacts.year, p.year),
+      fact(C.ui.caseFacts.role, t(p.role)),
+      fact(C.ui.caseFacts.company, t(p.company)),
+      fact(C.ui.caseFacts.type, t(p.discipline))),
+    cover,
+    el("p", { className: "case__lead", textContent: t(p.summary) }),
+    el("div", { className: "case__sections" },
+      ["role", "process", "solution", "result"].map((key) => {
+        const copy = p.sections?.[key];
+        if (!copy) return null;
+        const block = el("div", { className: "case__section" },
+          el("h3", { textContent: t(C.ui.caseLabels[key]) }),
+          el("p", { textContent: t(copy) }));
+        block.dataset.key = key;
+        return block;
+      })),
+    ...p.details.flatMap((d) => detailPair(d, p.slug)),
+  );
+
+  if (p.shots?.length) {
+    wrap.append(el("ul", { className: "shots" }, p.shots.map((sh) => {
+      const li = el("li", {},
+        el("img", { src: sh.src, alt: t(sh.alt), loading: "lazy", decoding: "async" }));
+      li.dataset.span = sh.span || "half";
+      return li;
+    })));
+  }
+
+  wrap.append(
+    el("nav", { className: "case__next" },
+      el("a", { href: `#/work/${next.slug}` },
+        el("span", { className: "case__next-label", textContent: t(C.ui.nextCase) }),
+        el("span", { className: "case__next-name", textContent: t(next.title) }))));
+
+  return wrap;
+}
+
+function fact(label, value) {
+  return el("div", {},
+    el("dt", { textContent: t(label) }),
+    el("dd", { textContent: value }));
 }
 
 /* One annotation: a trigger and the note it discloses. Native aria-expanded
@@ -194,7 +256,10 @@ export const ROUTES = [
   { id: "contact", label: { en: "Contact",  nl: "Contact" }, sections: ["contact"] },
 ];
 
-const ROUTE_IDS = ROUTES.map((r) => r.id);
+/* Every case is a real route with a real address, so a single project can be
+   sent to someone on its own. */
+const CASE_IDS = C.projects.map((p) => `work/${p.slug}`);
+const ROUTE_IDS = [...ROUTES.map((r) => r.id), ...CASE_IDS];
 
 /* Who the visitor said they were still decides order — it now orders the
    tabs rather than a scroll. Home and Contact are pinned: the first is
@@ -355,8 +420,21 @@ function fallBackToDrawing(host) {
 }
 
 function renderRoute(id) {
-  const route = ROUTES.find((r) => r.id === id) ?? ROUTES[0];
   const view = document.getElementById("view");
+
+  if (id.startsWith("work/")) {
+    cat?.destroy(); cat = null;
+    paws?.destroy(); paws = null;
+    swarm?.destroy(); swarm = null;
+    halftone?.destroy(); halftone = null;
+    const slug = id.slice(5);
+    const p = C.projects.find((x) => x.slug === slug);
+    view.replaceChildren(caseDetail(slug));
+    document.title = `${t(p?.title) || "Work"} — ${C.meta.name}, ${t(C.meta.role)}`;
+    return;
+  }
+
+  const route = ROUTES.find((r) => r.id === id) ?? ROUTES[0];
 
   /* Tear the companion down before the markup it was rigged to is replaced,
      or its listeners keep running against elements that no longer exist. */
@@ -620,7 +698,7 @@ function armHoverSpotlight() {
    here rather than in each renderer so the list of what counts as a card
    lives in one place. */
 const HOVERABLE = [
-  ".ask__options button", ".outcomes > li", ".project",
+  ".ask__options button", ".outcomes > li", ".project", ".case-card",
   ".skills > div", ".findings > li", ".steps > li",
 ].join(", ");
 
