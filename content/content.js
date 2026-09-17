@@ -24,7 +24,7 @@ export const meta = {
     nl: "Open voor freelance en vast werk",
   },
   links: [
-    { label: "LinkedIn", href: "https://www.linkedin.com/in/sofy-m-93474b174" },
+    { label: "LinkedIn", href: "https://www.linkedin.com/in/safa-m-93474b174/" },
     { label: "GitHub",   href: "https://github.com/sofy98" },
   ],
 };
@@ -40,7 +40,7 @@ export const audiences = [
     label:  { en: "I'm hiring",          nl: "Ik werf" },
     detail: { en: "Forty seconds. Outcomes first, then the work, then how to reach me.",
               nl: "Veertig seconden. Eerst resultaten, dan het werk, dan hoe je me bereikt." },
-    order: ["outcomes", "work", "skills", "contact"],
+    order: ["outcomes", "work", "cv", "skills", "contact"],
   },
   {
     id: "designer",
@@ -280,15 +280,18 @@ export const projects = [
 
 /* -------------------------------------------------------------------------
    ACCESSIBILITY — where this site's behaviour comes from.
-   These findings are real, from her own first accessibility audit in 2023:
+   These findings are real, from her own first accessibility audit. No year
+   and no "first-year assignment": the work is the point, and dating it to a
+   student exercise invites the reader to discount it before reading it.
+   It also stops the page ageing.
    she tested her work with VoiceOver, a contrast checker, and Chrome's
    colour-vision and blurred-vision simulations, and wrote up what failed.
    Most portfolios claim accessibility. This one has the test notes.
    ------------------------------------------------------------------------- */
 export const accessibility = {
   lead: {
-    en: "In 2023, on a first-year assignment, I ran my own work through a screen reader, a contrast checker and Chrome's vision simulations, and wrote down everything that failed. Three things did. Every one of them taught me something I now build in from the start — including into this site.",
-    nl: "In 2023, bij een eerstejaarsopdracht, haalde ik mijn eigen werk door een screenreader, een contrastchecker en de zichtsimulaties van Chrome, en schreef ik op wat er faalde. Drie dingen faalden. Elk daarvan leerde me iets dat ik nu vanaf het begin inbouw — ook in deze site.",
+    en: "I put my own work through a screen reader, a contrast checker and Chrome's vision simulations, and wrote down everything that failed. Three things did. Every one of them taught me something I now build in from the start — including into this site.",
+    nl: "Ik haalde mijn eigen werk door een screenreader, een contrastchecker en de zichtsimulaties van Chrome, en schreef op wat er faalde. Drie dingen faalden. Elk daarvan leerde me iets dat ik nu vanaf het begin inbouw — ook in deze site.",
   },
   findings: [
     { value: { en: "red on yellow", nl: "rood op geel" },
@@ -306,6 +309,50 @@ export const accessibility = {
     nl: "Daarom vraagt deze site aan je apparaat wat je nodig hebt voordat hij besluit wat hij wordt, daarom heeft hij twee volledig ontworpen modi in plaats van één plus een terugval, en daarom zegt hij hardop wanneer hij iets verandert.",
   },
   source: { label: "github.com/sofy98/Blokweb", href: "https://github.com/sofy98/Blokweb" },
+};
+
+/* -------------------------------------------------------------------------
+   CV
+   Assembled here rather than kept as a separate PDF, so there is exactly one
+   copy of the facts. Her previous portfolio linked a "Download CV" button to
+   href="#" with no file behind it — a dead promise a recruiter finds by
+   clicking it. A CV built from the same content as the site can never be the
+   stale one.
+
+   The experience below is not invented: every entry is a project already on
+   this site, with its own year, role and client.
+   ------------------------------------------------------------------------- */
+export const cv = {
+  summary: {
+    en: "UX / UI designer in Amsterdam. Healthcare, civic infrastructure and community platforms — products where a confusing screen has a cost somebody else pays. Human-centred by training, accessibility-led by practice.",
+    nl: "UX / UI-designer in Amsterdam. Zorg, publieke infrastructuur en communityplatforms — producten waar een verwarrend scherm een prijs heeft die iemand anders betaalt. Human-centred opgeleid, toegankelijkheid als uitgangspunt.",
+  },
+
+  /* Pulled from the projects so a case and the CV can never disagree. */
+  experienceFrom: ["velotech", "dentara", "pubhubs", "medialab"],
+
+  education: [
+    { period: "2022 — 2026",
+      what:  { en: "BA Communication and Multimedia Design",
+               nl: "BA Communication and Multimedia Design" },
+      where: { en: "Amsterdam University of Applied Sciences (HvA)",
+               nl: "Hogeschool van Amsterdam (HvA)" } },
+  ],
+
+  languages: [
+    { name: { en: "Dutch",   nl: "Nederlands" }, level: { en: "Fluent",       nl: "Vloeiend" } },
+    { name: { en: "English", nl: "Engels" },     level: { en: "Professional", nl: "Professioneel" } },
+    { name: { en: "Arabic",  nl: "Arabisch" },   level: { en: "Native",       nl: "Moedertaal" } },
+  ],
+
+  sectionLabels: {
+    profile:    { en: "Profile",    nl: "Profiel" },
+    experience: { en: "Experience", nl: "Ervaring" },
+    education:  { en: "Education",  nl: "Opleiding" },
+    skills:     { en: "Skills",     nl: "Vaardigheden" },
+    languages:  { en: "Languages",  nl: "Talen" },
+    contact:    { en: "Contact",    nl: "Contact" },
+  },
 };
 
 export const about = {
@@ -391,6 +438,12 @@ export const ui = {
   nextShot:      { en: "Next screen",        nl: "Volgend scherm" },
   nextCase:      { en: "Next case",          nl: "Volgende case" },
   cursorRead:    { en: "Read",               nl: "Lees" },
+  cvTitle:       { en: "Curriculum vitae",   nl: "Curriculum vitae" },
+  cvDownload:    { en: "Download as PDF",    nl: "Download als PDF" },
+  cvHint: {
+    en: "Opens your browser's print dialogue — choose \u201cSave as PDF\u201d. The file is generated from this page, so it is never out of date.",
+    nl: "Opent het printvenster van je browser — kies \u201cOpslaan als PDF\u201d. Het bestand komt van deze pagina en is dus nooit verouderd.",
+  },
   skip:          { en: "Skip to content",   nl: "Naar de inhoud" },
   metaDescription: {
     en: "Portfolio of Safa Mohalaia, a UX/UI designer in Amsterdam. Healthcare, civic infrastructure and community platforms.",
@@ -474,6 +527,7 @@ export const ui = {
     skills:        { en: "Skills",         nl: "Vaardigheden" },
     accessibility: { en: "Accessibility",  nl: "Toegankelijkheid" },
     "detail-index":{ en: "Every decision on this site", nl: "Elke keuze op deze site" },
+    cv:            { en: "Curriculum vitae", nl: "Curriculum vitae" },
     contact:       { en: "Contact",        nl: "Contact" },
   },
   caseLabels: {

@@ -244,6 +244,30 @@ is lying, and "01 / 04" is meaningless when all four are on screen at once.
 The rail is a focusable labelled region, since a scrollable box that cannot be
 focused cannot be scrolled by keyboard at all.
 
+## The CV
+
+A `#/cv` route assembled from the same content as the rest of the site, so a
+case study and the CV can never disagree — and **printed by the browser**
+rather than shipped as a file. Her previous portfolio had a Download CV button
+pointing at `href="#"` with nothing behind it; a PDF committed to the repo
+would go stale the first time a fact changed.
+
+`window.print()` on a page with a print stylesheet gives a real, selectable,
+searchable PDF through *Save as PDF* — text, not a picture of text, which is
+what a canvas-rendered PDF would be.
+
+Experience is not invented: each entry is a project already on the site, read
+back with its own year, role, client and result.
+
+In print, the site's chrome goes (it is navigation, and paper does not
+navigate), colour drops to black on white rather than being converted — a lime
+heading costs real ink and reads as grey on the office laser printer this will
+actually meet — and jobs get `break-inside: avoid`, because a CV that splits an
+entry across two pages has failed at its one task. External links print their
+address, since a printed word "LinkedIn" is a dead end.
+
+It fits **one A4 page**: 1024px of the 1032px usable at 12mm margins.
+
 ## Both languages, all the way down
 
 **EN / NL sits in the header**, visible without opening anything. It was only

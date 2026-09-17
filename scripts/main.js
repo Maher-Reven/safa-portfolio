@@ -87,6 +87,79 @@ const SECTIONS = {
             el("p", { textContent: t(d.note) }),
             el("p", { style: "color:var(--text-faint)", textContent: t(proj.title) }))))))),
 
+  /* THE CV.
+     Built from the same content as the rest of the site, so a case study and
+     the CV can never disagree, and printed by the browser rather than
+     shipped as a file — a PDF in the repo goes stale the first time a fact
+     changes, and hers was already a Download button pointing at href="#".
+
+     window.print() on a page with a print stylesheet gives a real, selectable,
+     accessible PDF through "Save as PDF" — searchable text rather than a
+     picture of text, which is what a PDF generated from a canvas would be. */
+  cv: () => {
+    const wrap = section("cv",
+      el("p", { className: "cv__hint" },
+        el("button", { type: "button", className: "cv__print",
+                       textContent: t(C.ui.cvDownload) }),
+        el("span", { className: "cv__hint-text", textContent: t(C.ui.cvHint) })));
+
+    const sheet = el("article", { className: "cv" });
+
+    sheet.append(
+      el("header", { className: "cv__head" },
+        el("h3", { className: "cv__name", textContent: C.meta.name }),
+        el("p", { className: "cv__role", textContent: `${t(C.meta.role)} — ${t(C.meta.located)}` }),
+        el("p", { className: "cv__contacts" },
+          el("a", { href: `mailto:${C.meta.email}`, textContent: C.meta.email }),
+          el("span", { textContent: " · " }),
+          el("a", { href: `tel:${C.meta.phone.replace(/\s/g, "")}`, textContent: C.meta.phone }),
+          ...C.meta.links.flatMap((l) => [
+            el("span", { textContent: " · " }),
+            el("a", { href: l.href, textContent: l.label }),
+          ]))),
+      cvBlock(C.cv.sectionLabels.profile,
+        el("p", { textContent: t(C.cv.summary) })),
+    );
+
+    /* Experience is the projects, read back. */
+    const jobs = C.cv.experienceFrom
+      .map((slug) => C.projects.find((x) => x.slug === slug))
+      .filter(Boolean);
+    sheet.append(cvBlock(C.cv.sectionLabels.experience,
+      el("ul", { className: "cv__list" }, jobs.map((j) =>
+        el("li", {},
+          el("p", { className: "cv__row" },
+            el("span", { className: "cv__what", textContent: `${t(j.role)}, ${t(j.title)}` }),
+            el("span", { className: "cv__when", textContent: j.year })),
+          el("p", { className: "cv__where", textContent: `${t(j.company)} · ${t(j.discipline)}` }),
+          el("p", { className: "cv__note", textContent: t(j.sections?.result || j.summary) }))))));
+
+    sheet.append(cvBlock(C.cv.sectionLabels.education,
+      el("ul", { className: "cv__list" }, C.cv.education.map((e) =>
+        el("li", {},
+          el("p", { className: "cv__row" },
+            el("span", { className: "cv__what", textContent: t(e.what) }),
+            el("span", { className: "cv__when", textContent: e.period })),
+          el("p", { className: "cv__where", textContent: t(e.where) }))))));
+
+    sheet.append(cvBlock(C.cv.sectionLabels.skills,
+      el("ul", { className: "cv__skills" }, C.skills.columns.map((col) =>
+        el("li", {},
+          el("span", { className: "cv__what", textContent: t(col.title) }),
+          el("span", { className: "cv__note",
+                       textContent: col.items.map((i) => t(i)).join(" · ") }))))));
+
+    sheet.append(cvBlock(C.cv.sectionLabels.languages,
+      el("ul", { className: "cv__skills cv__inline" }, C.cv.languages.map((l) =>
+        el("li", {},
+          el("span", { className: "cv__what", textContent: t(l.name) }),
+          el("span", { className: "cv__note", textContent: t(l.level) }))))));
+
+    wrap.append(sheet);
+    wrap.querySelector(".cv__print").addEventListener("click", () => window.print());
+    return wrap;
+  },
+
   contact: () => section("contact",
     el("p", {}, el("a", { className: "contact__big",
                           href: `mailto:${C.meta.email}`, textContent: C.meta.email })),
@@ -313,6 +386,12 @@ function prefersStill() {
          matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
+function cvBlock(label, ...children) {
+  return el("section", { className: "cv__block" },
+    el("h4", { className: "cv__label", textContent: t(label) }),
+    el("div", {}, ...children));
+}
+
 function fact(label, value) {
   return el("div", {},
     el("dt", { textContent: t(label) }),
@@ -360,6 +439,7 @@ export const ROUTES = [
   { id: "about",   label: { en: "About",    nl: "Over" },    sections: ["about", "process"] },
   { id: "access",  label: { en: "Access",   nl: "Toegang" }, sections: ["accessibility", "detail-index"] },
   { id: "skills",  label: { en: "Skills",   nl: "Kunde" },   sections: ["skills"] },
+  { id: "cv",      label: { en: "CV",       nl: "CV" },      sections: ["cv"] },
   { id: "contact", label: { en: "Contact",  nl: "Contact" }, sections: ["contact"] },
 ];
 

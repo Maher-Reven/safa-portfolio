@@ -1,0 +1,142 @@
+/* =========================================================================
+   cv.css — the CV on screen, and the same CV as a printed page.
+   ========================================================================= */
+
+.cv__hint {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-xs) var(--s-sm);
+  margin-block-end: var(--s-lg);
+  max-width: none;
+}
+.cv__print {
+  padding: var(--s-2xs) var(--s-sm);
+  border: var(--rule-strong);
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-family: var(--face-detail);
+  font-size: var(--t-sm);
+  letter-spacing: 0.04em;
+}
+.cv__print:hover { filter: brightness(1.08); }
+.cv__hint-text { font-size: var(--t-sm); color: var(--text-faint); max-width: 46ch; }
+
+.cv {
+  padding: var(--s-lg);
+  border: var(--rule);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+}
+.cv__head { padding-block-end: var(--s-sm); border-block-end: var(--rule-strong); }
+.cv__name { font-size: var(--t-lg); margin: 0; }
+.cv__role { margin: var(--s-3xs) 0 var(--s-2xs); color: var(--text-soft); }
+.cv__contacts { margin: 0; font-family: var(--face-detail); font-size: var(--t-sm); color: var(--text-soft); }
+
+.cv__block {
+  display: grid;
+  grid-template-columns: minmax(6rem, 9rem) minmax(0, 1fr);
+  gap: var(--s-sm);
+  padding-block: var(--s-md);
+  border-block-end: var(--rule);
+}
+.cv__block:last-child { border-block-end: none; }
+.cv__label {
+  margin: 0;
+  font-family: var(--face-detail);
+  font-size: var(--t-detail);
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-faint);
+}
+
+.cv__list, .cv__skills { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--s-sm); }
+.cv__list > li, .cv__skills > li { max-width: none; }
+.cv__row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--s-2xs) var(--s-sm);
+  margin: 0;
+  max-width: none;
+}
+.cv__what { font-weight: 500; }
+.cv__when { font-family: var(--face-detail); font-size: var(--t-sm); color: var(--text-faint); }
+.cv__where { margin: var(--s-3xs) 0 0; font-size: var(--t-sm); color: var(--text-soft); }
+.cv__note { margin: var(--s-3xs) 0 0; font-size: var(--t-sm); color: var(--text-soft); }
+.cv__skills > li { display: grid; gap: var(--s-3xs); }
+
+/* Languages are two short words each; stacking them burned four rows of a
+   page that has to end at one. */
+.cv__inline > li {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--s-sm);
+  border-block-end: var(--rule);
+  padding-block-end: var(--s-3xs);
+}
+.cv__inline > li:last-child { border-block-end: none; }
+
+@media (max-width: 40rem) {
+  .cv { padding: var(--s-sm); }
+  .cv__block { grid-template-columns: 1fr; gap: var(--s-2xs); }
+}
+
+/* =========================================================================
+   PRINT
+   Everything that is furniture goes, and what is left is a CV on white paper.
+   Colour is dropped entirely rather than converted: a lime heading costs real
+   ink and reads as grey on the office laser printer this will actually meet.
+   ========================================================================= */
+@media print {
+  /* The site's chrome is navigation, and paper does not navigate. */
+  .site-head, .banner, .site-foot, .paws, .cursor-badge, #field,
+  #attune-root, .attune, .attune__scrim, .cv__hint, .skip { display: none !important; }
+
+  :root, [data-mode="full"], [data-mode="calm"] {
+    --ground: #fff; --surface: #fff;
+    --text: #000; --text-soft: #222; --text-faint: #444;
+    --line: rgba(0,0,0,0.25); --line-strong: rgba(0,0,0,0.6);
+    --accent: #000; --accent-ink: #fff;
+  }
+  html, body { background: #fff !important; color: #000 !important; }
+  body { font-size: 9.8pt; line-height: 1.34; }
+
+  #view, main, .rail { width: auto; margin: 0; padding: 0; }
+  .cv { border: none; padding: 0; background: none; }
+  .cv__name { font-size: 18pt; }
+  .cv__head { padding-block-end: 6pt; }
+  .cv__block { padding-block: 5pt; }
+  .cv__list, .cv__skills { gap: 6pt; }
+
+  /* The page heading duplicates the name directly beneath it. */
+  #view .section__label { display: none; }
+
+  /* On paper a link cannot be clicked, so a bare word "LinkedIn" is a dead
+     end. External destinations print their address; mailto: and tel: do not,
+     because the address is already the visible text. */
+  .cv__contacts a[href^="http"]::after {
+    content: " " attr(href);
+    font-size: 8pt;
+    color: #444;
+    /* No break-all: it snapped the URL mid-word ("...linkedi / n.com/...").
+       A URL that wraps at a space and overhangs slightly reads as a URL;
+       one broken across a syllable reads as a typesetting accident. */
+    white-space: nowrap;
+  }
+
+  /* A CV that splits a job across two pages has failed at its one task. */
+  .cv__list > li, .cv__skills > li, .cv__block { break-inside: avoid; }
+  .cv__head { break-after: avoid; }
+
+  /* Long links printed in full are unreadable; the text already names them. */
+  a { text-decoration: none; color: inherit; }
+
+  /* A4 is 297mm tall; 12mm top and bottom leaves 273mm (~1032px at 96dpi)
+     of usable height. That figure — not the paper size — is what the content
+     has to fit inside, which is the thing I got wrong by measuring against
+     the full page the first time. */
+  @page { margin: 12mm 13mm; }
+}
