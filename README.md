@@ -60,6 +60,34 @@ first time you open it.
 The home page counts its figures up — the one effect Safa wrote in 2023 and
 couldn't get working. It works now.
 
+## The ground
+
+A full-bleed shader behind everything, and it is the headline drawn:
+
+> *Turning complexity into clarity, one interface at a time.*
+
+So the field is **turbulent on one side and ordered on the other**. Under the
+words, a clean orthogonal grid — the surface a designer actually works on.
+Behind the cat, a twice-domain-warped flow read as contour ribbons, like a
+topographic map of something unresolved. **Scroll and the tideline sweeps
+right**: by the bottom of the page the whole field is grid. The sentence
+happens behind you while you read it.
+
+The cool tone only ever appears in the turbulent half, so resolving the field
+literally drains the confusion out of it. A standing scaffold grid sits under
+both states at the edge of visibility, and a vignette keeps the centre of the
+page — where the reading happens — the quietest part of it.
+
+**The constraint that shaped all of it.** The headline sits on this. Ground
+`#1C1C1C` measures 0.0116 relative luminance against text `#FAF8F5` at 0.93,
+about 17:1. Letting the field rise 9% toward lime puts it at 0.073, still 8:1.
+So 9% is the ceiling and everything is composed inside that band. Measured off
+the rendered pixels in the headline region: **15.4:1**. A background that costs
+a reader a sentence is not a background.
+
+Five-octave fbm across a full screen is not free, so the pixel ratio caps at
+1.5 rather than 2 — nobody can see the difference on a wall this soft.
+
 ## The cat, as 24,000 particles
 
 Safa is a cat person, and a cat happens to be the right animal for *this*

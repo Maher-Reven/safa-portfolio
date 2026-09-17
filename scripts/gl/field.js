@@ -1,27 +1,32 @@
 /* =========================================================================
-   field.js — the live ground of full mode.
+   field.js — the ground the whole site sits on.
    -------------------------------------------------------------------------
-   A single full-screen quad running one fragment shader. Raw WebGL2, no
-   library: Three.js exists to manage scene graphs, cameras and materials,
-   and there is exactly one quad here with none of those. Importing 600 KB
-   to draw two triangles would be a decision against the visitor.
+   A full-bleed shader behind everything. Not a decorative fluid: it is the
+   headline, drawn.
 
-   What it draws: a slow domain-warped noise field in the site's own paper
-   tones, which warms where the pointer is and keeps a decaying trail of
-   where it has been. The page notices you before it says it does.
+   "Turning complexity into clarity, one interface at a time."
 
-   Three constraints the shader is written around:
+   So the field is turbulent on one side and ordered on the other. On the
+   left, under the words, a clean orthogonal grid. On the right, behind the
+   cat, a domain-warped flow — contour ribbons tangling through each other
+   like a topographic map of something unresolved. Scroll, and the boundary
+   sweeps right: the page resolves as you read it, and by the bottom the
+   whole field is grid. The sentence happens behind you while you read it.
 
-   1. CONTRAST IS NOT NEGOTIABLE. The output is clamped to a narrow
-      luminance band around --paper, so body text sitting on top never
-      drops below its measured ratio. A background that makes a sentence
-      harder to read is not a background, it is a mistake.
-   2. IT STOPS WHEN NOBODY IS LOOKING. Hidden tab, scrolled past, reduced
-      motion, low battery — the loop pauses. A decorative animation has no
-      right to anyone's battery.
-   3. IT IS ALLOWED TO FAIL. No WebGL2, no context, no problem: the canvas
-      is removed and CSS paper shows through. Nothing on this site depends
-      on it.
+   Why this and not a coloured fluid: a fluid is a nice texture that means
+   nothing. This one is her argument, and it is built out of her own
+   vocabulary — the grid a designer works on, the contours of an
+   infrastructure map, the near-black and the single lime.
+
+   THE CONSTRAINT THAT SHAPES ALL OF IT.
+   The headline sits on top of this. Ground #1C1C1C has a relative luminance
+   of 0.0116 against text #FAF8F5 at 0.93 — about 17:1. Letting the field
+   rise 9% toward lime puts it at 0.073, which still leaves 8:1. So 9% is
+   the ceiling, and everything below is composed inside that band. A
+   background that costs a reader a sentence is not a background.
+
+   It stops when the tab is hidden, caps its pixel ratio, and if WebGL2 is
+   missing it removes itself and the CSS ground shows through.
    ========================================================================= */
 
 const VERT = `#version 300 es
@@ -35,14 +40,13 @@ out vec4 fragColor;
 
 uniform vec2  uRes;
 uniform float uTime;
-uniform vec2  uPointer;    // pointer in pixels, y already flipped
-uniform float uPresence;   // 0..1 — how present the pointer is, eased
-uniform vec3  uPaper;      // ground colour, read from the live CSS tokens
-uniform vec3  uWarm;       // the colour attention warms toward
-uniform float uReach;      // radius of attention, in pixels
+uniform vec2  uPointer;    // pixels, y already flipped
+uniform float uPresence;   // 0..1, eased
+uniform float uOrder;      // 0 turbulent .. 1 resolved, driven by scroll
+uniform vec3  uGround;
+uniform vec3  uAccent;
+uniform vec3  uCool;
 
-/* --- value noise + fbm, the cheap kind. Nothing here needs to be correct,
-       only to look like weather. ------------------------------------------ */
 float hash(vec2 p) {
   p = fract(p * vec2(123.34, 456.21));
   p += dot(p, p + 45.32);
@@ -51,60 +55,89 @@ float hash(vec2 p) {
 
 float noise(vec2 p) {
   vec2 i = floor(p), f = fract(p);
-  vec2 u = f * f * (3.0 - 2.0 * f);          // smoothstep, by hand
+  vec2 u = f * f * (3.0 - 2.0 * f);
   return mix(mix(hash(i), hash(i + vec2(1, 0)), u.x),
              mix(hash(i + vec2(0, 1)), hash(i + vec2(1, 1)), u.x), u.y);
 }
 
 float fbm(vec2 p) {
-  float sum = 0.0, amp = 0.5;
-  for (int i = 0; i < 4; i++) {              // four octaves is plenty at this scale
-    sum += amp * noise(p);
-    p *= 2.02;                               // non-integer, so octaves never line up
-    amp *= 0.5;
-  }
-  return sum;
+  float s = 0.0, a = 0.5;
+  for (int i = 0; i < 5; i++) { s += a * noise(p); p *= 2.03; a *= 0.5; }
+  return s;
+}
+
+/* A line of given width around a value's fractional crossings. Used for both
+   the contours and the grid, so the two halves are drawn with one pen. */
+float lineband(float v, float width) {
+  float d = abs(fract(v) - 0.5);
+  return 1.0 - smoothstep(0.0, width, d);
 }
 
 void main() {
-  vec2 frag = gl_FragCoord.xy;
-  vec2 uv   = frag / uRes;
-  vec2 p    = uv * vec2(uRes.x / uRes.y, 1.0);
-
-  /* Domain warp: sample the field through a slowly drifting version of
-     itself. This is what turns noise into something that reads as fabric
-     rather than static. */
+  vec2 uv = gl_FragCoord.xy / uRes;
+  vec2 p  = (gl_FragCoord.xy - 0.5 * uRes) / uRes.y;   // aspect-correct, centred
   float t = uTime * 0.035;
-  vec2 warp = vec2(fbm(p * 2.1 + t), fbm(p * 2.1 - t + 4.7));
-  float field = fbm(p * 2.6 + warp * 1.35);
 
-  /* Attention. Distance to the pointer, softened, raised to a power so the
-     falloff is gentle at the centre and quick at the edge — the shape of
-     a held gaze rather than a spotlight. */
-  float d = distance(frag, uPointer) / max(uReach, 1.0);
-  float attention = pow(1.0 - clamp(d, 0.0, 1.0), 2.4) * uPresence;
+  /* ---- THE TURBULENT SIDE ------------------------------------------------
+     Two rounds of domain warping. One is noise; two is weather. The field is
+     then read as contours — a topographic map of something that has not been
+     worked out yet. */
+  vec2 q = vec2(fbm(p * 1.5 + t), fbm(p * 1.5 + vec2(3.2, 1.7) - t));
+  vec2 r = vec2(fbm(p * 1.5 + 1.9 * q + vec2(1.7, 9.2) + 0.28 * t),
+                fbm(p * 1.5 + 1.9 * q + vec2(8.3, 2.8) - 0.22 * t));
+  float flow = fbm(p * 1.5 + 2.4 * r);
 
-  /* The field lifts where attention falls on it. */
-  float lift = field * 0.55 + attention * 0.85;
+  float contour = lineband(flow * 7.0 - t * 0.6, 0.26);
 
-  /* CONTRAST CLAMP. The whole visible range of this shader is 7% of the
-     distance from the ground toward the accent. Measured against --text,
-     the worst-lit pixel still leaves body copy above 15:1. The effect is
-     meant to be felt and not seen; anything stronger would be decoration
-     bought with somebody's legibility. */
-  vec3 col = mix(uPaper, uWarm, clamp(lift, 0.0, 1.0) * 0.07);
+  /* ---- THE RESOLVED SIDE -------------------------------------------------
+     A true orthogonal grid: the surface a designer actually works on. */
+  vec2 g = p * 7.0;
+  float grid = max(lineband(g.x, 0.045), lineband(g.y, 0.045));
 
-  /* Grain, tied to fragment position and time. Breaks the banding that
-     eight-bit gradients show on wide flat areas, and gives the ground the
-     tooth that calm mode gets from its CSS paper texture. */
-  float grain = (hash(frag + fract(uTime) * 100.0) - 0.5) * 0.012;
-  col += grain;
+  /* ---- THE BOUNDARY ------------------------------------------------------
+     Ordered on the left where the words are, turbulent on the right where
+     the cat is, and the edge sweeps right as you scroll. Softened by a
+     little of the flow itself so it is a tideline, not a wipe. */
+  /* The tideline starts at 0.38 rather than 0, so at the top of the page the
+     resolved half actually sits under the headline instead of clinging to
+     the left edge of the screen where nobody is reading. */
+  float edge = uv.x - 0.38 - uOrder * 0.85 + (flow - 0.5) * 0.12;
+  float order = 1.0 - smoothstep(-0.26, 0.30, edge);
+
+  float ink = mix(contour, grid, order);
+
+  /* ---- POINTER -----------------------------------------------------------
+     Attention brightens the field near it, and nothing more. The cat does
+     the reacting; the ground only acknowledges. */
+  float d = distance(gl_FragCoord.xy, uPointer) / (min(uRes.x, uRes.y) * 0.55);
+  float near = pow(1.0 - clamp(d, 0.0, 1.0), 2.6) * uPresence;
+
+  /* ---- COLOUR ------------------------------------------------------------
+     Everything below is scaled to stay inside the 9% ceiling set at the top
+     of this file. The cool tone only ever appears in the turbulent half, so
+     resolving the field literally drains the confusion out of it. */
+  vec3 col = uGround;
+  col += uAccent * ink  * (0.052 + near * 0.05);
+  col += uCool   * ink  * (1.0 - order) * 0.026;
+
+  /* A standing grid over everything at the edge of visibility: the drawing
+     surface, always there, under both states. */
+  vec2 fine = p * 22.0;
+  float scaffold = max(lineband(fine.x, 0.02), lineband(fine.y, 0.02));
+  col += uAccent * scaffold * 0.012;
+
+  /* A slow vignette toward the corners so the centre of the page, where the
+     reading happens, is always the quietest part of it. */
+  col *= 1.0 - 0.35 * pow(length(p * vec2(0.62, 1.0)), 2.2);
+
+  /* Grain. Kills the banding an 8-bit gradient shows across a flat wall, and
+     gives the ground the same tooth the print mode gets from its paper. */
+  col += (hash(gl_FragCoord.xy + fract(uTime) * 100.0) - 0.5) * 0.011;
 
   fragColor = vec4(col, 1.0);
 }
 `;
 
-/** Read a CSS custom property and return it as linear-ish 0..1 RGB. */
 function cssColor(name, fallback) {
   const raw = getComputedStyle(document.documentElement).getPropertyValue(name).trim() || fallback;
   const hex = raw.replace("#", "");
@@ -118,8 +151,10 @@ export class PresenceField {
   constructor(canvas) {
     this.canvas = canvas;
     this.pointer = { x: -9999, y: -9999 };
-    this.presence = 0;         // eased toward 1 while the pointer is over the page
+    this.presence = 0;
     this.targetPresence = 0;
+    this.order = 0;
+    this.targetOrder = 0;
     this.running = false;
     this.t0 = performance.now();
   }
@@ -127,7 +162,6 @@ export class PresenceField {
   async start() {
     const gl = this.canvas.getContext("webgl2", {
       alpha: false, antialias: false, powerPreference: "low-power",
-      // No depth or stencil buffer: one quad, no geometry, nothing to sort.
       depth: false, stencil: false,
     });
     if (!gl) return this.fail();
@@ -138,17 +172,15 @@ export class PresenceField {
     this.program = program;
     gl.useProgram(program);
 
-    /* One quad, as two triangles, as six vertices. */
     const buf = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, buf);
-    gl.bufferData(gl.ARRAY_BUFFER,
-      new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
     const loc = gl.getAttribLocation(program, "pos");
     gl.enableVertexAttribArray(loc);
     gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
 
     this.u = Object.fromEntries(
-      ["uRes", "uTime", "uPointer", "uPresence", "uPaper", "uWarm", "uReach"]
+      ["uRes", "uTime", "uPointer", "uPresence", "uOrder", "uGround", "uAccent", "uCool"]
         .map((n) => [n, gl.getUniformLocation(program, n)]));
 
     this.bind();
@@ -161,23 +193,23 @@ export class PresenceField {
   link(vsrc, fsrc) {
     const gl = this.gl;
     const compile = (type, src) => {
-      const s = gl.createShader(type);
-      gl.shaderSource(s, src);
-      gl.compileShader(s);
-      if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) {
-        console.warn("field:", gl.getShaderInfoLog(s));
+      const sh = gl.createShader(type);
+      gl.shaderSource(sh, src);
+      gl.compileShader(sh);
+      if (!gl.getShaderParameter(sh, gl.COMPILE_STATUS)) {
+        console.warn("field:", gl.getShaderInfoLog(sh));
         return null;
       }
-      return s;
+      return sh;
     };
     const vs = compile(gl.VERTEX_SHADER, vsrc);
     const fs = compile(gl.FRAGMENT_SHADER, fsrc);
     if (!vs || !fs) return null;
-    const p = gl.createProgram();
-    gl.attachShader(p, vs);
-    gl.attachShader(p, fs);
-    gl.linkProgram(p);
-    return gl.getProgramParameter(p, gl.LINK_STATUS) ? p : null;
+    const pr = gl.createProgram();
+    gl.attachShader(pr, vs);
+    gl.attachShader(pr, fs);
+    gl.linkProgram(pr);
+    return gl.getProgramParameter(pr, gl.LINK_STATUS) ? pr : null;
   }
 
   bind() {
@@ -186,13 +218,16 @@ export class PresenceField {
       const x = touch ? touch.clientX : e.clientX;
       const y = touch ? touch.clientY : e.clientY;
       this.pointer.x = x * this.dpr;
-      this.pointer.y = (innerHeight - y) * this.dpr;   // GL counts up from the bottom
+      this.pointer.y = (innerHeight - y) * this.dpr;
       this.targetPresence = 1;
     };
     this.onLeave = () => { this.targetPresence = 0; };
     this.onResize = () => this.resize();
+    this.onScroll = () => {
+      const scrollable = Math.max(document.documentElement.scrollHeight - innerHeight, 1);
+      this.targetOrder = Math.min(1, scrollY / scrollable);
+    };
     this.onVisibility = () => {
-      // Nobody is looking. Stop burning their battery.
       if (document.hidden) this.running = false;
       else if (!this.running) { this.running = true; this.loop(); }
     };
@@ -201,24 +236,27 @@ export class PresenceField {
     addEventListener("touchmove", this.onMove, { passive: true });
     addEventListener("pointerleave", this.onLeave, { passive: true });
     addEventListener("resize", this.onResize, { passive: true });
+    addEventListener("scroll", this.onScroll, { passive: true });
     document.addEventListener("visibilitychange", this.onVisibility);
 
-    /* If the palette changes — someone switched to high contrast — the
-       ground follows, rather than staying warm under a page that is not. */
     this.paletteObserver = new MutationObserver(() => this.readPalette());
     this.paletteObserver.observe(document.documentElement,
       { attributes: true, attributeFilter: ["data-contrast", "data-mode"] });
+
+    this.onScroll();
   }
 
   readPalette() {
-    this.paper = cssColor("--ground", "#1c1c1c");
-    this.warm  = cssColor("--accent", "#c8e65a");
+    this.ground = cssColor("--ground", "#1c1c1c");
+    this.accent = cssColor("--accent", "#c8e65a");
+    this.cool   = cssColor("--note", "#8fd4e8");
   }
 
   resize() {
-    /* Cap device pixel ratio at 2. Beyond that the shader costs four times
-       as much for a difference nobody can see on a field this soft. */
-    this.dpr = Math.min(devicePixelRatio || 1, 2);
+    /* 1.5 rather than 2. This is a soft, low-contrast wall; the extra
+       fragments buy nothing anyone can see and cost real battery on a
+       full-screen five-octave fbm. */
+    this.dpr = Math.min(devicePixelRatio || 1, 1.5);
     const w = Math.floor(innerWidth * this.dpr);
     const h = Math.floor(innerHeight * this.dpr);
     if (this.canvas.width === w && this.canvas.height === h) return;
@@ -231,25 +269,23 @@ export class PresenceField {
     if (!this.running) return;
     const gl = this.gl;
 
-    // Ease presence rather than snapping it — attention arrives and fades.
     this.presence += (this.targetPresence - this.presence) * 0.06;
+    this.order += (this.targetOrder - this.order) * 0.05;
 
     gl.uniform2f(this.u.uRes, this.canvas.width, this.canvas.height);
     gl.uniform1f(this.u.uTime, (performance.now() - this.t0) / 1000);
     gl.uniform2f(this.u.uPointer, this.pointer.x, this.pointer.y);
     gl.uniform1f(this.u.uPresence, this.presence);
-    gl.uniform1f(this.u.uReach, Math.min(this.canvas.width, this.canvas.height) * 0.55);
-    gl.uniform3fv(this.u.uPaper, this.paper);
-    gl.uniform3fv(this.u.uWarm, this.warm);
+    gl.uniform1f(this.u.uOrder, this.order);
+    gl.uniform3fv(this.u.uGround, this.ground);
+    gl.uniform3fv(this.u.uAccent, this.accent);
+    gl.uniform3fv(this.u.uCool, this.cool);
 
     gl.drawArrays(gl.TRIANGLES, 0, 3);
     this.raf = requestAnimationFrame(this.loop);
   };
 
-  fail() {
-    // Silence, and the CSS ground. Nothing here was load-bearing.
-    this.canvas.remove();
-  }
+  fail() { this.canvas.remove(); }
 
   destroy() {
     this.running = false;
@@ -258,10 +294,9 @@ export class PresenceField {
     removeEventListener("touchmove", this.onMove);
     removeEventListener("pointerleave", this.onLeave);
     removeEventListener("resize", this.onResize);
+    removeEventListener("scroll", this.onScroll);
     document.removeEventListener("visibilitychange", this.onVisibility);
     this.paletteObserver?.disconnect();
-    /* Free the GPU context explicitly. Browsers cap the number of live
-       WebGL contexts per page, and toggling modes should not leak one. */
     this.gl?.getExtension("WEBGL_lose_context")?.loseContext();
   }
 }
