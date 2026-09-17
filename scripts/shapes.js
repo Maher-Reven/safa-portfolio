@@ -27,51 +27,111 @@ function drawCat(ctx, W, H) {
   fit(ctx, W, H);
   ctx.fillStyle = "#fff";
 
-  // tail, as a wide stroke rather than a filled outline
-  ctx.lineWidth = 22;
-  ctx.lineCap = "round";
-  ctx.strokeStyle = "#fff";
+  /* TAIL — a filled taper, not a stroke. A constant-width stroke gives a
+     tail the same thickness at the root as at the tip, which is the single
+     most cartoon thing you can do to a cat. */
   ctx.beginPath();
-  ctx.moveTo(214, 312);
-  ctx.bezierCurveTo(272, 320, 306, 274, 292, 230);
-  ctx.bezierCurveTo(285, 208, 262, 202, 254, 220);
-  ctx.stroke();
-
-  // body
-  ctx.beginPath();
-  ctx.moveTo(112, 176);
-  ctx.bezierCurveTo(96, 214, 88, 268, 92, 306);
-  ctx.bezierCurveTo(94, 324, 106, 334, 126, 334);
-  ctx.lineTo(194, 334);
-  ctx.bezierCurveTo(214, 334, 226, 324, 228, 306);
-  ctx.bezierCurveTo(232, 268, 224, 214, 208, 176);
+  ctx.moveTo(206, 330);
+  ctx.bezierCurveTo(268, 336, 300, 292, 288, 244);
+  ctx.bezierCurveTo(283, 222, 266, 210, 252, 218);
+  ctx.bezierCurveTo(264, 224, 270, 240, 268, 254);   // tip, narrow
+  ctx.bezierCurveTo(274, 292, 252, 316, 204, 310);
   ctx.closePath();
   ctx.fill();
 
-  // ears, bases sitting on the skull
+  /* BODY — narrower at the shoulders than at the haunches, with the chest
+     carried forward. The old shape was a symmetrical trapezoid, which reads
+     as a bell rather than as an animal sitting down. */
   ctx.beginPath();
-  ctx.moveTo(119, 75); ctx.lineTo(108, 18); ctx.lineTo(156, 60); ctx.closePath();
-  ctx.moveTo(201, 75); ctx.lineTo(212, 18); ctx.lineTo(164, 60); ctx.closePath();
+  ctx.moveTo(128, 168);
+  ctx.bezierCurveTo(112, 196, 100, 246, 101, 292);   // back line, haunch
+  ctx.bezierCurveTo(102, 316, 113, 330, 134, 332);
+  ctx.lineTo(190, 332);
+  ctx.bezierCurveTo(210, 330, 220, 316, 221, 292);
+  ctx.bezierCurveTo(222, 246, 208, 196, 192, 168);
+  ctx.closePath();
   ctx.fill();
 
-  // head
+  /* EARS — taller, with a real inner notch cut back in below. */
   ctx.beginPath();
-  ctx.arc(160, 124, 64, 0, Math.PI * 2);
+  ctx.moveTo(122, 72); ctx.lineTo(103, 8);  ctx.lineTo(157, 54); ctx.closePath();
+  ctx.moveTo(198, 72); ctx.lineTo(217, 8);  ctx.lineTo(163, 54); ctx.closePath();
   ctx.fill();
 
-  /* The eyes are punched out, not drawn on. Negative space means the cat is
-     recognisable from its holes, which is how a silhouette works, and it
-     gives the swarm somewhere to be empty. */
+  /* HEAD — slightly smaller than the body is wide, so a neck exists. */
+  ctx.beginPath();
+  ctx.arc(160, 116, 59, 0, Math.PI * 2);
+  ctx.fill();
+
+  /* CHEEKS — a cat's face is wider than it is round. */
+  ctx.beginPath();
+  ctx.ellipse(160, 136, 62, 44, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  /* ---- negative space. Everything below is cut OUT of the silhouette, and
+     it is what turns a mass into a face. ---- */
   ctx.globalCompositeOperation = "destination-out";
+
+  // inner ears
   ctx.beginPath();
-  ctx.ellipse(135, 118, 17, 12, -0.18, 0, Math.PI * 2);
-  ctx.ellipse(185, 118, 17, 12, 0.18, 0, Math.PI * 2);
+  ctx.moveTo(128, 66); ctx.lineTo(115, 30); ctx.lineTo(148, 57); ctx.closePath();
+  ctx.moveTo(192, 66); ctx.lineTo(205, 30); ctx.lineTo(172, 57); ctx.closePath();
   ctx.fill();
-  // and the muzzle line, so the lower face is not one dumb lobe
+
+  // eye sockets — the pupils are a separate plate that tracks the pointer
   ctx.beginPath();
-  ctx.ellipse(160, 158, 26, 9, 0, 0, Math.PI * 2);
+  ctx.ellipse(136, 112, 19, 13, -0.16, 0, Math.PI * 2);
+  ctx.ellipse(184, 112, 19, 13, 0.16, 0, Math.PI * 2);
   ctx.fill();
+
+  // nose and the muzzle split
+  ctx.beginPath();
+  ctx.moveTo(152, 142); ctx.lineTo(168, 142); ctx.lineTo(160, 151); ctx.closePath();
+  ctx.fill();
+  ctx.lineWidth = 3.5; ctx.lineCap = "round"; ctx.strokeStyle = "#fff";
+  ctx.beginPath();
+  ctx.moveTo(160, 151); ctx.lineTo(160, 158);
+  ctx.moveTo(160, 158); ctx.bezierCurveTo(152, 168, 143, 165, 141, 158);
+  ctx.moveTo(160, 158); ctx.bezierCurveTo(168, 168, 177, 165, 179, 158);
+  ctx.stroke();
+
+  // whiskers, cut clean through the cheek
+  ctx.lineWidth = 2.6;
+  ctx.beginPath();
+  ctx.moveTo(132, 150); ctx.lineTo(74, 138);
+  ctx.moveTo(132, 157); ctx.lineTo(72, 158);
+  ctx.moveTo(132, 163); ctx.lineTo(76, 177);
+  ctx.moveTo(188, 150); ctx.lineTo(246, 138);
+  ctx.moveTo(188, 157); ctx.lineTo(248, 158);
+  ctx.moveTo(188, 163); ctx.lineTo(244, 177);
+  ctx.stroke();
+
+  // the neck, and the two front legs, as grooves
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(146, 296); ctx.lineTo(146, 330);
+  ctx.moveTo(176, 296); ctx.lineTo(176, 330);
+  ctx.stroke();
+
+  // the chest, so the front is not one flat plane
+  ctx.lineWidth = 2.6;
+  ctx.beginPath();
+  ctx.moveTo(161, 186); ctx.bezierCurveTo(150, 216, 148, 254, 152, 288);
+  ctx.stroke();
+
   ctx.globalCompositeOperation = "source-over";
+}
+
+/* The pupils are their own plate so they can be moved independently of the
+   face: in the swarm they track the pointer, which is the entire "it
+   notices you" claim expressed in about forty particles each. */
+function drawPupils(ctx, W, H) {
+  fit(ctx, W, H);
+  ctx.fillStyle = "#fff";
+  ctx.beginPath();
+  ctx.ellipse(136, 112, 9.5, 12, 0, 0, Math.PI * 2);
+  ctx.ellipse(184, 112, 9.5, 12, 0, 0, Math.PI * 2);
+  ctx.fill();
 }
 
 function drawPaw(ctx, W, H) {
@@ -109,4 +169,4 @@ function drawCursor(ctx, W, H) {
   ctx.fill();
 }
 
-export { DESIGN, fit, drawCat, drawPaw, drawCursor };
+export { DESIGN, fit, drawCat, drawPupils, drawPaw, drawCursor };

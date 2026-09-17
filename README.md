@@ -74,6 +74,27 @@ Everything you do changes it:
 | click | a burst impulse blows the shape apart and it reassembles |
 | scroll | morphs continuously across a deliberately tall stage, with the headline pinned beside it |
 
+The cat is drawn with real anatomy — inner ear notches, cheeks carried wider
+than the skull, a muzzle split, a chest line, front-leg grooves, a tail that
+tapers from root to tip — and almost all of it is **negative space** cut back
+out of the silhouette. That is what turns a mass into a face.
+
+Sampling is **edge-weighted**: 42% of the particles are spent on the boundary,
+with a fraction of the jitter the interior gets. Uniform sampling put nearly
+every particle in the middle where they stack invisibly and left the outline
+as thin as chance allowed, which is why it read as a blob.
+
+**The eyes follow you.** The pupils are their own plate, sampled separately and
+given their own slice of the particle budget, drawn brighter and larger than
+anything else. They are exempt from the pointer field, so when you stir the
+cloud the eyes hold their place and keep tracking — the cat goes on looking at
+you *through* the disturbance. Tracking fades out as the swarm morphs away from
+the cat, because a paw with eyes is a different animal.
+
+The pointer **stirs** rather than pushes: a tangential term on a travelling
+sine makes particles orbit it. A purely radial push cleared a clean circle,
+which read as erasure — as if the cursor were a rubber.
+
 The shapes are **not modelled**. They are drawn once to an offscreen 2D canvas
 and the particles sample the opaque pixels — so the cat is authored as a
 drawing, with its eyes and muzzle punched out as real holes, and the GPU never
