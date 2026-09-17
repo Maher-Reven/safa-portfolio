@@ -370,6 +370,7 @@
   position: relative;
   z-index: var(--z-content);
   margin: 0;
+  min-width: 0;
   padding: var(--s-2xs) var(--gutter);
   padding-top: max(var(--s-2xs), env(safe-area-inset-top, 0px));
   background: var(--accent);
@@ -408,3 +409,11 @@
   margin-block-end: var(--s-md);
 }
 .steps__n { color: var(--accent); font-family: var(--face-detail); font-size: 0.6em; }
+
+
+/* On a phone the second half of the banner is the same two facts the header
+   already states, so it goes rather than wrapping to a second lime line. */
+@media (max-width: 40rem) {
+  .banner > span:last-child { display: none; }
+  .banner { justify-content: flex-start; }
+}

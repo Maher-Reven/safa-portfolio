@@ -146,6 +146,14 @@ void main() {
      for normal text, so a layout change can never make this a trap. */
   float loud = mix(0.075, 0.22, smoothstep(0.45, 0.72, uv.x));
 
+  /* On a narrow screen the layout collapses to one column, so the right
+     side stops being empty and starts carrying body copy. The loud zone is
+     only safe because nothing is read on top of it — the moment that stops
+     being true, the permission has to go with it. Below roughly a 1.1
+     aspect ratio the whole field drops to the quiet ceiling. */
+  float narrow = 1.0 - smoothstep(1.0, 1.25, uRes.x / uRes.y);
+  loud = mix(loud, 0.075, narrow);
+
   /* ---- POINTER -----------------------------------------------------------
      Attention brightens the field near it, and nothing more. The cat does
      the reacting; the ground only acknowledges. */

@@ -7,6 +7,12 @@
   flex-wrap: wrap;
   gap: var(--s-3xs);
   margin-inline: auto var(--s-sm);
+  /* A flex item's min-width is auto, meaning "never shrink below my
+     content". Six tabs are 466px of content, so on a 390px phone this one
+     declaration pushed the layout viewport out to 543 and took the whole
+     page with it. Scrolling the strip requires permission to be narrower
+     than what is in it. */
+  min-width: 0;
 }
 .tabs a {
   display: inline-flex;
@@ -45,10 +51,34 @@
 }
 
 @media (max-width: 62rem) {
-  .site-head { flex-wrap: wrap; row-gap: var(--s-2xs); }
-  .tabs { order: 3; width: 100%; margin-inline: 0; overflow-x: auto; flex-wrap: nowrap;
-          scrollbar-width: none; }
+  .site-head {
+    flex-wrap: wrap;
+    row-gap: var(--s-2xs);
+    padding-block-end: var(--s-2xs);
+  }
+  /* The tabs drop to their own full-width row and scroll sideways, with a
+     little padding so the first and last chip are not welded to the edge. */
+  .tabs {
+    order: 3;
+    width: 100%;
+    margin-inline: 0;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    scrollbar-width: none;
+    scroll-snap-type: x proximity;
+    padding-inline: 2px;
+  }
   .tabs::-webkit-scrollbar { display: none; }
+  .tabs a { flex: 0 0 auto; scroll-snap-align: start; }
+}
+
+/* Below this the wordmark and the Attune button have to share one line with
+   room to spare, so both give some up. */
+@media (max-width: 30rem) {
+  .wordmark__name { font-size: var(--t-body); }
+  .wordmark__role { font-size: 0.6875rem; }
+  #attune-open { padding-inline: var(--s-2xs); }
+  .tabs a { padding-inline: var(--s-2xs); font-size: 0.875rem; }
 }
 
 /* =========================================================================

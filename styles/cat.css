@@ -22,6 +22,9 @@
   gap: var(--s-lg);
 }
 [data-mode="full"] .cat-stage { min-height: 210vh; }
+/* Grid children default to min-width:auto and refuse to shrink below their
+   content, which is how a column overflows its own track. */
+.cat-stage > *, .cat-stage__words, .cat-stage__right { min-width: 0; }
 [data-mode="full"] .cat-stage__words,
 [data-mode="full"] .cat-stage__right {
   position: sticky;
@@ -66,9 +69,14 @@
   width: 100%;
   /* The swarm needs real height to be worth rendering. A square-ish stage
      gives the cat room to sit and the cursor room to point. */
+  /* Sized from its COLUMN, never from the viewport height. With an explicit
+     height plus aspect-ratio the width is derived from the height, so the
+     figure stayed 62vh wide however narrow its grid track got — it burst
+     out of the layout and sat on top of the headline between roughly 900
+     and 1100px. Width first, height follows, and max-height only clamps. */
   aspect-ratio: 1 / 1;
-  height: 62vh;
-  max-height: 62vh;
+  max-width: 100%;
+  max-height: 68vh;
   margin: 0;
   color: var(--accent);
   /* Decoration must never intercept a click meant for the page behind it —
@@ -132,7 +140,7 @@
 [data-mode="calm"] .cat__all { stroke-width: 2.4; }
 [data-mode="calm"] .cat__ear, [data-mode="calm"] .cat__eye { transition: none; }
 
-@media (max-width: 52rem) {
+@media (max-width: 64rem) {
   .cat-stage { grid-template-columns: 1fr; }
   .cat-stage__figure {
     position: static;
@@ -182,4 +190,5 @@
 /* Print mode does not need a live progress indicator, and a printed page
    does not have one. */
 [data-mode="calm"] .paws { display: none; }
-@media (max-width: 52rem) { .paws { display: none; } }
+/* No margin to put a trail in once the layout is one column. */
+@media (max-width: 64rem) { .paws { display: none; } }
