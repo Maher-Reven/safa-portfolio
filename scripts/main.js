@@ -7,6 +7,7 @@ import { attune, AXES } from "./attune.js";
 import { Router } from "./router.js";
 import { makeTransition } from "./transitions.js";
 import { Cat, PawTrail } from "./cat.js";
+import { CursorBadge } from "./cursor.js";
 import * as C from "../content/content.js";
 
 /* ---- i18n -------------------------------------------------------------
@@ -119,6 +120,8 @@ function section(id, ...children) {
 function caseCard(p) {
   const article = el("article", { className: "case-card hoverable" });
   article.style.setProperty("--case", p.colour);
+  /* Summons the cursor badge. The word is the promise the card is making. */
+  article.dataset.cursor = t(C.ui.cursorRead);
 
   const link = el("a", { href: `#/work/${p.slug}`, className: "case-card__link" },
     t(p.title));
@@ -707,5 +710,6 @@ function markHoverables(root = document) {
 }
 
 armHoverSpotlight();
+new CursorBadge().mount();
 markHoverables();
 router.addEventListener("navigate", () => markHoverables());

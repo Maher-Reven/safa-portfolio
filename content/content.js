@@ -381,6 +381,7 @@ export const ui = {
   detailHint:    { en: "Look closer",       nl: "Kijk beter" },
   viewCase:      { en: "Read the case \u2192", nl: "Lees de case \u2192" },
   nextCase:      { en: "Next case",          nl: "Volgende case" },
+  cursorRead:    { en: "Read",               nl: "Lees" },
   caseFacts: {
     year:    { en: "Year",    nl: "Jaar" },
     role:    { en: "Role",    nl: "Rol" },

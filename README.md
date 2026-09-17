@@ -24,6 +24,17 @@ component:
   to it: the raw position snapped frame to frame and jittered on any small
   hand movement. One rAF loop, running only while a card is under the pointer.
 - The border takes the accent, and a small lift.
+- **A cursor badge.** Over anything openable, a ring with crosshair ticks and
+  a word in it appears and *trails* the pointer. The lag is the whole trick: a
+  badge pinned exactly to the cursor is just a bigger cursor, while one that
+  catches up a beat later reads as an object with weight following you.
+
+Any element carrying `data-cursor="WORD"` summons the badge; nothing else has
+to know it exists. It never replaces the real pointer — hiding the system
+cursor to draw your own is a bet that your rAF loop never drops a frame, and
+when it loses the visitor has no cursor at all. Touch never sees it, print
+mode never shows it, and under reduced motion it is placed rather than trailed
+with the ticks held still.
 
 Focus gets everything hover gets — `:hover`, `:focus-visible` and
 `:focus-within` are always written together, because a keyboard visitor who

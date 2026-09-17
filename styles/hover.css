@@ -172,3 +172,63 @@
   .hoverable::after { display: none; }
   .hoverable:hover { transform: none; }
 }
+
+/* =========================================================================
+   THE CURSOR BADGE
+   A ring that follows the pointer over anything openable. It sits above
+   everything and intercepts nothing.
+   ========================================================================= */
+.cursor-badge {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: var(--z-announce);
+  display: grid;
+  place-items: center;
+  width: 5.25rem;
+  height: 5.25rem;
+  color: var(--accent);
+  pointer-events: none;          /* it must never eat the click it advertises */
+  opacity: 0;
+  scale: 0.4;
+  transition: opacity 260ms var(--ease-out), scale 380ms var(--ease-out);
+}
+.cursor-badge[data-on="true"] { opacity: 1; scale: 1; }
+
+/* The disc. Blurred so the badge reads over a screenshot as well as over
+   the ground, without hiding what is underneath it. */
+.cursor-badge::before {
+  content: "";
+  position: absolute;
+  inset: 12%;
+  border-radius: 50%;
+  border: 1px solid color-mix(in oklab, var(--accent) 70%, transparent);
+  background: color-mix(in oklab, var(--ground) 62%, transparent);
+  backdrop-filter: blur(6px);
+}
+
+.cursor__ticks {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  animation: badge-turn 14s linear infinite;
+}
+@keyframes badge-turn { to { rotate: 360deg; } }
+
+.cursor__label {
+  position: relative;
+  font-family: var(--face-detail);
+  font-size: 0.6875rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/* Ink does not follow your hand, and stillness stops the ring turning. */
+[data-mode="calm"] .cursor-badge { display: none; }
+@media (prefers-reduced-motion: reduce) {
+  .cursor-badge { transition: opacity 140ms linear; }
+  .cursor__ticks { animation: none; }
+}
+/* No hover, no badge. */
+@media (hover: none) { .cursor-badge { display: none; } }
