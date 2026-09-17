@@ -129,7 +129,11 @@ void main() {
      the tracking out as it morphs into the paw, because a paw with eyes is
      a different animal. Forty particles each, and it is the entire "it
      notices you" claim. */
-  p.xy += uLook * aRegion * w0 * 0.075;
+  /* 0.045, not 0.075. The socket is 21 design units across and the pupil
+     9.5, which leaves about 11 units of travel before the pupil clips
+     through the eyelid — and 0.075 world units is roughly 15. The cat was
+     rolling its eyes out of its own head. */
+  p.xy += uLook * aRegion * w0 * 0.045;
 
   /* Every particle drifts on its own phase. This is what stops a settled
      shape from looking like a photograph of a shape. */

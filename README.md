@@ -13,10 +13,17 @@ Three things about Safa are not three features here. They are one behaviour.
 
 ## Hover
 
-Every container on the site shares one hover treatment rather than a different
-effect per component: a spotlight that tracks the pointer inside the card, the
-border picking up the accent, and a small lift. One delegated listener writes
-the pointer position into whichever card it is inside; CSS does the rest.
+Every container shares one hover treatment rather than a different effect per
+component:
+
+- **A sweep.** A band of light crosses the card left to right, once, over
+  900ms when you arrive. The transition is asymmetric on purpose — entering it
+  eases across, leaving it snaps back, because a highlight easing in reverse
+  reads as the card undoing itself.
+- **A spotlight** that follows the pointer, eased rather than written straight
+  to it: the raw position snapped frame to frame and jittered on any small
+  hand movement. One rAF loop, running only while a card is under the pointer.
+- The border takes the accent, and a small lift.
 
 Focus gets everything hover gets — `:hover`, `:focus-visible` and
 `:focus-within` are always written together, because a keyboard visitor who

@@ -564,6 +564,32 @@ attune.addEventListener("change", (e) => {
    ========================================================================= */
 function armHoverSpotlight() {
   let active = null;
+  let target = { x: 50, y: 50 };
+  let at = { x: 50, y: 50 };
+  let raf = 0;
+
+  /* The spotlight EASES toward the pointer rather than being written
+     straight to it. Writing the raw position made the light snap frame to
+     frame and jitter on any small hand movement; a lerp gives it weight, so
+     it trails slightly behind and settles. One rAF loop, running only while
+     a card is actually under the pointer. */
+  /* Easing IS animation. Someone who asked for stillness gets the light
+     placed, not glided — the indicator still works, it just does not move
+     on its own. */
+  const still = () => matchMedia("(prefers-reduced-motion: reduce)").matches ||
+                      document.documentElement.dataset.mode === "calm";
+
+  const tick = () => {
+    const k = still() ? 1 : 0.16;
+    at.x += (target.x - at.x) * k;
+    at.y += (target.y - at.y) * k;
+    if (active) {
+      active.style.setProperty("--mx", `${at.x.toFixed(2)}%`);
+      active.style.setProperty("--my", `${at.y.toFixed(2)}%`);
+    }
+    const settled = Math.abs(target.x - at.x) < 0.1 && Math.abs(target.y - at.y) < 0.1;
+    raf = (active && !settled) ? requestAnimationFrame(tick) : 0;
+  };
 
   addEventListener("pointermove", (e) => {
     if (e.pointerType === "touch") return;      // a finger has no hover
@@ -573,12 +599,20 @@ function armHoverSpotlight() {
       active?.style.removeProperty("--mx");
       active?.style.removeProperty("--my");
       active = card;
+      if (card) {
+        /* Start the light at the edge the pointer came in through, so it
+           travels across the card rather than fading up in the middle. */
+        const r = card.getBoundingClientRect();
+        at.x = ((e.clientX - r.left) / r.width) * 100;
+        at.y = ((e.clientY - r.top) / r.height) * 100;
+      }
     }
     if (!card) return;
 
     const r = card.getBoundingClientRect();
-    card.style.setProperty("--mx", `${((e.clientX - r.left) / r.width) * 100}%`);
-    card.style.setProperty("--my", `${((e.clientY - r.top) / r.height) * 100}%`);
+    target.x = ((e.clientX - r.left) / r.width) * 100;
+    target.y = ((e.clientY - r.top) / r.height) * 100;
+    if (!raf) raf = requestAnimationFrame(tick);
   }, { passive: true });
 }
 
