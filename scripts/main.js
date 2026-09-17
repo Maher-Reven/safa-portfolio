@@ -284,6 +284,38 @@ function routesForAudience() {
   return [ROUTES[0], ...middle, ROUTES.find((r) => r.id === "contact")];
 }
 
+/* THE LANGUAGE TOGGLE, IN THE HEADER.
+   It is also in the Attune panel, but that is the wrong and only home for
+   it: the panel is where someone goes to adjust how the site behaves, and
+   language is not a behaviour — for a bilingual city it is the first thing a
+   reader decides, before they have any reason to open a settings panel. It
+   was 818px down inside a drawer nobody had opened.
+
+   Two buttons rather than a single toggle, because a toggle labelled "NL"
+   never says whether it means "you are reading Dutch" or "switch to Dutch".
+   Each carries its own lang attribute so a screen reader pronounces
+   Nederlands in Dutch rather than reading it as English, and aria-pressed
+   states which one you are actually in. */
+function renderLang() {
+  const root = document.getElementById("lang-root");
+  if (!root) return;
+
+  const group = el("div", { className: "lang" });
+  group.setAttribute("role", "group");
+  group.setAttribute("aria-label", t(C.ui.langLabel));
+
+  for (const [code, label] of [["en", "EN"], ["nl", "NL"]]) {
+    const on = attune.get("lang") === code;
+    const btn = el("button", { type: "button", textContent: label });
+    btn.lang = code;
+    btn.dataset.lang = code;
+    btn.setAttribute("aria-pressed", String(on));
+    btn.addEventListener("click", () => attune.set("lang", code));
+    group.append(btn);
+  }
+  root.replaceChildren(group);
+}
+
 function renderTabs() {
   const nav = document.getElementById("tabs");
   nav.replaceChildren(...routesForAudience().map((r) => {
@@ -637,11 +669,14 @@ router = new Router({
    on the very first frame, not one frame late. */
 router.addEventListener("navigate", renderTabs);
 renderTabs();
+renderLang();
 router.start();
 
 attune.addEventListener("change", (e) => {
   const { changed } = e.detail;
-  if (changed === "lang") { renderStatic(); renderAttune(); renderTabs(); renderRoute(router.current); }
+  if (changed === "lang") {
+    renderStatic(); renderAttune(); renderTabs(); renderLang(); renderRoute(router.current);
+  }
   else if (changed === "audience") renderTabs();
   else if (changed === "mode") { syncField(); renderRoute(router.current); }
 });

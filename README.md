@@ -220,6 +220,20 @@ a consistent shape. The case page shows the screenshot whole.
 
 ## Both languages, all the way down
 
+**EN / NL sits in the header**, visible without opening anything. It was only
+in the Attune panel, 818px down inside a drawer nobody had opened — and the
+panel is the wrong home for it. That is where someone goes to adjust how the
+site behaves, and language is not a behaviour; for a bilingual city it is the
+first thing a reader decides, before they have any reason to open settings.
+
+Two buttons rather than one switch, because a single control labelled "NL"
+never says whether it means *you are reading Dutch* or *press for Dutch*. Each
+carries its own `lang` attribute so a screen reader pronounces Nederlands in
+Dutch instead of reading it as English, `aria-pressed` states which one you
+are in, and the active half is filled rather than tinted so the state survives
+greyscale. The panel control stays and the two stay in sync.
+
+
 Every string is a `{ en, nl }` pair, and the toggle in the Attune panel
 switches the whole application, not just the prose:
 

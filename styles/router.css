@@ -176,3 +176,43 @@
     height: 3px;
   }
 }
+
+/* =========================================================================
+   LANGUAGE TOGGLE
+   Two buttons, not one switch. A single control labelled "NL" never says
+   whether it means "you are reading Dutch" or "press for Dutch"; a pair
+   shows the choice and which half of it you are in.
+   ========================================================================= */
+.lang {
+  display: inline-flex;
+  align-items: stretch;
+  border: var(--rule-strong);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+}
+.lang button {
+  min-height: 38px;
+  padding-inline: var(--s-xs);
+  font-family: var(--face-detail);
+  font-size: var(--t-detail);
+  letter-spacing: 0.08em;
+  color: var(--text-faint);
+  transition: color var(--dur-quick) var(--ease-out),
+              background var(--dur-quick) var(--ease-out);
+}
+.lang button:hover { color: var(--text); }
+
+/* The pressed one is filled, so the state survives greyscale and a
+   colour-blind reader — aria-pressed carries it to everyone else. */
+.lang button[aria-pressed="true"] {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+.lang button:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: -3px;      /* inset, or the ring is clipped by the pill */
+}
+
+@media (max-width: 30rem) {
+  .lang button { padding-inline: var(--s-2xs); min-height: 34px; }
+}
