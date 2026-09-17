@@ -88,6 +88,30 @@ function countUp(node, { duration = 1100 } = {}) {
   requestAnimationFrame(step);
 }
 
+/* Run something the first time an element is actually looked at.
+
+   Anything below the fold has to be triggered by arrival, not by a timer
+   started at page load. On a landing page three and a half viewports tall
+   the difference is total: the outcome figures sit at 3.08vh, so a delay
+   measured from route entry counted them up in an empty room. */
+function whenSeen(nodes, fn, { threshold = 0.4 } = {}) {
+  const list = [...nodes];
+  if (!list.length) return;
+
+  if (!("IntersectionObserver" in window)) {
+    list.forEach(fn);                      // no observer: just do it
+    return;
+  }
+  const io = new IntersectionObserver((entries, obs) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      obs.unobserve(entry.target);         // once only — a figure that counts twice is a bug
+      fn(entry.target);
+    });
+  }, { threshold });
+  list.forEach((n) => io.observe(n));
+}
+
 /* ---- per-page choreography --------------------------------------------- */
 
 const CHOREO = {
@@ -95,13 +119,17 @@ const CHOREO = {
      up, which is the one effect Safa wrote in 2023 that she could not get
      working. It works now. */
   home(view) {
-    rise(view.querySelectorAll(".intro__kicker, h1, .intro__sub, .ask"), { stagger: 90 });
+    rise(view.querySelectorAll(".intro__kicker, h1, .intro__sub"), { stagger: 90 });
     const marks = view.querySelectorAll(".stop");
     marks.forEach((m) => m.animate(
       [{ transform: "scale(0)", opacity: 0 }, { transform: "scale(1)", opacity: 1 }],
       { duration: 520, delay: 240, easing: "cubic-bezier(0.34, 1.56, 0.64, 1)", fill: "backwards" }));
-    view.querySelectorAll(".outcome__figure").forEach((f, i) =>
-      setTimeout(() => countUp(f), 320 + i * 90));
+    /* The figures count when they are reached, not when the route opens. */
+    whenSeen(view.querySelectorAll(".outcome__figure"),
+             (f) => countUp(f), { threshold: 0.9 });
+
+    /* Same for the audience question, which sits two viewports down. */
+    whenSeen(view.querySelectorAll(".ask"), (n) => rise([n], { stagger: 0 }));
   },
 
   /* ASSEMBLE — the covers arrive from slightly different places and land
