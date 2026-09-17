@@ -77,21 +77,33 @@ export class Router extends EventTarget {
     };
 
     await this.transition(id, swap, from);
-    this.settle(id);
+    /* `from` is null only on the very first resolve — a page load, not a
+       navigation. See settle(). */
+    this.settle(id, { isFirstLoad: from === null });
   }
 
   /* After the paint: put the visitor where they now are, in both senses. */
-  settle(id) {
+  settle(id, { isFirstLoad = false } = {}) {
+    /* Focus moves on a NAVIGATION, never on first load.
+       Moving it on load looks harmless and is not: it puts focus past the
+       skip link, so the first Tab press lands somewhere in the content and
+       the skip link — the whole point of which is to be the first stop —
+       becomes unreachable. On a fresh load the browser's own starting
+       position is already correct, and the document title says where you
+       are. Only a route change needs correcting, because only a route
+       change leaves focus stranded on the link that caused it. */
     const heading = document.querySelector("#view h1, #view h2");
-    if (heading) {
+    if (heading && !isFirstLoad) {
       /* tabindex -1 makes it programmatically focusable without adding it
          to the tab order — the heading is a destination, not a control. */
       heading.setAttribute("tabindex", "-1");
       heading.focus({ preventScroll: true });
     }
     /* Scrolled, not smooth-scrolled: this is a new page, and easing to the
-       top of a page you have already arrived at is a lie about distance. */
-    scrollTo({ top: 0, behavior: "auto" });
+       top of a page you have already arrived at is a lie about distance.
+       Not on first load either — that would discard a deep link's own
+       scroll position and fight the browser's scroll restoration. */
+    if (!isFirstLoad) scrollTo({ top: 0, behavior: "auto" });
 
     document.querySelectorAll("[data-route]").forEach((link) => {
       const active = link.dataset.route === id;

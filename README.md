@@ -35,6 +35,40 @@ first time you open it.
 The home page counts its figures up — the one effect Safa wrote in 2023 and
 couldn't get working. It works now.
 
+## The cat
+
+Safa is a cat person, and a cat is the right animal for *this* site rather than
+a decorative one: the whole thesis here is "design that notices the person using
+them", and a cat watching you is the most honest picture of that there is.
+
+It is a **rig**, not a morph — head, ears, eyes, pupils, whiskers, body, tail
+and paws are separate groups, each driven by something different:
+
+- **scroll → waking.** Ears lift, eyes open, posture rises, the tail wakes up.
+  It wakes because you arrived, which is the right causality for an animal and
+  for an interface.
+- **pointer → where it looks.** Pupils track you and the head turns with them,
+  because eyes alone always look like a cardboard cut-out.
+- **time → breathing, tail sway, and the slow blink.**
+
+Eye openness is `scaleY`, so a shut eye is a horizontal line — which is how a
+closed cat eye is actually drawn.
+
+**The slow blink** is the detail the whole thing is for. A cat closing its eyes
+slowly at you is not sleepiness, it is trust; cat people call it a cat kiss. It
+happens about every twelve seconds and responds to nothing at all. Leave the
+pointer alone for six seconds and the cat loses interest and looks at the lime
+full stop instead, the way a real one gives up on a laser dot.
+
+In **print mode** it becomes an engraving: ink instead of lime, thinner stroke,
+awake, still. Exactly what the two modes mean everywhere else here.
+
+It is `aria-hidden` and carries nothing the text does not. Delete it and the
+page reads identically.
+
+The scroll indicator is a **trail of paw prints** that fill in as you pass them,
+alternating left and right of the line the way an animal actually walks.
+
 ## Two modes, both signed
 
 **Full** — a live WebGL ground that warms where your pointer is, display type at
@@ -81,6 +115,7 @@ scripts/attune.js     the six adaptation axes, persistence, announcements
 scripts/router.js     hash routing, focus management, route announcements
 scripts/transitions.js one choreography per page
 scripts/main.js       rendering, route composition, disclosure
+scripts/cat.js        the rigged cat and the paw-print scroll trail
 scripts/gl/field.js   the WebGL ground (raw WebGL2, no library)
 ```
 

@@ -1,0 +1,112 @@
+/* =========================================================================
+   cat.css — presentation for the home page companion.
+   ========================================================================= */
+
+.cat-stage {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.42fr);
+  align-items: end;
+  gap: var(--s-lg);
+}
+.cat-stage__figure {
+  position: sticky;
+  bottom: var(--s-xl);
+  justify-self: end;
+  width: min(100%, 22rem);
+  margin: 0;
+  color: var(--accent);
+  /* Decoration must never intercept a click meant for the page behind it. */
+  pointer-events: none;
+}
+.cat-stage__figure svg { width: 100%; height: auto; overflow: visible; }
+
+/* -------------------------------------------------------------------------
+   TRANSFORM ORIGINS
+   transform-box: view-box puts these in the SVG's own coordinate system, so
+   each origin is the anatomical joint it should be — the base of an ear, the
+   root of the tail, the cat's seat — rather than the centre of a bounding
+   box, which is where limbs go to look broken.
+   ------------------------------------------------------------------------- */
+.cat__ear, .cat__head, .cat__body, .cat__tail, .cat__eye, .cat__pupil {
+  transform-box: view-box;
+  will-change: transform;
+}
+.cat__ear--l { transform-origin: 136px 68px; }   /* midpoint of the ear's base on the skull */
+.cat__ear--r { transform-origin: 184px 68px; }
+.cat__head   { transform-origin: 160px 150px; }  /* the neck, not the crown */
+.cat__body   { transform-origin: 160px 330px; }  /* the seat: it breathes upward */
+.cat__tail   { transform-origin: 232px 300px; }  /* the root of the tail */
+.cat__eye--l { transform-origin: 135px 120px; }
+.cat__eye--r { transform-origin: 185px 120px; }
+
+/* Ears and eyes settle rather than snap. The tail, head and body are driven
+   every frame from script, so they must NOT have a transition — two easings
+   fighting over one property is how motion starts to feel underwater. */
+.cat__ear { transition: transform 620ms var(--ease-out); }
+.cat__eye { transition: transform 140ms ease-out; }
+
+.cat__whiskers { opacity: 0.55; }
+.cat__ear-in { opacity: 0.45; }
+.cat__paw { opacity: 0.8; }
+
+/* -------------------------------------------------------------------------
+   PRINT MODE
+   The cat becomes an engraving: ink, not lime, and thinner — a printed line
+   holds at a weight that would disappear on a dark screen. Still, awake,
+   drawn once. Exactly what calm mode means everywhere else on this site.
+   ------------------------------------------------------------------------- */
+[data-mode="calm"] .cat-stage__figure { color: var(--text); }
+[data-mode="calm"] .cat__all { stroke-width: 2.4; }
+[data-mode="calm"] .cat__ear, [data-mode="calm"] .cat__eye { transition: none; }
+
+@media (max-width: 52rem) {
+  .cat-stage { grid-template-columns: 1fr; }
+  .cat-stage__figure {
+    position: static;
+    justify-self: center;
+    width: min(60%, 15rem);
+    margin-block-start: var(--s-lg);
+  }
+}
+
+/* =========================================================================
+   PAW TRAIL — the scroll indicator.
+   A page whose companion is a cat should not measure itself with a grey bar.
+   Prints fill in as you pass them, so the trail is both where you are and
+   where the cat has been.
+   ========================================================================= */
+.paws {
+  position: fixed;
+  inset-block: 0;
+  inset-inline-start: max(var(--s-2xs), env(safe-area-inset-left, 0px));
+  z-index: var(--z-content);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--s-xs);
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  pointer-events: none;
+}
+.paws li { margin: 0; max-width: none; line-height: 0; }
+.paws svg {
+  width: 13px;
+  height: auto;
+  color: var(--text-faint);
+  opacity: 0.22;
+  /* Alternate the prints left and right of the line, the way an animal
+     actually walks. A single column of identical marks is a dotted rule. */
+  transform: translateX(0) rotate(-16deg);
+  transition: opacity var(--dur-calm) var(--ease-out),
+              color var(--dur-calm) var(--ease-out),
+              transform var(--dur-calm) var(--ease-out);
+}
+.paws li:nth-child(even) svg { transform: translateX(7px) rotate(10deg); }
+.paws li[data-passed="true"] svg { opacity: 1; color: var(--accent); }
+
+/* Print mode does not need a live progress indicator, and a printed page
+   does not have one. */
+[data-mode="calm"] .paws { display: none; }
+@media (max-width: 52rem) { .paws { display: none; } }

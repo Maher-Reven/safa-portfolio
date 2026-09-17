@@ -6,6 +6,7 @@
 import { attune, AXES } from "./attune.js";
 import { Router } from "./router.js";
 import { makeTransition } from "./transitions.js";
+import { Cat, PawTrail } from "./cat.js";
 import * as C from "../content/content.js";
 
 /* ---- i18n -------------------------------------------------------------
@@ -230,10 +231,19 @@ function renderTabs() {
 /* The intro is a section like any other, so that home is composed the same
    way every other page is. */
 SECTIONS.intro = () => {
-  const wrap = el("section", { className: "intro rail", id: "intro" },
+  const words = el("div", {},
     el("p", { className: "intro__kicker", textContent: t(C.intro.kicker) }),
     heroHeading(),
     el("p", { className: "intro__sub", textContent: t(C.intro.sub) }));
+
+  /* The cat shares the headline's stage rather than sitting under it, so it
+     reads as company rather than as a footnote. It is a <figure> with no
+     caption and aria-hidden: it says nothing the words do not. */
+  const figure = el("figure", { className: "cat-stage__figure" });
+  figure.setAttribute("aria-hidden", "true");
+
+  const wrap = el("section", { className: "intro rail", id: "intro" },
+    el("div", { className: "cat-stage" }, words, figure));
 
   const ask = el("div", { className: "ask" },
     el("p", { className: "ask__lead", textContent: t(C.ui.audienceLabel) }),
@@ -259,11 +269,27 @@ function heroHeading() {
   return el("h1", { id: "intro-h" }, line, el("span", { className: "stop", textContent: "." }));
 }
 
+let cat = null;
+let paws = null;
+
 function renderRoute(id) {
   const route = ROUTES.find((r) => r.id === id) ?? ROUTES[0];
   const view = document.getElementById("view");
+
+  /* Tear the companion down before the markup it was rigged to is replaced,
+     or its listeners keep running against elements that no longer exist. */
+  cat?.destroy(); cat = null;
+  paws?.destroy(); paws = null;
+
   view.replaceChildren(...route.sections.map((key) => SECTIONS[key]?.()).filter(Boolean));
   document.title = `${t(route.label)} — ${C.meta.name}, ${t(C.meta.role)}`;
+
+  const host = view.querySelector(".cat-stage__figure");
+  if (host) {
+    cat = new Cat(host);
+    cat.start();
+    paws = new PawTrail().mount(document.body);
+  }
 }
 
 /* =========================================================================
@@ -444,5 +470,5 @@ attune.addEventListener("change", (e) => {
   const { changed } = e.detail;
   if (changed === "lang") { renderStatic(); renderAttune(); renderTabs(); renderRoute(router.current); }
   else if (changed === "audience") renderTabs();
-  else if (changed === "mode") syncField();
+  else if (changed === "mode") { syncField(); renderRoute(router.current); }
 });
