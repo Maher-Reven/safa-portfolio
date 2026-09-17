@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Safa Mohalaia — Digital designer, Amsterdam</title>
-<meta name="description" content="Portfolio of Safa Mohalaia, a digital designer in Amsterdam. Human-centred, detail-obsessed, accessible by construction. This site rearranges itself depending on who is reading it.">
-<meta name="color-scheme" content="light">
+<title>Safa Mohalaia — UX / UI Designer, Amsterdam</title>
+<meta name="description" content="Portfolio of Safa Mohalaia, a UX/UI designer in Amsterdam. Healthcare, civic infrastructure and community platforms. This site rearranges itself depending on who is reading it.">
+<meta name="color-scheme" content="dark light">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 
 <!-- Fonts. Four faces, each doing one job — see tokens.css for why each.
@@ -13,7 +13,7 @@
      stacks are metric-close enough that the swap does not shift layout. -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..700,0..100,0..1&family=Inter:wght@300..700&family=JetBrains+Mono:wght@400;500&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,200..700;1,9..40,200..500&family=DM+Mono:wght@400;500&family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..600,0..100,0..1&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
 
 <link rel="stylesheet" href="styles/tokens.css">
 <link rel="stylesheet" href="styles/base.css">
@@ -63,6 +63,8 @@
      ===================================================================== -->
 <div id="attune-root"></div>
 
+<p class="banner" id="banner"></p>
+
 <header class="site-head rail">
   <a class="wordmark" href="#main">
     <span class="wordmark__name">Safa Mohalaia</span>
@@ -78,6 +80,7 @@
 
   <!-- ===== The opening question ===== -->
   <section id="intro" class="intro rail" aria-labelledby="intro-h">
+    <p class="intro__kicker" data-i18n="intro.kicker"></p>
     <h1 id="intro-h" data-i18n="intro.statement"></h1>
     <p class="intro__sub" data-i18n="intro.sub"></p>
 

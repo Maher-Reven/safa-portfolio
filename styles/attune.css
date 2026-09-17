@@ -15,14 +15,14 @@
   font-family: var(--face-detail);
   font-size: var(--t-sm);
   letter-spacing: 0.02em;
-  border: var(--rule-ink);
+  border: var(--rule-strong);
   border-radius: var(--radius-pill);
-  background: var(--paper-pure);
+  background: var(--surface);
   transition: background var(--dur-quick) var(--ease-out),
               color var(--dur-quick) var(--ease-out);
 }
-#attune-open:hover { background: var(--ink); color: var(--paper-pure); }
-#attune-open[aria-expanded="true"] { background: var(--ink); color: var(--paper-pure); }
+#attune-open:hover { background: var(--text); color: var(--surface); }
+#attune-open[aria-expanded="true"] { background: var(--text); color: var(--surface); }
 
 /* ---- The panel --------------------------------------------------------- */
 .attune {
@@ -35,8 +35,8 @@
            max(var(--s-lg), env(safe-area-inset-bottom));
   overflow-y: auto;
   overscroll-behavior: contain;
-  background: var(--paper-pure);
-  border-inline-start: var(--rule-ink);
+  background: var(--surface);
+  border-inline-start: var(--rule-strong);
   transform: translateX(101%);
   transition: transform var(--dur-calm) var(--ease-out);
 }
@@ -50,7 +50,7 @@
   position: fixed;
   inset: 0;
   z-index: calc(var(--z-attune) - 1);
-  background: color-mix(in oklab, var(--ink) 34%, transparent);
+  background: color-mix(in oklab, var(--text) 34%, transparent);
   opacity: 0;
   pointer-events: none;
   transition: opacity var(--dur-calm) var(--ease-out);
@@ -63,7 +63,7 @@
   justify-content: space-between;
   gap: var(--s-sm);
   padding-block-end: var(--s-sm);
-  border-block-end: var(--rule-ink);
+  border-block-end: var(--rule-strong);
 }
 .attune__title {
   font-family: var(--face-display);
@@ -73,7 +73,7 @@
 .attune__intro {
   margin-block: var(--s-sm) var(--s-lg);
   font-size: var(--t-sm);
-  color: var(--ink-soft);
+  color: var(--text-soft);
   max-width: 34ch;
 }
 
@@ -88,7 +88,7 @@
   font-size: var(--t-detail);
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: var(--ink-faint);
+  color: var(--text-faint);
 }
 
 /* "Your device already asked for this." — shown next to any axis where we
@@ -100,7 +100,7 @@
   font-family: var(--face-detail);
   font-size: var(--t-detail);
   line-height: 1.4;
-  color: var(--tide-deep);
+  color: var(--note);
   text-transform: none;
   letter-spacing: 0;
   max-width: 30ch;
@@ -141,11 +141,11 @@
   transition: background var(--dur-quick) var(--ease-out),
               border-color var(--dur-quick) var(--ease-out);
 }
-.choice:hover label { border-color: var(--ink-soft); }
+.choice:hover label { border-color: var(--text-soft); }
 .choice input:checked + label {
-  background: var(--ink);
-  border-color: var(--ink);
-  color: var(--paper-pure);
+  background: var(--text);
+  border-color: var(--text);
+  color: var(--surface);
 }
 /* The ring goes on the label, because the input itself is invisible. */
 .choice input:focus-visible + label {
@@ -160,7 +160,7 @@
   margin-block-start: var(--s-3xs);
   font-size: var(--t-detail);
   line-height: 1.45;
-  color: var(--ink-faint);
+  color: var(--text-faint);
   max-width: 30ch;
 }
 
@@ -171,10 +171,10 @@
   border-block-start: var(--rule);
   font-family: var(--face-detail);
   font-size: var(--t-detail);
-  color: var(--ink-soft);
+  color: var(--text-soft);
 }
 .attune__log li { margin-block-end: var(--s-3xs); max-width: none; }
-.attune__log li::before { content: "→ "; color: var(--tide); }
+.attune__log li::before { content: "→ "; color: var(--note); }
 
 @media (max-width: 30rem) {
   .attune { width: 100%; border-inline-start: none; }

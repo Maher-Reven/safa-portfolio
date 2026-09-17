@@ -1,86 +1,80 @@
 /* =========================================================================
    content.js — everything the site says, in both languages, in one file.
    -------------------------------------------------------------------------
-   This is the only file Safa needs to open to update the site. No build
-   step, no CMS, no markdown pipeline. Edit, save, refresh.
+   This is the only file Safa needs to open to change the site. No build
+   step, no CMS. Edit, save, refresh.
 
-   Every string is a pair: { en: "...", nl: "..." }
-   If a Dutch string is missing the site falls back to English rather than
-   showing an empty space.
+   Every string is a pair: { en: "…", nl: "…" }. A missing Dutch string
+   falls back to English rather than leaving a hole on the page.
 
-   PROJECTS marked `placeholder: true` are scaffolding. Replace them with
-   real work — the shape is the contract, the content is yours.
+   Project copy, imagery and contact details are her own, carried over from
+   her live portfolio. The `details` arrays are the annotation layer: the
+   decisions behind the work, disclosed only to visitors who look closer.
+   Entries marked TODO are hers to write — nothing is invented for her.
    ========================================================================= */
 
 export const meta = {
   name: "Safa Mohalaia",
-  role: {
-    en: "Digital designer",
-    nl: "Digitaal ontwerper",
+  role:    { en: "UX / UI Designer", nl: "UX / UI Designer" },
+  located: { en: "Amsterdam, NL",    nl: "Amsterdam, NL" },
+  email: "safamuh98@icloud.com",
+  phone: "+31 6 38 13 61 34",
+  available: {
+    en: "Open for freelance and full-time work",
+    nl: "Open voor freelance en vast werk",
   },
-  location: "Amsterdam",
-  email: "hello@example.com",           // TODO: real address
   links: [
-    { label: "Behance",  href: "#" },   // TODO: real links
-    { label: "LinkedIn", href: "#" },
+    { label: "LinkedIn", href: "https://www.linkedin.com/in/sofy-m-93474b174" },
     { label: "GitHub",   href: "https://github.com/sofy98" },
   ],
 };
 
 /* -------------------------------------------------------------------------
    THE OPENING QUESTION
-   The site asks who is looking before it decides what to be. This is the
-   human-centred process run on the visitor, live, rather than described
-   in a paragraph about human-centred process.
+   The site asks who is looking before it decides what to be. Human-centred
+   design run on the visitor, live, instead of a paragraph claiming it.
    ------------------------------------------------------------------------- */
 export const audiences = [
   {
     id: "hiring",
     label:  { en: "I'm hiring",          nl: "Ik werf" },
-    detail: { en: "Forty seconds. CV first, three projects, done.",
-              nl: "Veertig seconden. Eerst het cv, drie projecten, klaar." },
-    order: ["intro", "cv", "work", "contact"],
-    depth: "brief",
+    detail: { en: "Forty seconds. Outcomes first, then the work, then how to reach me.",
+              nl: "Veertig seconden. Eerst resultaten, dan het werk, dan hoe je me bereikt." },
+    order: ["outcomes", "work", "skills", "contact"],
   },
   {
     id: "designer",
     label:  { en: "I'm a designer",      nl: "Ik ben ontwerper" },
-    detail: { en: "The process, the rejected drafts, the decisions and why.",
-              nl: "Het proces, de afgekeurde schetsen, de keuzes en waarom." },
-    order: ["intro", "work", "process", "detail-index", "about", "contact"],
-    depth: "deep",
+    detail: { en: "Process, decisions, and the accessibility work underneath all of it.",
+              nl: "Proces, keuzes, en het toegankelijkheidswerk daaronder." },
+    order: ["work", "process", "accessibility", "detail-index", "about", "contact"],
   },
   {
     id: "client",
     label:  { en: "I have a project",    nl: "Ik heb een opdracht" },
     detail: { en: "What I do, how I work, and what it asks of you.",
               nl: "Wat ik doe, hoe ik werk, en wat het van jou vraagt." },
-    order: ["intro", "services", "work", "process", "contact"],
-    depth: "brief",
+    order: ["outcomes", "skills", "work", "process", "contact"],
   },
   {
     id: "curious",
     label:  { en: "Just looking",        nl: "Ik kijk even rond" },
     detail: { en: "No order imposed. Everything is open.",
               nl: "Geen volgorde opgelegd. Alles staat open." },
-    order: ["intro", "work", "about", "process", "detail-index", "cv", "contact"],
-    depth: "deep",
+    order: ["work", "about", "process", "accessibility", "skills", "detail-index", "contact"],
   },
 ];
 
-/* -------------------------------------------------------------------------
-   INTRO — the only text on the first screen.
-   ------------------------------------------------------------------------- */
 export const intro = {
+  kicker:  { en: "Portfolio · MMXXVI", nl: "Portfolio · MMXXVI" },
   statement: {
-    en: "I design digital things that notice the person using them.",
-    nl: "Ik ontwerp digitale dingen die de mens die ze gebruikt opmerken.",
+    en: "Turning complexity into clarity, one interface at a time.",
+    nl: "Complexiteit omzetten in helderheid, één interface tegelijk.",
   },
   sub: {
-    en: "Human-centred by training, obsessive by temperament, accessible because anything else is a design that decided some people don't count.",
-    nl: "Human-centred opgeleid, obsessief van aard, toegankelijk omdat alles daarbuiten een ontwerp is dat besloot dat sommige mensen niet meetellen.",
+    en: "UX / UI Designer in Amsterdam. Healthcare, civic infrastructure, community platforms — the kind of products where a confusing screen has a cost.",
+    nl: "UX / UI Designer in Amsterdam. Zorg, publieke infrastructuur, communityplatforms — het soort producten waar een verwarrend scherm een prijs heeft.",
   },
-  /* Shown once, on first visit, under the audience question. */
   invitation: {
     en: "This site rearranges itself depending on who you are. Tell it, or don't — everything stays reachable either way.",
     nl: "Deze site herschikt zichzelf op basis van wie je bent. Vertel het, of niet — alles blijft hoe dan ook bereikbaar.",
@@ -88,136 +82,286 @@ export const intro = {
 };
 
 /* -------------------------------------------------------------------------
-   WORK
-   `details` are the annotation layer: the things only a person who looks
-   closely would ever find. Each one is a real decision with a real reason.
+   OUTCOMES — the numbers, alone, for the visitor with forty seconds.
+   Every figure here is from the work itself, not from a rounding-up.
+   ------------------------------------------------------------------------- */
+export const outcomes = [
+  { figure: "13",     label: { en: "cities running VeloTech.AI",      nl: "steden draaien VeloTech.AI" } },
+  { figure: "€150K+", label: { en: "early revenue it helped generate", nl: "vroege omzet mede gegenereerd" } },
+  { figure: "7",      label: { en: "pilot clients",                    nl: "pilotklanten" } },
+  { figure: "4",      label: { en: "products shipped since 2024",      nl: "producten opgeleverd sinds 2024" } },
+];
+
+/* -------------------------------------------------------------------------
+   WORK — four real projects. Copy and imagery are hers.
    ------------------------------------------------------------------------- */
 export const projects = [
   {
-    slug: "placeholder-one",
-    placeholder: true,
-    year: "2025",
-    title:      { en: "Project title",  nl: "Projecttitel" },
-    discipline: { en: "Interaction design · Research", nl: "Interactieontwerp · Onderzoek" },
-    role:       { en: "Design lead",    nl: "Ontwerplead" },
+    slug: "velotech",
+    colour: "var(--c-velotech)",
+    year: "2025 — 2026",
+    title:      { en: "VeloTech.AI", nl: "VeloTech.AI" },
+    company:    { en: "VeloTech.AI · Freelance", nl: "VeloTech.AI · Freelance" },
+    discipline: { en: "Dashboard · Civic infrastructure",
+                  nl: "Dashboard · Publieke infrastructuur" },
+    role:       { en: "Product Designer", nl: "Product Designer" },
     summary: {
-      en: "One paragraph: the problem as the people in it experienced it, not as the brief described it.",
-      nl: "Eén alinea: het probleem zoals de mensen erin het ervoeren, niet zoals de briefing het omschreef.",
+      en: "Cities have a lot of infrastructure to maintain — road markings, street lights, signs. Inspecting all of it manually is slow, costly and hard to scale.",
+      nl: "Steden hebben veel infrastructuur om te onderhouden — wegmarkeringen, straatverlichting, borden. Dit handmatig inspecteren is traag, duur en moeilijk schaalbaar.",
     },
-    cover: { src: "assets/work/placeholder-1.svg", alt: { en: "", nl: "" } },
+    sections: {
+      role: { en: "I designed the UI for the VeloTech.AI web app — the screens inspectors and city workers use to view and manage inspection results.",
+              nl: "Ik ontwierp de UI voor de VeloTech.AI-webapp — de schermen die inspecteurs en gemeentemedewerkers gebruiken om inspectieresultaten te bekijken en te beheren." },
+      process: { en: "I looked at how inspectors actually work, sketched out the main screens, and refined them against feedback and the real data the product uses.",
+                 nl: "Ik bekeek hoe inspecteurs echt werken, schetste de belangrijkste schermen en verfijnde ze op basis van feedback en de echte data die het product gebruikt." },
+      solution: { en: "A dashboard showing a live map, detected damage with severity scores, asset details and inspection history — plus reports and repair orders.",
+                  nl: "Een dashboard met een live kaart, gedetecteerde schade met ernstscores, asset-details en inspectiegeschiedenis — plus rapporten en reparatieopdrachten." },
+      result: { en: "The platform is now used in 13 cities with 7 pilot clients, and helped generate €150K+ in early revenue.",
+                nl: "Het platform wordt nu gebruikt in 13 steden met 7 pilotklanten en hielp €150K+ aan vroege omzet te genereren." },
+    },
+    cover: { src: "assets/work/velotech-dashboard.png",
+             alt: { en: "The VeloTech.AI dashboard: a live city map beside detected road damage with severity scores",
+                    nl: "Het VeloTech.AI-dashboard: een live stadskaart naast gedetecteerde wegschade met ernstscores" } },
+    shots: [
+      { src: "assets/work/velotech-inspections.png", span: "half",
+        alt: { en: "The inspections list, filtered by severity", nl: "De inspectielijst, gefilterd op ernst" } },
+      { src: "assets/work/velotech-detail.png", span: "half",
+        alt: { en: "A single asset's detail view with its inspection history", nl: "Detailweergave van één asset met inspectiegeschiedenis" } },
+      { src: "assets/work/velotech-reports.png", span: "wide",
+        alt: { en: "The reporting view, where inspections become repair orders", nl: "De rapportageweergave, waar inspecties reparatieopdrachten worden" } },
+    ],
     details: [
-      { kind: "colour", value: "#e8402a",
-        note: { en: "Chosen for 3.6:1 against the ground — display type only. Body copy uses the deeper cut at 5.7:1.",
-                nl: "Gekozen voor 3,6:1 op de ondergrond — alleen displaytekst. Broodtekst gebruikt de diepere versie op 5,7:1." } },
-      { kind: "spacing", value: "24px",
-        note: { en: "The one gap that made the card scannable at arm's length on a phone.",
-                nl: "De ene marge die de kaart op armlengte op een telefoon scanbaar maakte." } },
-      { kind: "rejected",
-        note: { en: "The version before this one tested well and felt wrong. Kept here because the difference is the whole argument.",
-                nl: "De versie hiervoor testte goed en voelde fout. Hier bewaard omdat het verschil het hele argument is." } },
+      { kind: "colour", value: "#2F5D8C",
+        note: { en: "Municipal blue, taken from the product's own chrome rather than assigned. On the dark ground it measures 3.1:1 — enough for a large surface, never enough for text, so no label is ever set in it.",
+                nl: "Gemeenteblauw, genomen uit de chrome van het product zelf in plaats van toegewezen. Op de donkere ondergrond meet het 3,1:1 — genoeg voor een groot vlak, nooit genoeg voor tekst, dus geen enkel label is erin gezet." } },
+      { kind: "constraint",
+        note: { en: "Severity is never carried by colour alone. An inspector reading a map in daylight, or with any colour vision deficiency, still needs to rank damage — so severity is a score and a shape, and the colour is the third signal, not the first.",
+                nl: "Ernst wordt nooit alleen door kleur gedragen. Een inspecteur die bij daglicht een kaart leest, of met welke kleurzichtstoornis dan ook, moet schade nog steeds kunnen rangschikken — dus ernst is een score en een vorm, en kleur is het derde signaal, niet het eerste." } },
     ],
   },
+
   {
-    slug: "placeholder-two",
-    placeholder: true,
-    year: "2024",
-    title:      { en: "Project title", nl: "Projecttitel" },
-    discipline: { en: "Visual identity · Motion", nl: "Visuele identiteit · Motion" },
-    role:       { en: "Designer", nl: "Ontwerper" },
-    summary: { en: "", nl: "" },
-    cover: { src: "assets/work/placeholder-2.svg", alt: { en: "", nl: "" } },
-    details: [],
-  },
-  {
-    /* The one real project we have. Kept because it is honest and because
-       the accessibility audit inside it is genuinely unusual for a first
-       year — most portfolios claim a11y, this one has the test notes. */
-    slug: "cmd-rebuild",
-    placeholder: false,
-    year: "2023",
-    title:      { en: "Rebuilding CMD Amsterdam, by hand",
-                  nl: "CMD Amsterdam met de hand herbouwen" },
-    discipline: { en: "Front-end · Accessibility audit",
-                  nl: "Front-end · Toegankelijkheidsaudit" },
-    role:       { en: "Everything", nl: "Alles" },
+    slug: "dentara",
+    colour: "var(--c-dentara)",
+    year: "2026",
+    title:      { en: "Dentara", nl: "Dentara" },
+    company:    { en: "Graduation project", nl: "Afstudeerproject" },
+    discipline: { en: "Mobile · Healthcare", nl: "Mobiel · Zorg" },
+    role:       { en: "Lead Designer", nl: "Lead Designer" },
     summary: {
-      en: "A first-year brief: rebuild your own school's website in hand-written HTML and CSS, no frameworks, no classes. I treated it as an accessibility audit instead of a copying exercise — VoiceOver pass, contrast measurement, colour-blindness and blurred-vision simulation, written up honestly including what I could not fix.",
-      nl: "Een eerstejaarsopdracht: bouw de website van je eigen opleiding na in handgeschreven HTML en CSS, zonder frameworks, zonder classes. Ik behandelde het als een toegankelijkheidsaudit in plaats van een overschrijfoefening — VoiceOver-test, contrastmeting, kleurenblindheid- en wazigzichtsimulatie, eerlijk opgeschreven inclusief wat ik niet kon oplossen.",
+      en: "Patients at a holistic dental practice felt overwhelmed by complex medical information, with no central place to review treatments or prepare for appointments.",
+      nl: "Patiënten bij een holistische tandartspraktijk voelden zich overweldigd door complexe medische informatie, zonder centrale plek om behandelingen te bekijken of zich voor te bereiden op afspraken.",
     },
-    cover: { src: "assets/work/cmd-rebuild.svg",
-             alt: { en: "The rebuilt CMD Amsterdam homepage on a phone",
-                    nl: "De nagebouwde CMD Amsterdam-homepage op een telefoon" } },
-    href: "https://github.com/sofy98/Blokweb",
+    sections: {
+      role: { en: "Solo UX designer — research, concept, wireframes, visual design and prototype.",
+              nl: "Solo UX-designer — onderzoek, concept, wireframes, visueel ontwerp en prototype." },
+      process: { en: "Expert interviews, patient interviews, desk research, three concept directions, lo-fi and mid-fi testing, iterated into a full hi-fi prototype.",
+                 nl: "Expertinterviews, patiëntinterviews, deskresearch, drie conceptrichtingen, lo-fi- en mid-fi-testen, geïtereerd naar een volledig hi-fi-prototype." },
+      solution: { en: "A mobile app that guides patients through their care journey: a treatment preparation flow, an interactive tooth map, a personal health overview and a holistic care section.",
+                  nl: "Een mobiele app die patiënten door hun zorgtraject begeleidt: een voorbereidingsflow voor behandelingen, een interactieve gebitskaart, een persoonlijk gezondheidsoverzicht en een holistische zorgsectie." },
+      result: { en: "Patients understood the app quickly and valued the preparation feature most. The practice confirmed it would save time and strengthen the patient relationship.",
+                nl: "Patiënten begrepen de app snel en waardeerden de voorbereidingsfunctie het meest. De praktijk bevestigde dat het tijd zou besparen en de band met de patiënt zou versterken." },
+    },
+    cover: { src: "assets/work/dentara-home.png",
+             alt: { en: "Dentara's home screen: a personal greeting above the next appointment and a treatment progress summary",
+                    nl: "Het startscherm van Dentara: een persoonlijke begroeting boven de volgende afspraak en een overzicht van de behandelvoortgang" } },
+    shots: [
+      { src: "assets/work/dentara-gebit.png", span: "half",
+        alt: { en: "The interactive tooth map, where each tooth carries its own treatment history", nl: "De interactieve gebitskaart, waar elke tand zijn eigen behandelgeschiedenis draagt" } },
+      { src: "assets/work/dentara-voorbereiden.png", span: "half",
+        alt: { en: "The appointment preparation flow — the feature patients valued most", nl: "De voorbereidingsflow voor afspraken — de functie die patiënten het meest waardeerden" } },
+      { src: "assets/work/dentara-historie.png", span: "half",
+        alt: { en: "Treatment history, ordered by visit", nl: "Behandelgeschiedenis, geordend per bezoek" } },
+      { src: "assets/work/dentara-holistisch.png", span: "half",
+        alt: { en: "The holistic care section", nl: "De holistische zorgsectie" } },
+    ],
     details: [
-      { kind: "finding", value: "red on yellow",
-        note: { en: "Failed contrast. It appeared twice on the whole site, which is exactly why it had survived review — nobody looks at two words.",
-                nl: "Zakte voor contrast. Het kwam twee keer voor op de hele site, en juist daarom was het door de review geglipt — niemand kijkt naar twee woorden." } },
-      { kind: "finding", value: "blurred vision",
-        note: { en: "The only simulation the page failed. Everything else passed, including full colour-blindness. I wrote it down rather than quietly dropping it.",
-                nl: "De enige simulatie waarvoor de pagina zakte. Al het andere slaagde, inclusief volledige kleurenblindheid. Ik schreef het op in plaats van het stil te laten vallen." } },
-      { kind: "finding", value: "a missing button",
-        note: { en: "VoiceOver found a control I had built wrong in the HTML. The screen reader found it before I did. That is the lesson.",
-                nl: "VoiceOver vond een element dat ik verkeerd in de HTML had gebouwd. De screenreader vond het eerder dan ik. Dat is de les." } },
-      { kind: "rejected",
-        note: { en: "I built the hamburger menu twice — once in CSS, then again in JavaScript — because I wanted to know which one a keyboard user would prefer.",
-                nl: "Ik bouwde het hamburgermenu twee keer — eerst in CSS, daarna in JavaScript — omdat ik wilde weten welke een toetsenbordgebruiker zou verkiezen." } },
+      { kind: "colour", value: "#E8A598",
+        note: { en: "Blush, not clinical blue. Dental anxiety is the actual problem being designed against, and every convention of medical UI is a convention built for the practice, not the patient.",
+                nl: "Blush, geen klinisch blauw. Tandartsangst is het werkelijke probleem waartegen ontworpen wordt, en elke conventie van medische UI is een conventie gebouwd voor de praktijk, niet voor de patiënt." } },
+      { kind: "finding",
+        note: { en: "Testing said the preparation flow mattered most — not the tooth map, which was the more impressive thing to build. The research disagreed with the instinct and the research won.",
+                nl: "Uit de tests bleek de voorbereidingsflow het belangrijkst — niet de gebitskaart, die indrukwekkender was om te bouwen. Het onderzoek was het oneens met het instinct en het onderzoek won." } },
+      /* TODO (Safa): the tooth map is the most interesting interaction in
+         this project and the one thing a designer reading this will want to
+         know about. One line on how a patient with limited dexterity or a
+         screen reader reaches a single tooth would be the strongest
+         annotation on the whole site. */
+    ],
+  },
+
+  {
+    slug: "pubhubs",
+    colour: "var(--c-pubhubs)",
+    year: "2024 — 2025",
+    title:      { en: "PubHubs", nl: "PubHubs" },
+    company:    { en: "PubHubs · Freelance", nl: "PubHubs · Freelance" },
+    discipline: { en: "Community platform", nl: "Communityplatform" },
+    role:       { en: "UX / UI Designer", nl: "UX / UI Designer" },
+    summary: {
+      en: "Students inside the organisation had no easy way to find each other — no central place to find communities, join discussions, or reach a fellow student.",
+      nl: "Studenten binnen de organisatie hadden geen makkelijke manier om elkaar te vinden — geen centrale plek voor communities, discussies of medestudenten.",
+    },
+    sections: {
+      role: { en: "I designed the full platform — from the community overview to the chat rooms and the search system.",
+              nl: "Ik ontwierp het volledige platform — van het community-overzicht tot de chatrooms en het zoeksysteem." },
+      process: { en: "I focused on how students find people and topics, and designed the search and filter system so the right room, topic or person is reachable quickly.",
+                 nl: "Ik richtte me op hoe studenten mensen en onderwerpen vinden, en ontwierp het zoek- en filtersysteem zodat de juiste room, het juiste onderwerp of de juiste persoon snel bereikbaar is." },
+      solution: { en: "A platform where students browse communities, join public rooms, filter by topic or level, and chat one to one — in one dark, quiet interface.",
+                  nl: "Een platform waar studenten communities verkennen, openbare rooms joinen, filteren op onderwerp of niveau en één-op-één chatten — in één donkere, rustige interface." },
+      result: { en: "A clear way for students to connect inside the organisation, with search and filtering at the core so nothing is hard to find.",
+                nl: "Een duidelijke manier voor studenten om binnen de organisatie in contact te komen, met zoeken en filteren als kern zodat niets moeilijk te vinden is." },
+    },
+    cover: { src: "assets/work/pubhubs.png",
+             alt: { en: "The PubHubs community platform: room list, active conversation and member sidebar",
+                    nl: "Het PubHubs-communityplatform: roomlijst, actief gesprek en ledenzijbalk" } },
+    shots: [
+      { src: "assets/work/pubhubs-communities.png", span: "half",
+        alt: { en: "The community overview, filterable by topic and level", nl: "Het community-overzicht, filterbaar op onderwerp en niveau" } },
+      { src: "assets/work/pubhubs-rooms.png", span: "half",
+        alt: { en: "Public rooms, ranked by activity", nl: "Openbare rooms, gerangschikt op activiteit" } },
+      { src: "assets/work/pubhubs-chat.png", span: "wide",
+        alt: { en: "One-to-one chat", nl: "Één-op-één chat" } },
+    ],
+    details: [
+      { kind: "decision",
+        note: { en: "Search and filter were designed first, before the rooms they search. In a platform whose whole purpose is finding people, the finding mechanism is the product and the rooms are its content.",
+                nl: "Zoeken en filteren zijn als eerste ontworpen, vóór de rooms die ze doorzoeken. In een platform dat bestaat om mensen te vinden, is het vindmechanisme het product en zijn de rooms de inhoud." } },
+    ],
+  },
+
+  {
+    slug: "medialab",
+    colour: "var(--c-medialab)",
+    year: "2024 — 2025",
+    title:      { en: "MediaLab", nl: "MediaLab" },
+    company:    { en: "MediaLab · Internship", nl: "MediaLab · Stage" },
+    discipline: { en: "Mobile + dashboard redesign", nl: "Mobiel + dashboard-herontwerp" },
+    role:       { en: "UX Designer", nl: "UX Designer" },
+    summary: {
+      en: "MediaLab's existing app felt outdated and inconsistent. Users needed a cleaner way to manage and share media files.",
+      nl: "De bestaande app van MediaLab voelde verouderd en inconsistent. Gebruikers hadden een strakkere manier nodig om mediabestanden te beheren en te delen.",
+    },
+    sections: {
+      role: { en: "I redesigned the MediaLab mobile app and web dashboard — navigation, file browsing, and the overall visual style.",
+              nl: "Ik herontwierp de MediaLab mobiele app en het webdashboard — navigatie, bestandsbeheer en de algehele visuele stijl." },
+      process: { en: "I audited the existing app for what felt cluttered or confusing, then explored a darker direction and redesigned the folder view, file grid and main dashboard.",
+                 nl: "Ik auditeerde de bestaande app op wat rommelig of verwarrend voelde, verkende een donkerdere richting en herontwierp het mapoverzicht, het bestandsraster en het hoofddashboard." },
+      solution: { en: "A dark-themed redesign with cleaner folder navigation, a better grid for media files, and a dashboard showing connections, workflows and activity at a glance.",
+                  nl: "Een herontwerp met donker thema, strakkere mapnavigatie, een beter raster voor mediabestanden en een dashboard dat connecties, workflows en activiteit in één oogopslag toont." },
+      result: { en: "A more consistent product that sits closer to modern media tools, and makes files easier to find, manage and share.",
+                nl: "Een consistenter product dat dichter bij moderne mediatools staat en bestanden makkelijker vindbaar, beheerbaar en deelbaar maakt." },
+    },
+    cover: { src: "assets/work/medialab-dashboard.png",
+             alt: { en: "The redesigned MediaLab dashboard: connections, workflows and recent activity in one view",
+                    nl: "Het herontworpen MediaLab-dashboard: connecties, workflows en recente activiteit in één weergave" } },
+    shots: [
+      { src: "assets/work/medialab-folders.png", span: "half",
+        alt: { en: "Folder navigation after the redesign", nl: "Mapnavigatie na het herontwerp" } },
+      { src: "assets/work/medialab-info.png", span: "half",
+        alt: { en: "A file's detail panel", nl: "Het detailpaneel van een bestand" } },
+      { src: "assets/work/medialab.png", span: "half",
+        alt: { en: "The mobile app's media grid", nl: "Het mediaraster van de mobiele app" } },
+      { src: "assets/work/medialab-2.png", span: "half",
+        alt: { en: "Mobile file browsing", nl: "Bestanden bekijken op mobiel" } },
+    ],
+    details: [
+      { kind: "constraint",
+        note: { en: "A dark theme is a decision about someone's eyes, not a style. It suits a tool used for hours against bright media thumbnails; it suits low-vision readers far less. That is the trade this product made, and it is why this site refuses to make the same one for you.",
+                nl: "Een donker thema is een keuze over iemands ogen, geen stijl. Het past bij een tool die uren wordt gebruikt tegen felle mediathumbnails; het past slechtzienden veel minder. Dat is de afweging die dit product maakte, en daarom weigert deze site die keuze voor jou te maken." } },
     ],
   },
 ];
 
 /* -------------------------------------------------------------------------
-   ABOUT / PROCESS / CV / SERVICES — kept short on purpose.
+   ACCESSIBILITY — where this site's behaviour comes from.
+   These findings are real, from her own first accessibility audit in 2023:
+   she tested her work with VoiceOver, a contrast checker, and Chrome's
+   colour-vision and blurred-vision simulations, and wrote up what failed.
+   Most portfolios claim accessibility. This one has the test notes.
    ------------------------------------------------------------------------- */
+export const accessibility = {
+  lead: {
+    en: "In 2023, on a first-year assignment, I ran my own work through a screen reader, a contrast checker and Chrome's vision simulations, and wrote down everything that failed. Three things did. Every one of them taught me something I now build in from the start — including into this site.",
+    nl: "In 2023, bij een eerstejaarsopdracht, haalde ik mijn eigen werk door een screenreader, een contrastchecker en de zichtsimulaties van Chrome, en schreef ik op wat er faalde. Drie dingen faalden. Elk daarvan leerde me iets dat ik nu vanaf het begin inbouw — ook in deze site.",
+  },
+  findings: [
+    { value: { en: "red on yellow", nl: "rood op geel" },
+      note: { en: "Failed contrast. It appeared twice on the entire site — which is exactly why it had survived every review. Nobody checks two words.",
+              nl: "Zakte voor contrast. Het kwam twee keer voor op de hele site — en juist daarom was het door elke review geglipt. Niemand controleert twee woorden." } },
+    { value: { en: "blurred vision", nl: "wazig zicht" },
+      note: { en: "The only simulation the page failed. Full colour-blindness passed; reduced contrast passed. I wrote the failure down instead of quietly dropping it.",
+              nl: "De enige simulatie waarvoor de pagina zakte. Volledige kleurenblindheid slaagde; verlaagd contrast slaagde. Ik schreef het falen op in plaats van het stil te laten vallen." } },
+    { value: { en: "a missing button", nl: "een ontbrekende knop" },
+      note: { en: "VoiceOver found a control I had built wrong in the HTML. The screen reader found it before I did. That is the whole lesson: the test is not a formality, it is a better reader than you are.",
+              nl: "VoiceOver vond een element dat ik verkeerd in de HTML had gebouwd. De screenreader vond het eerder dan ik. Dat is de hele les: de test is geen formaliteit, het is een betere lezer dan jij bent." } },
+  ],
+  close: {
+    en: "That is why this site asks your device what you need before it decides what to be, why it has two fully designed modes instead of one and a fallback, and why it tells you out loud whenever it changes something.",
+    nl: "Daarom vraagt deze site aan je apparaat wat je nodig hebt voordat hij besluit wat hij wordt, daarom heeft hij twee volledig ontworpen modi in plaats van één plus een terugval, en daarom zegt hij hardop wanneer hij iets verandert.",
+  },
+  source: { label: "github.com/sofy98/Blokweb", href: "https://github.com/sofy98/Blokweb" },
+};
+
 export const about = {
   body: {
     en: [
-      "I studied Communication and Multimedia Design in Amsterdam, where the first thing they teach you is that the design process starts with the people, not the screen.",
-      "In practice that means I spend a long time on things nobody is supposed to notice: the gap that makes a card readable at arm's length, the contrast ratio that decides whether a sentence exists for someone, the two words in a corner that fail a test everyone else passed.",
-      "I am a perfectionist about detail and honest about what I could not get right. Both are on this site.",
+      "I'm a UX/UI designer in Amsterdam, specialising in turning complexity into clarity. Whether it's a dashboard, a mobile app or a design system, I approach it the same way: understand it deeply, structure it carefully, design it beautifully.",
+      "The products I've worked on share something. A city inspector ranking road damage, a patient trying to understand a treatment, a student looking for one person in a crowd — in all of them, a confusing screen has a cost that somebody other than me pays.",
+      "So I spend a long time on things nobody is supposed to notice. The margin that makes a card readable at arm's length. The contrast ratio that decides whether a sentence exists for someone. The two words in a corner that fail a test everything else passed.",
     ],
     nl: [
-      "Ik studeerde Communication and Multimedia Design in Amsterdam, waar ze je als eerste leren dat het ontwerpproces bij de mens begint, niet bij het scherm.",
-      "In de praktijk betekent dat dat ik lang bezig ben met dingen die niemand hoort op te merken: de marge die een kaart op armlengte leesbaar maakt, de contrastverhouding die bepaalt of een zin voor iemand bestaat, de twee woorden in een hoek die zakken voor een test die iedereen verder haalde.",
-      "Ik ben perfectionistisch over detail en eerlijk over wat ik niet goed kreeg. Beide staan op deze site.",
+      "Ik ben UX/UI-designer in Amsterdam, gespecialiseerd in het omzetten van complexiteit naar helderheid. Of het nu een dashboard, een mobiele app of een designsysteem is, ik pak het hetzelfde aan: diep begrijpen, zorgvuldig structureren, mooi ontwerpen.",
+      "De producten waaraan ik werkte hebben iets gemeen. Een stadsinspecteur die wegschade rangschikt, een patiënt die een behandeling probeert te begrijpen, een student die één persoon zoekt in een menigte — in al die gevallen heeft een verwarrend scherm een prijs die iemand anders dan ik betaalt.",
+      "Dus besteed ik lang aan dingen die niemand hoort op te merken. De marge die een kaart op armlengte leesbaar maakt. De contrastverhouding die bepaalt of een zin voor iemand bestaat. De twee woorden in een hoek die zakken voor een test die al het andere haalde.",
     ],
   },
 };
 
 export const process = {
   steps: [
-    { title: { en: "Ask who",      nl: "Vraag wie" },
-      body:  { en: "Before anything is drawn. The brief describes a problem; the people in it describe a different one.",
-               nl: "Voor er iets getekend is. De briefing beschrijft een probleem; de mensen erin beschrijven een ander." } },
-    { title: { en: "Make it badly, fast", nl: "Maak het slecht, snel" },
-      body:  { en: "Prototypes exist to be wrong in public early, where being wrong is cheap.",
-               nl: "Prototypes bestaan om vroeg en in het openbaar fout te zijn, waar fout zijn goedkoop is." } },
-    { title: { en: "Test with the person it excludes", nl: "Test met wie het buitensluit" },
-      body:  { en: "Screen reader, keyboard only, low vision, no colour, bad light, one hand. The edge is the design.",
-               nl: "Screenreader, alleen toetsenbord, slechtziend, geen kleur, slecht licht, één hand. De rand is het ontwerp." } },
-    { title: { en: "Then obsess",  nl: "Dan pas obsederen" },
-      body:  { en: "Only once it works for everyone is it worth spending three days on a single margin. And it is worth it.",
-               nl: "Pas als het voor iedereen werkt, is het waard om drie dagen aan één marge te besteden. En dat is het waard." } },
+    { n: "01", title: { en: "Research", nl: "Onderzoek" },
+      body: { en: "Talk to users, dig into data, understand context.", nl: "Praat met gebruikers, duik in data, begrijp de context." } },
+    { n: "02", title: { en: "Define", nl: "Definiëren" },
+      body: { en: "Synthesise insights, sharpen the problem.", nl: "Inzichten samenbrengen, het probleem aanscherpen." } },
+    { n: "03", title: { en: "Ideate", nl: "Ideeën" },
+      body: { en: "Sketch, explore, diverge before committing.", nl: "Schetsen, verkennen, divergeren voor je kiest." } },
+    { n: "04", title: { en: "Design", nl: "Ontwerpen" },
+      body: { en: "Wireframes to hi-fi, inside the chosen system.", nl: "Van wireframes naar hi-fi, binnen het gekozen systeem." } },
+    { n: "05", title: { en: "Test", nl: "Testen" },
+      body: { en: "Usability sessions, iterate, refine.", nl: "Usability-sessies, itereren, verfijnen." } },
+    { n: "06", title: { en: "Deliver", nl: "Opleveren" },
+      body: { en: "Hand off with care — specs, docs, motion.", nl: "Zorgvuldig overdragen — specs, documentatie, motion." } },
   ],
 };
 
-export const services = {
-  items: [
-    { en: "Interaction and interface design", nl: "Interactie- en interfaceontwerp" },
-    { en: "Accessibility audits, written so a non-specialist can act on them",
-      nl: "Toegankelijkheidsaudits, geschreven zodat een niet-specialist ermee aan de slag kan" },
-    { en: "Design systems small enough that a team actually uses them",
-      nl: "Designsystemen die klein genoeg zijn dat een team ze echt gebruikt" },
-    { en: "Front-end, hand-written, when the design deserves it",
-      nl: "Front-end, met de hand geschreven, als het ontwerp het verdient" },
+export const skills = {
+  columns: [
+    { key: "A", eyebrow: { en: "Methodology", nl: "Methodologie" },
+      title: { en: "UX & design thinking", nl: "UX & design thinking" },
+      items: [
+        { en: "UX research", nl: "UX-onderzoek" },
+        { en: "User-centred design", nl: "User-centred design" },
+        { en: "Information architecture", nl: "Informatiearchitectuur" },
+        { en: "Wireframing & prototyping", nl: "Wireframing & prototyping" },
+        { en: "Interaction design", nl: "Interactieontwerp" },
+        { en: "Visual interface", nl: "Visuele interface" },
+        { en: "Design systems", nl: "Designsystemen" },
+        { en: "Usability testing", nl: "Usability-testen" },
+        { en: "Accessibility auditing", nl: "Toegankelijkheidsaudits" },
+      ] },
+    { key: "B", eyebrow: { en: "Daily drivers", nl: "Dagelijks gereedschap" },
+      title: { en: "Tools & software", nl: "Tools & software" },
+      items: ["Figma", "Webflow", "Framer", "Photoshop", "Illustrator",
+              "InDesign", "After Effects", "Notion", "Miro"] },
+    { key: "C", eyebrow: { en: "New literacy", nl: "Nieuwe geletterdheid" },
+      title: { en: "AI tools", nl: "AI-tools" },
+      items: ["Claude", "ChatGPT", "Midjourney", "Adobe Firefly", "Gemini"] },
   ],
-};
-
-export const cv = {
-  /* TODO: replace with the real record */
-  rows: [
-    { period: "2022–2026", what: { en: "BA Communication and Multimedia Design, HvA Amsterdam",
-                                   nl: "BA Communication and Multimedia Design, HvA Amsterdam" } },
-  ],
+  note: {
+    en: "Actively exploring AI as a design tool — to move faster, think deeper, and push what's possible.",
+    nl: "Actief bezig met AI als ontwerptool — om sneller te werken, dieper te denken en te verkennen wat mogelijk is.",
+  },
 };
 
 export const ui = {
@@ -225,8 +369,8 @@ export const ui = {
   attuneIntro:   { en: "This is not a settings menu hidden in a footer. It is how the site works.",
                    nl: "Dit is geen instellingenmenu verstopt in een footer. Zo werkt deze site." },
   modeLabel:     { en: "Mode",              nl: "Modus" },
-  modeFull:      { en: "Full",              nl: "Vol" },
-  modeCalm:      { en: "Calm",              nl: "Rustig" },
+  modeFull:      { en: "Screen",            nl: "Scherm" },
+  modeCalm:      { en: "Print",             nl: "Print" },
   readingLabel:  { en: "Reading type",      nl: "Leesletter" },
   textsizeLabel: { en: "Text size",         nl: "Tekstgrootte" },
   contrastLabel: { en: "Contrast",          nl: "Contrast" },
@@ -236,4 +380,20 @@ export const ui = {
                    nl: "Je apparaat vroeg hier al om." },
   detailHint:    { en: "Look closer",       nl: "Kijk beter" },
   closeLabel:    { en: "Close",             nl: "Sluiten" },
+  sections: {
+    work:          { en: "Work",           nl: "Werk" },
+    outcomes:      { en: "Outcomes",       nl: "Resultaten" },
+    about:         { en: "About",          nl: "Over" },
+    process:       { en: "Process",        nl: "Proces" },
+    skills:        { en: "Skills",         nl: "Vaardigheden" },
+    accessibility: { en: "Accessibility",  nl: "Toegankelijkheid" },
+    "detail-index":{ en: "Every decision on this site", nl: "Elke keuze op deze site" },
+    contact:       { en: "Contact",        nl: "Contact" },
+  },
+  caseLabels: {
+    role:     { en: "My role",  nl: "Mijn rol" },
+    process:  { en: "Process",  nl: "Proces" },
+    solution: { en: "Solution", nl: "Oplossing" },
+    result:   { en: "Result",   nl: "Resultaat" },
+  },
 };

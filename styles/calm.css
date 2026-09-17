@@ -7,27 +7,36 @@
    ========================================================================= */
 
 [data-mode="calm"] body {
-  background-color: var(--paper);
+  background-color: var(--ground);
   /* Paper grain: two offset repeating gradients at very low opacity. Costs
      nothing, renders identically everywhere, and gives the ground the
      texture that the shader gives it in full mode. */
   background-image:
     repeating-linear-gradient(0deg,
-      color-mix(in oklab, var(--ink) 2.5%, transparent) 0 1px,
+      color-mix(in oklab, var(--text) 2.5%, transparent) 0 1px,
       transparent 1px 3px),
     repeating-linear-gradient(90deg,
-      color-mix(in oklab, var(--ink) 1.8%, transparent) 0 1px,
+      color-mix(in oklab, var(--text) 1.8%, transparent) 0 1px,
       transparent 1px 4px);
 }
 
 /* Print sets a headline at reading size and lets the grid carry the drama. */
 [data-mode="calm"] .intro { min-height: auto; padding-block: var(--s-2xl) var(--s-xl); }
+/* Print sets a headline at reading size in a serif that only exists in this
+   mode, and lets the grid carry the drama instead of the scale. */
 [data-mode="calm"] .intro h1 {
   font-size: var(--t-xl);
-  max-width: 22ch;
-  font-variation-settings: "opsz" 48, "SOFT" 0, "WONK" 0;
-  font-weight: 500;
+  max-width: 20ch;
+  font-family: var(--face-display);
+  font-variation-settings: "opsz" 144, "SOFT" 4, "WONK" 1;
+  font-weight: 400;
   letter-spacing: -0.02em;
+}
+[data-mode="calm"] .intro h1 em { font-style: italic; }
+[data-mode="calm"] .intro h1 .stop { color: var(--accent); }
+[data-mode="calm"] h2, [data-mode="calm"] h3 {
+  font-family: var(--face-display);
+  font-variation-settings: "opsz" 72, "SOFT" 0, "WONK" 0;
 }
 [data-mode="calm"] .intro__sub { font-size: var(--t-body); }
 
@@ -38,7 +47,7 @@
   grid-template-columns: minmax(8rem, 15rem) minmax(0, 1fr);
   gap: var(--s-md) var(--s-lg);
   padding-block: var(--s-xl);
-  border-block-start: var(--rule-ink);
+  border-block-start: var(--rule-strong);
 }
 [data-mode="calm"] .section__label {
   grid-column: 1;
@@ -49,7 +58,7 @@
 /* Sections are numbered, as a printed document numbers its parts. */
 [data-mode="calm"] .section__label::before {
   content: counter(section, decimal-leading-zero) " / ";
-  color: var(--signal-deep);
+  color: var(--accent);
 }
 [data-mode="calm"] #flow { counter-reset: section; }
 [data-mode="calm"] .section { counter-increment: section; }
@@ -62,10 +71,13 @@
   padding-block-end: var(--s-lg);
   border-block-end: var(--rule);
 }
-[data-mode="calm"] .project__cover { aspect-ratio: 4 / 3; border-radius: 0; border: var(--rule-ink); }
+/* Print squares the corners and firms the rule, but never forces a ratio:
+   the screenshot keeps its own proportions here too. */
+[data-mode="calm"] .project__cover { border-radius: 0; border: var(--rule-strong); }
+[data-mode="calm"] .shots img { border-radius: 0; border: var(--rule-strong); }
 
 /* Hairline rules do the work that glow and depth do in full mode. */
-[data-mode="calm"] .steps > li { padding-inline-start: var(--s-sm); border-inline-start: var(--rule-ink); }
+[data-mode="calm"] .steps > li { padding-inline-start: var(--s-sm); border-inline-start: var(--rule-strong); }
 [data-mode="calm"] .ask__options button { border-radius: 0; }
 [data-mode="calm"] .ask__options button:hover { transform: none; }
 

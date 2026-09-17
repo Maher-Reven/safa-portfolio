@@ -27,86 +27,130 @@ const el = (tag, props = {}, ...kids) => {
    ========================================================================= */
 
 const SECTIONS = {
-  work: () => section("work", { en: "Work", nl: "Werk" },
+  outcomes: () => section("outcomes",
+    el("ul", { className: "outcomes" }, C.outcomes.map((o) =>
+      el("li", {},
+        el("span", { className: "outcome__figure", textContent: o.figure }),
+        el("span", { className: "outcome__label", textContent: t(o.label) }))))),
+
+  work: () => section("work",
     el("ul", { className: "work-list" }, C.projects.map(projectCard))),
 
-  about: () => section("about", { en: "About", nl: "Over" },
-    C.about.body[attune.get("lang")].map((p) => el("p", { textContent: p }))),
+  about: () => section("about",
+    C.about.body[attune.get("lang")].map((para) => el("p", { textContent: para }))),
 
-  process: () => section("process", { en: "How I work", nl: "Hoe ik werk" },
-    el("ol", { className: "steps" }, C.process.steps.map((s) =>
-      el("li", {}, el("h3", { textContent: t(s.title) }), el("p", { textContent: t(s.body) }))))),
+  process: () => section("process",
+    el("ol", { className: "steps" }, C.process.steps.map((st) =>
+      el("li", {},
+        el("h3", {}, el("span", { className: "steps__n", textContent: st.n + " " }), t(st.title)),
+        el("p", { textContent: t(st.body) }))))),
 
-  services: () => section("services", { en: "What I do", nl: "Wat ik doe" },
-    el("ul", { className: "steps" }, C.services.items.map((s) =>
-      el("li", {}, el("p", { textContent: t(s) }))))),
+  skills: () => section("skills",
+    el("div", { className: "skills" }, C.skills.columns.map((col) =>
+      el("div", {},
+        el("p", { className: "skills__eyebrow" },
+          el("span", { className: "skills__key", textContent: col.key }),
+          el("span", { textContent: t(col.eyebrow) })),
+        el("h3", { textContent: t(col.title) }),
+        el("ul", {}, col.items.map((item, i) =>
+          el("li", {},
+            el("span", { textContent: t(item) }),
+            el("span", { textContent: String(i + 1).padStart(2, "0") }))))))),
+    el("p", { className: "skills__note", textContent: t(C.skills.note) })),
 
-  cv: () => section("cv", { en: "Record", nl: "Overzicht" },
-    el("table", { className: "cv-rows" },
-      el("tbody", {}, C.cv.rows.map((r) =>
-        el("tr", {}, el("th", { scope: "row", textContent: r.period }),
-                     el("td", { textContent: t(r.what) })))))),
+  /* The chapter that explains why the site behaves the way it does.
+     Real findings from her own first accessibility audit, with the source. */
+  accessibility: () => section("accessibility",
+    el("p", { className: "intro__sub", textContent: t(C.accessibility.lead) }),
+    el("ul", { className: "findings" }, C.accessibility.findings.map((f) =>
+      el("li", {},
+        el("span", { className: "findings__value", textContent: t(f.value) }),
+        el("p", { textContent: t(f.note) })))),
+    el("p", { textContent: t(C.accessibility.close) }),
+    el("p", {}, el("a", { className: "detail-trigger",
+                          href: C.accessibility.source.href,
+                          textContent: C.accessibility.source.label }))),
 
-  /* The footnotes, promoted to a chapter. Every annotation on the site,
-     collected as one document — for the visitor who wants the decisions
-     without the pictures. */
+  /* The footnotes, promoted to a chapter: every annotation on the site as
+     one document, for the visitor who wants decisions without pictures. */
   "detail-index": () => section("detail-index",
-    { en: "Every decision on this site", nl: "Elke keuze op deze site" },
     el("div", { className: "detail-index" },
-      C.projects.flatMap((p) => p.details.map((d) =>
+      C.projects.flatMap((proj) => proj.details.map((d) =>
         el("div", { className: "detail-index__row" },
           el("span", { className: "detail-index__key",
                        textContent: `${d.kind}${d.value ? " · " + d.value : ""}` }),
           el("div", {},
             el("p", { textContent: t(d.note) }),
-            el("p", { style: "color:var(--ink-faint)", textContent: t(p.title) }))))))),
+            el("p", { style: "color:var(--text-faint)", textContent: t(proj.title) }))))))),
 
-  contact: () => section("contact", { en: "Reach me", nl: "Bereik me" },
-    el("p", {}, el("a", { href: `mailto:${C.meta.email}`, textContent: C.meta.email })),
-    el("p", {}, C.meta.links.map((l, i) =>
-      el("span", {}, i ? " · " : "", el("a", { href: l.href, textContent: l.label }))))),
+  contact: () => section("contact",
+    el("p", {}, el("a", { className: "contact__big",
+                          href: `mailto:${C.meta.email}`, textContent: C.meta.email })),
+    el("dl", { className: "contact__grid" },
+      el("dt", { textContent: "Email" }),
+      el("dd", {}, el("a", { href: `mailto:${C.meta.email}`, textContent: C.meta.email })),
+      el("dt", { textContent: "Phone" }),
+      el("dd", {}, el("a", { href: `tel:${C.meta.phone.replace(/\s/g, "")}`,
+                             textContent: C.meta.phone })),
+      el("dt", { textContent: t(C.ui.sections.contact) === "Contact" ? "Located" : "Locatie" }),
+      el("dd", { textContent: t(C.meta.located) }),
+      el("dt", { textContent: "Elsewhere" }),
+      el("dd", {}, C.meta.links.map((l, i) =>
+        el("span", {}, i ? " · " : "", el("a", { href: l.href, textContent: l.label + " \u2197" })))))),
 };
 
-function section(id, label, ...children) {
+function section(id, ...children) {
   return el("section", { className: "section rail", id },
-    el("h2", { className: "section__label", textContent: t(label) }),
+    el("h2", { className: "section__label", textContent: t(C.ui.sections[id]) }),
     ...children);
 }
 
+/* Each project renders as a full case: cover, the four written sections,
+   then the gallery. Nothing is behind a click — a portfolio that hides its
+   own work behind navigation is asking the visitor to do its job. */
 function projectCard(p) {
   const article = el("article", { className: "project" });
-  article.dataset.placeholder = String(!!p.placeholder);
+  article.style.setProperty("--case", p.colour);
 
   const cover = el("figure", { className: "project__cover", style: "margin:0" },
-    el("img", {
-      src: p.cover.src,
-      alt: t(p.cover.alt) || "",       // empty alt is a decision, not an omission
-      loading: "lazy",
-      decoding: "async",
+    el("img", { src: p.cover.src, alt: t(p.cover.alt), loading: "lazy", decoding: "async" }));
+
+  const body = el("div", {},
+    el("p", { className: "project__meta" },
+      el("span", { textContent: p.year }),
+      el("span", { textContent: t(p.company) }),
+      el("span", { textContent: t(p.discipline) })),
+    el("h3", { textContent: t(p.title) }),
+    el("p", { className: "project__summary", textContent: t(p.summary) }),
+    ...p.details.flatMap((d) => detailPair(d, p.slug)));
+
+  const written = el("div", { className: "case__sections" },
+    ["role", "process", "solution", "result"].map((key) => {
+      const copy = p.sections?.[key];
+      if (!copy) return null;
+      const block = el("div", { className: "case__section" },
+        el("h4", { textContent: t(C.ui.caseLabels[key]) }),
+        el("p", { textContent: t(copy) }));
+      block.dataset.key = key;
+      return block;
     }));
 
-  const heading = p.href
-    ? el("h3", {}, el("a", { href: p.href, textContent: t(p.title) }))
-    : el("h3", { textContent: t(p.title) });
+  const gallery = p.shots?.length
+    ? el("ul", { className: "shots" }, p.shots.map((sh) => {
+        const li = el("li", {},
+          el("img", { src: sh.src, alt: t(sh.alt), loading: "lazy", decoding: "async" }));
+        li.dataset.span = sh.span || "half";
+        return li;
+      }))
+    : null;
 
-  article.append(
-    cover,
-    el("div", {},
-      el("p", { className: "project__meta" },
-        el("span", { textContent: p.year }),
-        el("span", { textContent: t(p.discipline) }),
-        el("span", { textContent: t(p.role) })),
-      heading,
-      el("p", { className: "project__summary", textContent: t(p.summary) }),
-      ...p.details.flatMap((d) => detailPair(d, p.slug)),
-    ));
-
+  article.append(cover, body, written, ...(gallery ? [gallery] : []));
   return el("li", {}, article);
 }
 
-/* One annotation: a trigger and the note it discloses. Native
-   aria-expanded + hidden rather than a custom widget, so it behaves the
-   way a screen-reader user already expects disclosures to behave. */
+/* One annotation: a trigger and the note it discloses. Native aria-expanded
+   plus the hidden attribute, rather than a custom widget, so it behaves the
+   way a screen-reader user already expects a disclosure to behave. */
 let detailSeq = 0;
 function detailPair(d, slug) {
   const id = `detail-${slug}-${detailSeq++}`;
@@ -136,7 +180,7 @@ function detailPair(d, slug) {
 /* =========================================================================
    FLOW — order the sections for whoever is reading.
    ========================================================================= */
-const DEFAULT_ORDER = ["work", "about", "process", "detail-index", "cv", "contact"];
+const DEFAULT_ORDER = ["work", "outcomes", "about", "process", "accessibility", "skills", "detail-index", "contact"];
 
 function renderFlow() {
   const flow = $("#flow");
@@ -304,6 +348,7 @@ function closeButton() {
 const I18N_PATHS = {
   "role": () => t(C.meta.role),
   "intro.statement": () => t(C.intro.statement),
+  "intro.kicker": () => t(C.intro.kicker),
   "intro.sub": () => t(C.intro.sub),
   "intro.invitation": () => t(C.intro.invitation),
   "ui.audienceLabel": () => t(C.ui.audienceLabel),
@@ -315,10 +360,28 @@ function renderStatic() {
     const fn = I18N_PATHS[node.dataset.i18n];
     if (fn) node.textContent = fn();
   });
+
+  /* The headline gets one lime full stop — the entire brand mark, and the
+     only place on the site where the accent is used purely as identity.
+     Built from text nodes rather than innerHTML, so content.js can never
+     become an injection surface. */
+  const h1 = $("#intro-h");
+  if (h1) {
+    const line = t(C.intro.statement).replace(/\.$/, "");
+    h1.replaceChildren(line, el("span", { className: "stop", textContent: "." }));
+  }
+
+  const banner = $("#banner");
+  if (banner) {
+    banner.replaceChildren(
+      el("span", {}, el("span", { className: "banner__dot", "aria-hidden": "true" }),
+                     t(C.meta.available)),
+      el("span", { textContent: `${t(C.meta.located)} \u00b7 ${t(C.meta.role)}` }));
+  }
   $("#colophon").textContent =
     attune.get("lang") === "nl"
-      ? "Met de hand gebouwd in HTML, CSS en JavaScript. Fraunces, Inter, JetBrains Mono en Atkinson Hyperlegible. Twee volledig ontworpen modi, geen van beide een excuus."
-      : "Hand-built in HTML, CSS and JavaScript. Fraunces, Inter, JetBrains Mono and Atkinson Hyperlegible. Two fully designed modes, neither one an apology.";
+      ? "Met de hand gebouwd in HTML, CSS en JavaScript, zonder build-stap. DM Sans, DM Mono, Fraunces en Atkinson Hyperlegible. Twee volledig ontworpen modi, geen van beide een excuus."
+      : "Hand-built in HTML, CSS and JavaScript, no build step. DM Sans, DM Mono, Fraunces and Atkinson Hyperlegible. Two fully designed modes, neither one an apology.";
 }
 
 /* =========================================================================

@@ -13,7 +13,7 @@
   gap: var(--s-sm);
   padding-block: var(--s-xs);
   padding-top: max(var(--s-xs), env(safe-area-inset-top, 0px));
-  background: color-mix(in oklab, var(--paper) 86%, transparent);
+  background: color-mix(in oklab, var(--ground) 86%, transparent);
   backdrop-filter: blur(14px);
 }
 
@@ -33,7 +33,7 @@
   font-size: var(--t-detail);
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--ink-faint);
+  color: var(--text-faint);
 }
 
 /* ---- Intro ------------------------------------------------------------- */
@@ -51,7 +51,7 @@
 }
 .intro__sub {
   font-size: var(--t-md);
-  color: var(--ink-soft);
+  color: var(--text-soft);
   max-width: 48ch;
 }
 
@@ -62,7 +62,7 @@
   font-size: var(--t-detail);
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: var(--ink-faint);
+  color: var(--text-faint);
   margin-block-end: var(--s-xs);
 }
 .ask__options {
@@ -80,15 +80,15 @@
   height: 100%;
   padding: var(--s-xs) var(--s-sm);
   text-align: start;
-  border: var(--rule-ink);
+  border: var(--rule-strong);
   border-radius: var(--radius-md);
-  background: var(--paper-pure);
+  background: var(--surface);
   transition: transform var(--dur-quick) var(--ease-out),
               background var(--dur-quick) var(--ease-out);
 }
 .ask__options button:hover {
-  background: var(--ink);
-  color: var(--paper-pure);
+  background: var(--text);
+  color: var(--surface);
   transform: translateY(calc(-2px * var(--motion-scale)));
 }
 .ask__options strong { display: block; font-size: var(--t-body); font-weight: 500; }
@@ -99,7 +99,7 @@
   color: inherit;
   opacity: 0.72;
 }
-.ask__note { font-size: var(--t-sm); color: var(--ink-faint); max-width: 44ch; }
+.ask__note { font-size: var(--t-sm); color: var(--text-faint); max-width: 44ch; }
 
 /* ---- Sections ---------------------------------------------------------- */
 .section {
@@ -111,7 +111,7 @@
   font-size: var(--t-detail);
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: var(--ink-faint);
+  color: var(--text-faint);
   margin-block-end: var(--s-sm);
   padding-block-end: var(--s-2xs);
   border-block-end: var(--rule);
@@ -122,38 +122,38 @@
 .work-list > li { max-width: none; }
 
 .project { display: grid; gap: var(--s-md); }
+/* No fixed aspect ratio, and no object-fit: cover. For interface work the
+   whole screen IS the artifact — cropping a dashboard to fit a tidy 16:10
+   box throws away the columns at its edges, which are exactly the part a
+   hiring designer is looking at. The image sets its own height. */
 .project__cover {
   position: relative;
-  aspect-ratio: 16 / 10;
   overflow: hidden;
   border-radius: var(--radius-md);
-  background: var(--paper-deep);
+  border: var(--rule);
+  background: var(--surface);
 }
-.project__cover img { width: 100%; height: 100%; object-fit: cover; }
+.project__cover img { width: 100%; height: auto; }
 .project__meta {
   display: flex;
   flex-wrap: wrap;
   gap: var(--s-2xs);
   font-family: var(--face-detail);
   font-size: var(--t-detail);
-  color: var(--ink-faint);
+  color: var(--text-faint);
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
-/* A hairline between facts, so "2025 interaction design design lead" does
-   not read as one run-on phrase. */
+/* A separator between facts, so "2025 VeloTech.AI dashboard" does not read
+   as one run-on phrase. A dot rather than a rule: when the row wraps, a
+   vertical hairline at the start of the new line reads as a stray pipe. */
 .project__meta > span + span::before {
-  content: "";
-  display: inline-block;
-  width: 1px;
-  height: 0.85em;
+  content: "·";
   margin-inline-end: var(--s-2xs);
-  vertical-align: -0.1em;
-  background: currentColor;
-  opacity: 0.4;
+  opacity: 0.5;
 }
 .project h3 { font-size: var(--t-xl); }
-.project__summary { color: var(--ink-soft); }
+.project__summary { color: var(--text-soft); }
 
 /* A placeholder announces itself rather than pretending. */
 .project[data-placeholder="true"] .project__cover::after {
@@ -164,8 +164,8 @@
   padding: var(--s-3xs) var(--s-2xs);
   font-family: var(--face-detail);
   font-size: var(--t-detail);
-  background: var(--ink);
-  color: var(--paper-pure);
+  background: var(--text);
+  color: var(--surface);
   border-radius: var(--radius-sm);
 }
 
@@ -174,7 +174,7 @@
          grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); }
 .steps > li { max-width: none; }
 .steps h3 { margin-block-end: var(--s-2xs); }
-.steps p { color: var(--ink-soft); font-size: var(--t-sm); }
+.steps p { color: var(--text-soft); font-size: var(--t-sm); }
 
 .cv-rows { width: 100%; border-collapse: collapse; text-align: start; }
 .cv-rows th, .cv-rows td {
@@ -183,7 +183,228 @@
   vertical-align: baseline;
   text-align: start;
 }
-.cv-rows th { font-family: var(--face-detail); font-weight: 400; color: var(--ink-faint); white-space: nowrap; }
+.cv-rows th { font-family: var(--face-detail); font-weight: 400; color: var(--text-faint); white-space: nowrap; }
 
 .site-foot { padding-block: var(--s-xl) var(--s-2xl); border-block-start: var(--rule); }
-.colophon { font-family: var(--face-detail); font-size: var(--t-detail); color: var(--ink-faint); max-width: 60ch; }
+.colophon { font-family: var(--face-detail); font-size: var(--t-detail); color: var(--text-faint); max-width: 60ch; }
+
+/* =========================================================================
+   OUTCOMES — the numbers alone, for the visitor with forty seconds.
+   ========================================================================= */
+.outcomes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+  gap: var(--s-md);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.outcomes > li { max-width: none; }
+.outcome__figure {
+  display: block;
+  font-size: var(--t-xl);
+  font-weight: 300;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  color: var(--accent);
+}
+.outcome__label {
+  display: block;
+  margin-block-start: var(--s-2xs);
+  font-size: var(--t-sm);
+  color: var(--text-soft);
+  max-width: 22ch;
+}
+
+/* =========================================================================
+   CASE — cover, the four written sections, then the gallery.
+   ========================================================================= */
+.case__sections {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: var(--s-md) var(--s-lg);
+  margin-block: var(--s-md);
+  padding-block-start: var(--s-md);
+  border-block-start: var(--rule);
+}
+.case__section h4 {
+  margin-block-end: var(--s-3xs);
+  font-family: var(--face-detail);
+  font-size: var(--t-detail);
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-faint);
+}
+.case__section p { font-size: var(--t-sm); color: var(--text-soft); }
+/* The result is the one that gets the accent, because it is the one a
+   client is actually buying. */
+.case__section[data-key="result"] h4 { color: var(--accent); }
+.case__section[data-key="result"] p { color: var(--text); }
+
+.shots {
+  margin-inline: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--s-xs);
+  margin-block-start: var(--s-md);
+}
+.shots li { max-width: none; margin: 0; }
+.shots [data-span="wide"] { grid-column: 1 / -1; }
+.shots img {
+  width: 100%;
+  border-radius: var(--radius-md);
+  border: var(--rule);
+  background: var(--surface);
+}
+
+/* =========================================================================
+   SKILLS — three columns, numbered like a printed index.
+   ========================================================================= */
+.skills {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: var(--s-lg);
+}
+.skills__eyebrow {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2xs);
+  font-family: var(--face-detail);
+  font-size: var(--t-detail);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-faint);
+}
+.skills__key {
+  display: grid;
+  place-items: center;
+  width: 1.5em;
+  height: 1.5em;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+.skills h3 { margin-block: var(--s-2xs) var(--s-sm); font-size: var(--t-md); }
+.skills ul { margin: 0; padding: 0; list-style: none; }
+.skills li {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--s-sm);
+  padding-block: var(--s-3xs);
+  border-block-end: var(--rule);
+  max-width: none;
+  font-size: var(--t-sm);
+}
+.skills li span:last-child {
+  font-family: var(--face-detail);
+  font-size: var(--t-detail);
+  color: var(--text-faint);
+}
+.skills__note {
+  margin-block-start: var(--s-md);
+  font-size: var(--t-md);
+  color: var(--text-soft);
+  max-width: 48ch;
+}
+
+/* =========================================================================
+   ACCESSIBILITY — the chapter that explains why this site behaves the way
+   it does. Findings are set as evidence, not as a claim.
+   ========================================================================= */
+.findings { margin: var(--s-md) 0; padding: 0; list-style: none; display: grid; gap: var(--s-sm); }
+.findings > li {
+  display: grid;
+  grid-template-columns: minmax(7rem, 12rem) 1fr;
+  gap: var(--s-sm);
+  padding-block-end: var(--s-sm);
+  border-block-end: var(--rule);
+  max-width: none;
+}
+.findings__value {
+  font-family: var(--face-detail);
+  font-size: var(--t-sm);
+  color: var(--accent);
+}
+.findings p { margin: 0; font-size: var(--t-sm); color: var(--text-soft); }
+
+.contact__big {
+  display: inline-block;
+  font-size: var(--t-xl);
+  font-weight: 300;
+  letter-spacing: -0.03em;
+  text-decoration-thickness: 1px;
+}
+.contact__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: var(--s-md);
+  margin-block-start: var(--s-lg);
+  padding-block-start: var(--s-md);
+  border-block-start: var(--rule);
+}
+.contact__grid dt {
+  font-family: var(--face-detail);
+  font-size: var(--t-detail);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-faint);
+}
+.contact__grid dd { margin: var(--s-3xs) 0 0; }
+
+@media (max-width: 40rem) {
+  .shots { grid-template-columns: 1fr; }
+  .shots [data-span] { grid-column: 1; }
+  .findings > li { grid-template-columns: 1fr; gap: var(--s-3xs); }
+}
+
+/* =========================================================================
+   BANNER — the availability line. Hers, and the first thing a recruiter
+   needs to know before anything else on the page is worth their time.
+   ========================================================================= */
+.banner {
+  /* The canvas is fixed at z-index 0; anything static paints underneath it.
+     Everything the visitor is meant to read sits on the content layer. */
+  position: relative;
+  z-index: var(--z-content);
+  margin: 0;
+  padding: var(--s-2xs) var(--gutter);
+  padding-top: max(var(--s-2xs), env(safe-area-inset-top, 0px));
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-family: var(--face-detail);
+  font-size: var(--t-detail);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  max-width: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2xs) var(--s-md);
+  justify-content: space-between;
+}
+/* The dot pulses only where motion is welcome; --motion-scale zeroes the
+   distance it travels, so in print mode it is simply a dot. */
+.banner__dot {
+  display: inline-block;
+  width: 0.55em; height: 0.55em;
+  margin-inline-end: var(--s-3xs);
+  border-radius: 50%;
+  background: var(--accent-ink);
+  animation: pulse 2.4s var(--ease-soft) infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: calc(0.35 + 0.65 * (1 - var(--motion-scale))); }
+  50%      { opacity: 1; }
+}
+
+.intro__kicker {
+  font-family: var(--face-detail);
+  font-size: var(--t-detail);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--text-faint);
+  margin-block-end: var(--s-md);
+}
+.steps__n { color: var(--accent); font-family: var(--face-detail); font-size: 0.6em; }

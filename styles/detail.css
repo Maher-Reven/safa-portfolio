@@ -18,13 +18,13 @@
   padding: 0.1em 0.45em;
   font-family: var(--face-detail);
   font-size: 0.82em;
-  color: var(--tide-deep);
-  border: 1px solid color-mix(in oklab, var(--tide) 40%, transparent);
+  color: var(--note);
+  border: 1px solid color-mix(in oklab, var(--note) 40%, transparent);
   border-radius: var(--radius-sm);
-  background: color-mix(in oklab, var(--tide) 7%, transparent);
+  background: color-mix(in oklab, var(--note) 7%, transparent);
   transition: background var(--dur-quick) var(--ease-out);
 }
-.detail-trigger:hover { background: color-mix(in oklab, var(--tide) 16%, transparent); }
+.detail-trigger:hover { background: color-mix(in oklab, var(--note) 16%, transparent); }
 .detail-trigger::before { content: "↘"; opacity: 0.7; }
 
 /* A colour detail carries its own swatch — the value shown as the thing
@@ -35,7 +35,7 @@
   height: 0.7em;
   border-radius: 50%;
   background: var(--swatch);
-  border: 1px solid color-mix(in oklab, var(--ink) 30%, transparent);
+  border: 1px solid color-mix(in oklab, var(--text) 30%, transparent);
   opacity: 1;
 }
 
@@ -45,10 +45,10 @@
   gap: var(--s-2xs) var(--s-xs);
   margin-block: var(--s-2xs) var(--s-sm);
   padding: var(--s-xs) var(--s-sm);
-  border-inline-start: 2px solid var(--tide);
-  background: color-mix(in oklab, var(--tide) 5%, transparent);
+  border-inline-start: 2px solid var(--note);
+  background: color-mix(in oklab, var(--note) 5%, transparent);
   font-size: var(--t-sm);
-  color: var(--ink-soft);
+  color: var(--text-soft);
 }
 .detail-note[hidden] { display: none; }
 .detail-note dt {
@@ -56,7 +56,7 @@
   font-size: var(--t-detail);
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--tide-deep);
+  color: var(--note);
 }
 .detail-note dd { margin: 0; max-width: var(--measure); }
 
@@ -74,11 +74,11 @@
 .detail-index__key {
   font-family: var(--face-detail);
   font-size: var(--t-detail);
-  color: var(--tide-deep);
+  color: var(--note);
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
-.detail-index__row p { margin: 0; font-size: var(--t-sm); color: var(--ink-soft); }
+.detail-index__row p { margin: 0; font-size: var(--t-sm); color: var(--text-soft); }
 
 @media (max-width: 40rem) {
   .detail-index__row { grid-template-columns: 1fr; gap: var(--s-3xs); }

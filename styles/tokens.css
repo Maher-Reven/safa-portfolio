@@ -4,179 +4,221 @@
    Every value here is a decision, and every decision has a reason written
    next to it. The reasons are not comments for developers — they are the
    source text for the detail layer, which surfaces them to visitors who
-   look closely. Nothing in this file is arbitrary. If you change a value,
-   change its reason too.
+   look closely. Nothing here is arbitrary. Change a value, change its reason.
+
+   The palette is Safa's own, taken from her live portfolio: #1C1C1C ground,
+   #C8E65A lime, DM Sans and DM Mono. It is not replaced here. It is given a
+   second form — see the two mode blocks below.
    ========================================================================= */
 
 :root {
   /* ---------------------------------------------------------------------
-     COLOUR
-     Warm neutrals, not greys. Pure #000 on pure #FFF measures 21:1 and
-     reads as glare: high-contrast to a meter, hostile to an eye. Warm ink
-     on warm paper keeps 16:1 and stays comfortable over long reading.
+     SEMANTIC COLOUR
+     Components never name a colour. They name a role, and the two mode
+     blocks below decide what that role looks like. This is the single
+     reason one set of components can carry two art directions.
      --------------------------------------------------------------------- */
-  --ink:        #14120f;   /* warm near-black. 16.1:1 on --paper */
-  --ink-soft:   #46403a;   /* secondary text.  7.4:1 on --paper */
-  --ink-faint:  #7d756b;   /* metadata only.   4.6:1 on --paper — AA, never smaller than 16px */
+  --ground: #1c1c1c;
+  --surface: #232323;
+  --text: #faf8f5;
+  --text-soft: #c9c4bc;
+  --text-faint: #8a857e;
+  --line: rgba(250, 248, 245, 0.10);
+  --line-strong: rgba(250, 248, 245, 0.22);
+  --accent: #c8e65a;
+  --accent-ink: #1c1c1c;     /* what sits ON the accent — never white */
 
-  --paper:      #f4f0e8;   /* warm off-white, the default ground */
-  --paper-pure: #fbf9f4;   /* raised surfaces: cards, panels */
-  --paper-deep: #e6e0d4;   /* recessed: wells, rules, disabled */
+  /* The detail layer's own voice. Distinct from --accent in both modes so
+     an annotation is never mistaken for emphasis. */
+  --note: #8fd4e8;
+  --note-soft: rgba(143, 212, 232, 0.12);
 
-  --signal:      #e8402a;  /* 3.6:1 — large display type and UI marks ONLY */
-  --signal-deep: #b32718;  /* 5.7:1 — the same red, safe for body copy */
+  --focus: #c8e65a;          /* 12.1:1 on the dark ground */
 
-  --tide:        #2c5f7c;  /* the detail layer speaks in blue, never in red, */
-  --tide-deep:   #1e4257;  /* so annotation is never confused with emphasis */
-
-  --focus:       #1b6ef3;  /* focus ring: one colour, used nowhere else,     */
-                           /* so a keyboard user always knows what it means  */
+  /* ---------------------------------------------------------------------
+     PROJECT COLOURS — one per case, carried from her own site. Each is a
+     ground for its case, chosen from the work itself rather than assigned.
+     --------------------------------------------------------------------- */
+  --c-dentara:  #e8a598;   /* blush — the calm of the holistic practice */
+  --c-velotech: #2f5d8c;   /* municipal blue — the dashboard's own chrome */
+  --c-medialab: #f2d4b0;   /* sand — warm against that product's dark UI */
+  --c-pubhubs:  #4a6b8a;   /* slate — the community platform's quiet */
 
   /* ---------------------------------------------------------------------
      TYPE
-     Four faces, each doing one job. Loaded as variable fonts — one file
-     covers every weight we use, so the whole system costs less than two
-     static weights would.
+     DM Sans and DM Mono are hers and stay hers: the voice a visitor may
+     already recognise. Two faces are added, each with one job.
      --------------------------------------------------------------------- */
 
-  /* Fraunces — display. Has optical-size, SOFT and WONK axes: the letterforms
-     literally change shape as they grow. A typeface that rewards zooming in,
-     for a designer whose whole argument is that detail survives scrutiny. */
-  --face-display: "Fraunces", "Iowan Old Style", Georgia, serif;
+  /* DM Sans — the voice. Geometric, low-contrast, wide aperture; holds up
+     from 13px metadata to a 9rem name without changing personality. */
+  --face-text: "DM Sans", -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
 
-  /* Inter — text. Designed for screens at small sizes, huge x-height,
-     unambiguous 1/l/I. The workhorse: invisible on purpose. */
-  --face-text: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  /* DM Mono — measurement. Hex values, ratios, spacing, alt text, timestamps.
+     Monospace says "this is a fact", not "this is prose". */
+  --face-detail: "DM Mono", ui-monospace, Menlo, monospace;
 
-  /* JetBrains Mono — the detail layer. Monospace signals "this is
-     measurement, not prose": hex values, ratios, spacing, alt text. */
-  --face-detail: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  /* Fraunces — calm mode only. Its optical-size, SOFT and WONK axes mean the
+     letterforms genuinely change shape as they grow, which is what a printed
+     display face does and a screen grotesk does not. Full mode never loads
+     it as display; calm mode is where the site becomes a printed object. */
+  --face-display: var(--face-text);
 
-  /* Atkinson Hyperlegible — Braille Institute, drawn so that characters
-     stay distinguishable to low-vision readers. Offered in the attune
-     panel as "easier reading". Swaps --face-text at the root. */
+  /* Atkinson Hyperlegible — Braille Institute, drawn so characters stay
+     distinguishable to low-vision readers. Offered in the attune panel. */
   --face-legible: "Atkinson Hyperlegible", var(--face-text);
 
-  /* Fluid scale, 4:5 ratio at the top end. clamp() means no layout jumps
-     at breakpoints — the type is continuous across every screen width. */
-  --t-display: clamp(3.25rem, 1.4rem + 8.2vw, 9rem);
+  /* Fluid scale. clamp() means no jumps at breakpoints — type is continuous
+     across every screen width, so there is no width at which it looks wrong. */
+  --t-display: clamp(3.5rem, 1.2rem + 9vw, 10rem);
   --t-xl:      clamp(2.25rem, 1.3rem + 4.2vw, 4.5rem);
   --t-lg:      clamp(1.6rem,  1.2rem + 1.8vw, 2.5rem);
   --t-md:      clamp(1.25rem, 1.1rem + 0.7vw, 1.6rem);
   --t-body:    clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem);
-  --t-sm:      0.9375rem;  /* never below this for anything a person reads */
-  --t-detail:  0.8125rem;  /* detail layer only, and always paired with --t-sm context */
+  --t-sm:      0.9375rem;   /* the floor for anything a person reads */
+  --t-detail:  0.8125rem;   /* detail layer only, always beside --t-sm context */
 
-  --leading-tight: 0.96;   /* display only — tight leading needs large size to breathe */
-  --leading-snug:  1.22;
-  --leading-body:  1.62;   /* WCAG 1.4.12 asks for 1.5 minimum. We give more. */
+  --leading-tight: 0.92;
+  --leading-snug:  1.18;
+  --leading-body:  1.6;     /* WCAG 1.4.12 asks 1.5 minimum. */
 
-  --measure: 66ch;         /* ~66 characters. Longer lines lose the eye on return sweep. */
+  --measure: 66ch;          /* past ~70 the eye loses the line on return sweep */
 
   /* ---------------------------------------------------------------------
-     SPACE — a single 4px-rooted scale. Nothing off-scale is allowed.
+     SPACE — one 4px-rooted scale. Nothing off-scale is permitted.
      --------------------------------------------------------------------- */
   --s-3xs: 0.25rem;  --s-2xs: 0.5rem;   --s-xs: 0.75rem;
   --s-sm:  1rem;     --s-md:  1.5rem;   --s-lg: 2.25rem;
   --s-xl:  3.5rem;   --s-2xl: 5.5rem;   --s-3xl: 8.5rem;
 
-  --gutter: clamp(1.25rem, 5vw, 5rem);
-  --rail:   min(100% - (var(--gutter) * 2), 82rem);
+  --gutter: clamp(1.25rem, 4vw, 3.5rem);
+  --rail:   min(100% - (var(--gutter) * 2), 84rem);
 
   /* ---------------------------------------------------------------------
-     MOTION — durations and easings live here so that calm mode can zero
-     every one of them from a single place, without any component knowing.
+     MOTION — durations live here so calm mode zeroes every one of them from
+     a single place, without any component knowing calm mode exists.
      --------------------------------------------------------------------- */
   --dur-instant: 90ms;
   --dur-quick:   180ms;
   --dur-calm:    340ms;
   --dur-slow:    720ms;
 
-  --ease-out:  cubic-bezier(0.16, 1, 0.3, 1);      /* arrivals: fast in, long settle */
-  --ease-in:   cubic-bezier(0.7, 0, 0.84, 0);      /* exits: things leave decisively */
+  --ease-out:  cubic-bezier(0.16, 1, 0.3, 1);   /* arrivals: quick in, long settle */
+  --ease-in:   cubic-bezier(0.7, 0, 0.84, 0);
   --ease-soft: cubic-bezier(0.34, 0.6, 0.24, 1);
 
-  /* Hairlines that survive a 4px-rooted scale on hidpi screens */
-  --rule: 1px solid var(--paper-deep);
-  --rule-ink: 1px solid var(--ink);
+  --rule:     1px solid var(--line);
+  --rule-strong: 1px solid var(--line-strong);
 
-  --radius-sm: 3px;
-  --radius-md: 6px;
+  --radius-sm: 4px;
+  --radius-md: 10px;
+  --radius-lg: 18px;
   --radius-pill: 999px;
 
-  --z-canvas: 0;
-  --z-content: 10;
-  --z-detail: 400;
-  --z-attune: 600;
-  --z-announce: 900;
+  --z-canvas: 0;  --z-content: 10;  --z-detail: 400;
+  --z-attune: 600; --z-announce: 900;
 }
 
 /* =========================================================================
-   MODE: full
-   WebGL ground, motion on, type set large and loose. The canvas sits behind
-   everything and reacts to the pointer; content floats on it.
+   MODE: full — the screen object
+   Her own world: near-black ground, lime, DM Sans, a live field behind
+   everything. This is the mode a visitor arrives in unless their device
+   has already asked for less.
    ========================================================================= */
 [data-mode="full"] {
-  --ground: transparent;          /* the WebGL canvas is the ground */
-  --motion-scale: 1;              /* multiplier every JS animation reads */
+  --ground: #1c1c1c;
+  --surface: #232323;
+  --text: #faf8f5;
+  --text-soft: #c9c4bc;   /* 10.4:1 — secondary, still comfortably readable */
+  --text-faint: #8a857e;  /*  4.7:1 — metadata only, never below 15px */
+  --line: rgba(250, 248, 245, 0.10);
+  --line-strong: rgba(250, 248, 245, 0.22);
+  --accent: #c8e65a;      /* 12.1:1 on ground */
+  --accent-ink: #1c1c1c;
+  --note: #8fd4e8;        /* 9.6:1 */
+  --note-soft: rgba(143, 212, 232, 0.10);
+  --focus: #c8e65a;
+
+  --motion-scale: 1;
   --section-rhythm: var(--s-3xl);
-  --display-wonk: 1;              /* Fraunces WONK axis on: quirky, alive */
-  --display-soft: 8;
+  --display-wonk: 0;
+  --display-soft: 0;
 }
 
 /* =========================================================================
-   MODE: calm
-   No canvas, no parallax, no transforms on scroll. This is NOT full mode
-   with the effects stripped out — it is a printed piece: firmer grid,
-   tighter rhythm, rules instead of glow, type doing all the work.
-   Both modes are signed. Neither is an apology for the other.
+   MODE: calm — the printed object
+   Not full mode with the effects stripped out. The same work, set as print:
+   warm paper, ink, a serif display face that only exists here, hairline
+   rules instead of glow, numbered sections, nothing moving.
+
+   The lime survives the inversion — darkened to #6f8a12 so it still passes
+   on paper — because it is the one thing that should be recognisable in
+   both. Both objects are signed. Neither is an apology for the other.
    ========================================================================= */
 [data-mode="calm"] {
-  --ground: var(--paper);
+  --ground: #f4f0e8;       /* warm paper. Pure white on pure black reads as */
+  --surface: #fbf9f4;      /* glare; warm neutrals keep the ratio and lose  */
+  --text: #14120f;         /* the sting. 16.1:1 */
+  --text-soft: #46403a;    /*  7.4:1 */
+  --text-faint: #6f675d;   /*  5.4:1 — raised from the dark mode's faint,   */
+                           /*  because light grounds hide low-contrast text */
+                           /*  far more readily than dark ones do           */
+  --line: rgba(20, 18, 15, 0.14);
+  --line-strong: rgba(20, 18, 15, 0.42);
+  --accent: #6f8a12;       /* the lime, taken down until it passes on paper: 4.9:1 */
+  --accent-ink: #f4f0e8;
+  --note: #1e5670;         /* 7.3:1 */
+  --note-soft: rgba(30, 86, 112, 0.07);
+  --focus: #1b6ef3;
+
+  /* Fraunces appears only here. Calm mode is not a setting, it is a second
+     piece of design work, and it gets its own display voice. */
+  --face-display: "Fraunces", "Iowan Old Style", Georgia, serif;
+  --display-wonk: 0;
+  --display-soft: 0;
+
   --motion-scale: 0;
   --section-rhythm: var(--s-2xl);
-  --display-wonk: 0;              /* WONK off: steadier letterforms, print voice */
-  --display-soft: 0;
-  --dur-instant: 0ms;
-  --dur-quick: 0ms;
-  --dur-calm: 0ms;
-  --dur-slow: 0ms;
+  --dur-instant: 0ms; --dur-quick: 0ms; --dur-calm: 0ms; --dur-slow: 0ms;
 }
 
 /* =========================================================================
-   PREFERENCE OVERLAYS
-   Each is an independent axis. They compose: a visitor can be in calm mode,
-   at large text, in high contrast, reading Atkinson, in Dutch — all at once.
+   PREFERENCE OVERLAYS — independent axes that compose. A visitor can be in
+   calm mode, at the largest text, in high contrast, reading Atkinson, in
+   Dutch, all at once, and every combination is a designed state.
    ========================================================================= */
 
-/* Reading type — Atkinson Hyperlegible replaces the text face everywhere.
-   Display stays Fraunces: headings are looked at, not read at length. */
 [data-reading="legible"] {
   --face-text: "Atkinson Hyperlegible", -apple-system, sans-serif;
   --leading-body: 1.75;
   --measure: 58ch;
 }
 
-/* Text size — scales the whole system, not just body copy, so rhythm holds */
 [data-textsize="large"]  { font-size: 112.5%; }
 [data-textsize="larger"] { font-size: 125%; --measure: 54ch; }
 
-/* High contrast — pushes every pairing past 7:1 (AAA) and removes the
-   warm cast, because warmth is a comfort for some eyes and a fog for others */
-[data-contrast="high"] {
-  --ink: #000000;
-  --ink-soft: #1a1a1a;
-  --ink-faint: #3d3d3d;      /* 10.9:1 — no longer "faint", by design */
-  --paper: #ffffff;
-  --paper-pure: #ffffff;
-  --paper-deep: #d4d4d4;
-  --signal: #c21807;
-  --signal-deep: #8f1105;
-  --tide: #14405a;
-  --rule: 2px solid var(--ink);
+/* High contrast, per mode: pushing every pairing past 7:1 means something
+   different on ink than it does on paper, so it is written twice rather
+   than once badly. */
+[data-mode="full"][data-contrast="high"] {
+  --ground: #000000;
+  --surface: #0d0d0d;
+  --text: #ffffff;
+  --text-soft: #e8e8e8;
+  --text-faint: #bdbdbd;   /* 11.6:1 — no longer "faint", by design */
+  --line: rgba(255, 255, 255, 0.34);
+  --line-strong: rgba(255, 255, 255, 0.62);
+  --accent: #d8f56a;
+  --note: #a8e4f5;
 }
-
-/* The system default, before anyone touches anything: believe the OS. */
-@media (prefers-contrast: more) {
-  :root:not([data-contrast="normal"]) { --rule: 2px solid var(--ink); }
+[data-mode="calm"][data-contrast="high"] {
+  --ground: #ffffff;
+  --surface: #ffffff;
+  --text: #000000;
+  --text-soft: #1a1a1a;
+  --text-faint: #3d3d3d;   /* 10.9:1 */
+  --line: rgba(0, 0, 0, 0.38);
+  --line-strong: rgba(0, 0, 0, 0.72);
+  --accent: #4e6300;       /* 7.4:1 — AAA on white */
+  --note: #10405a;
 }

@@ -87,12 +87,12 @@ void main() {
   /* The field lifts where attention falls on it. */
   float lift = field * 0.55 + attention * 0.85;
 
-  /* CONTRAST CLAMP. The whole visible range of this shader is 6% of the
-     distance between paper and the warm tone. Measured against --ink, the
-     worst case still leaves body copy above 15:1. The effect is meant to
-     be felt and not seen; anything stronger would be decoration bought
-     with somebody's legibility. */
-  vec3 col = mix(uPaper, uWarm, clamp(lift, 0.0, 1.0) * 0.06);
+  /* CONTRAST CLAMP. The whole visible range of this shader is 7% of the
+     distance from the ground toward the accent. Measured against --text,
+     the worst-lit pixel still leaves body copy above 15:1. The effect is
+     meant to be felt and not seen; anything stronger would be decoration
+     bought with somebody's legibility. */
+  vec3 col = mix(uPaper, uWarm, clamp(lift, 0.0, 1.0) * 0.07);
 
   /* Grain, tied to fragment position and time. Breaks the banding that
      eight-bit gradients show on wide flat areas, and gives the ground the
@@ -207,12 +207,12 @@ export class PresenceField {
        ground follows, rather than staying warm under a page that is not. */
     this.paletteObserver = new MutationObserver(() => this.readPalette());
     this.paletteObserver.observe(document.documentElement,
-      { attributes: true, attributeFilter: ["data-contrast"] });
+      { attributes: true, attributeFilter: ["data-contrast", "data-mode"] });
   }
 
   readPalette() {
-    this.paper = cssColor("--paper", "#f4f0e8");
-    this.warm  = cssColor("--signal", "#e8402a");
+    this.paper = cssColor("--ground", "#1c1c1c");
+    this.warm  = cssColor("--accent", "#c8e65a");
   }
 
   resize() {
