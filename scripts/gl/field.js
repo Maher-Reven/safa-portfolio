@@ -42,6 +42,7 @@ uniform vec2  uRes;
 uniform float uTime;
 uniform vec2  uPointer;    // pixels, y already flipped
 uniform float uPresence;   // 0..1, eased
+uniform float uVel;        // 0..1, smoothed pointer speed
 uniform float uOrder;      // 0 turbulent .. 1 resolved, driven by scroll
 uniform vec3  uGround;
 uniform vec3  uAccent;
@@ -78,6 +79,27 @@ void main() {
   vec2 p  = (gl_FragCoord.xy - 0.5 * uRes) / uRes.y;   // aspect-correct, centred
   float t = uTime * 0.035;
 
+  /* ---- THE CURSOR, PUSHED INTO THE FIELD --------------------------------
+     Not a glow that follows the pointer — a displacement. A gaussian bump
+     around the cursor is added to the coordinates the flow field is sampled
+     at, so the field genuinely BENDS around you instead of lighting up
+     underneath you. The strength scales with how fast you are moving:
+     sweep across and you drag a wake through it, hold still and it settles
+     to a standing ripple.
+
+     And it deliberately ignores the order gate below. On the resolved side
+     the mesh is a clean grid, so the cursor re-introduces warp exactly
+     where clarity had been won — you disturb it, and it settles back. The
+     page's whole sentence, available to the reader's own hand. */
+  vec2 mpx = uPointer / uRes;
+  vec2 m = (mpx - 0.5) * vec2(uRes.x / uRes.y, 1.0);
+  float md = length(((gl_FragCoord.xy / uRes) - 0.5) * vec2(uRes.x / uRes.y, 1.0) - m);
+  /* Radius 14, not 7. At the wider falloff a single fast sweep churned most
+     of the resolved half into turbulence, which is not a wake — it is a
+     blender. Tight enough that you can see it travel, and that the grid
+     closes behind it. */
+  float push = exp(-md * md * 14.0) * (0.30 + uVel * 1.25) * uPresence;
+
   /* ---- ONE MESH, IN TWO STATES ------------------------------------------
      This was two patterns crossfading — contour ribbons on one side, a grid
      on the other — which is a dissolve between two pictures, not an
@@ -88,8 +110,8 @@ void main() {
 
      Two rounds of domain warping. One is noise; two is weather. */
   vec2 q = vec2(fbm(p * 1.5 + t), fbm(p * 1.5 + vec2(3.2, 1.7) - t));
-  vec2 r = vec2(fbm(p * 1.5 + 1.9 * q + vec2(1.7, 9.2) + 0.28 * t),
-                fbm(p * 1.5 + 1.9 * q + vec2(8.3, 2.8) - 0.22 * t));
+  vec2 r = vec2(fbm(p * 1.5 + 1.9 * q + vec2(1.7, 9.2) + 0.28 * t + push),
+                fbm(p * 1.5 + 1.9 * q + vec2(8.3, 2.8) - 0.22 * t - push));
   float flow = fbm(p * 1.5 + 2.4 * r);
 
   /* The tideline. Ordered under the words, turbulent behind the cat, and it
@@ -98,7 +120,10 @@ void main() {
   float edge = uv.x - 0.38 - uOrder * 0.85 + (flow - 0.5) * 0.12;
   float order = 1.0 - smoothstep(-0.26, 0.30, edge);
 
-  vec2 warp = (r - 0.5) * 1.35 * (1.0 - order);
+  /* The cursor's push is added OUTSIDE the order gate, so it can bend the
+     resolved grid as well as the turbulent half. */
+  float warpAmount = (1.0 - order) + push * 0.75;
+  vec2 warp = (r - 0.5) * 1.35 * warpAmount;
 
   /* Two layers at different scales, the far one drifting slower, so the
      turbulence has depth instead of being a flat pattern. */
@@ -132,7 +157,10 @@ void main() {
      of this file. The cool tone only ever appears in the turbulent half, so
      resolving the field literally drains the confusion out of it. */
   vec3 col = uGround;
-  col += uAccent * mesh * (loud + near * 0.06);
+  col += uAccent * mesh * (loud + near * 0.05 + push * 0.10);
+  /* A chromatic shift toward the cool tone where the cursor is, so the
+     disturbance reads as a different material rather than a brighter one. */
+  col += uCool * mesh * push * loud * 1.6;
   /* The cool tone exists only in the turbulent half, so resolving the field
      literally drains the confusion out of it. */
   col += uCool * mesh * (1.0 - order) * loud * 0.55;
@@ -170,6 +198,9 @@ export class PresenceField {
     this.pointer = { x: -9999, y: -9999 };
     this.presence = 0;
     this.targetPresence = 0;
+    this.vel = 0;
+    this.targetVel = 0;
+    this.last = null;
     this.order = 0;
     this.targetOrder = 0;
     this.running = false;
@@ -197,7 +228,7 @@ export class PresenceField {
     gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
 
     this.u = Object.fromEntries(
-      ["uRes", "uTime", "uPointer", "uPresence", "uOrder", "uGround", "uAccent", "uCool"]
+      ["uRes", "uTime", "uPointer", "uPresence", "uVel", "uOrder", "uGround", "uAccent", "uCool"]
         .map((n) => [n, gl.getUniformLocation(program, n)]));
 
     this.bind();
@@ -234,8 +265,17 @@ export class PresenceField {
       const touch = e.touches?.[0];
       const x = touch ? touch.clientX : e.clientX;
       const y = touch ? touch.clientY : e.clientY;
-      this.pointer.x = x * this.dpr;
-      this.pointer.y = (innerHeight - y) * this.dpr;
+      const px = x * this.dpr, py = (innerHeight - y) * this.dpr;
+      /* Speed, normalised against the short edge so a fast sweep reads the
+         same on a laptop as on a large display, and clamped so a flick of
+         the wrist cannot blow the field apart. */
+      if (this.last) {
+        const step = Math.hypot(px - this.last.x, py - this.last.y);
+        this.targetVel = Math.min(1, step / (Math.min(innerWidth, innerHeight) * this.dpr * 0.06));
+      }
+      this.last = { x: px, y: py };
+      this.pointer.x = px;
+      this.pointer.y = py;
       this.targetPresence = 1;
     };
     this.onLeave = () => { this.targetPresence = 0; };
@@ -288,11 +328,18 @@ export class PresenceField {
 
     this.presence += (this.targetPresence - this.presence) * 0.06;
     this.order += (this.targetOrder - this.order) * 0.05;
+    /* Velocity rises fast and falls slowly, so the wake trails behind the
+       hand rather than snapping off the moment it stops. targetVel is
+       decayed here rather than on an event, because "stopped moving" never
+       fires an event. */
+    this.vel += (this.targetVel - this.vel) * (this.targetVel > this.vel ? 0.35 : 0.045);
+    this.targetVel *= 0.88;
 
     gl.uniform2f(this.u.uRes, this.canvas.width, this.canvas.height);
     gl.uniform1f(this.u.uTime, (performance.now() - this.t0) / 1000);
     gl.uniform2f(this.u.uPointer, this.pointer.x, this.pointer.y);
     gl.uniform1f(this.u.uPresence, this.presence);
+    gl.uniform1f(this.u.uVel, this.vel);
     gl.uniform1f(this.u.uOrder, this.order);
     gl.uniform3fv(this.u.uGround, this.ground);
     gl.uniform3fv(this.u.uAccent, this.accent);

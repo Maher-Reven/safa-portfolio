@@ -75,6 +75,16 @@ Under the words: grid. Behind the cat: turbulence. **Scroll and the tideline
 sweeps right**, so by the bottom of the page the whole field has resolved.
 The sentence happens behind you while you read it.
 
+**The cursor pushes the field, it does not light it.** A gaussian bump around
+the pointer is added to the coordinates the flow field is sampled at, so the
+mesh genuinely *bends* around you rather than glowing underneath you, and the
+strength scales with how fast you are moving — sweep across and you drag a
+wake through it, hold still and it settles to a standing ripple.
+
+That push deliberately ignores the order gate, so it can bend the resolved
+grid as well as the turbulent half: you disturb the clarity where it has
+already been won, and it closes back behind you.
+
 Two layers at different scales, the far one drifting slower, so the turbulence
 has depth instead of being a flat pattern. The cool tone exists only in the
 turbulent half, so resolving the field drains the confusion out of it.
