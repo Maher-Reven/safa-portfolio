@@ -141,7 +141,18 @@
 [data-mode="calm"] .cat__ear, [data-mode="calm"] .cat__eye { transition: none; }
 
 @media (max-width: 64rem) {
-  .cat-stage { grid-template-columns: 1fr; }
+  /* ONE COLUMN, AND NO SCROLL STAGE.
+     The stage is 210vh tall so the morph has room to play beside the words.
+     In one column there is nothing beside anything: the words occupy 0.4 of
+     a viewport, the figure another 0.36, and the remaining 1.3 viewports are
+     empty space you have to scroll through twice — once to reach the cat and
+     again to get past it. So the stage collapses to its contents and the
+     sticky positioning goes with it, since there is no longer a second
+     column for anything to stay level with. */
+  [data-mode="full"] .cat-stage { min-height: 0; }
+  [data-mode="full"] .cat-stage__words,
+  [data-mode="full"] .cat-stage__right { position: static; max-height: none; }
+  .cat-stage { grid-template-columns: 1fr; gap: var(--s-md); }
   .cat-stage__figure {
     position: static;
     justify-self: center;

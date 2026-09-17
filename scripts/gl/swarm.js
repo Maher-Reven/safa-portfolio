@@ -389,9 +389,18 @@ export class Swarm {
     const stage = this.host.closest(".cat-stage");
     if (!stage) return;
     const r = stage.getBoundingClientRect();
-    const travel = Math.max(r.height - innerHeight, 1);
-    const p = Math.max(0, Math.min(1, -r.top / travel));
-    this.morphTarget = p * 2;
+    const travel = r.height - innerHeight;
+
+    /* On a narrow screen the stage collapses to its contents, so there is no
+       longer a tall stage to measure progress through — and dividing by the
+       1px floor made the morph snap from cat to cursor in a single flick.
+       When the stage is shorter than a viewport, the morph rides the whole
+       page instead, so the sequence still plays out across the read. */
+    const p = travel > innerHeight * 0.4
+      ? -r.top / travel
+      : scrollY / Math.max(document.documentElement.scrollHeight - innerHeight, 1);
+
+    this.morphTarget = Math.max(0, Math.min(1, p)) * 2;
   }
 
   resize() {
