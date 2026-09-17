@@ -242,8 +242,30 @@ SECTIONS.intro = () => {
   const figure = el("figure", { className: "cat-stage__figure" });
   figure.setAttribute("aria-hidden", "true");
 
+  /* The stage says what it is doing. Without this the morph is a mystery
+     the visitor has to solve; with it, it is a sequence they can follow —
+     and the sequence is the argument the headline just made. */
+  const caption = el("p", { className: "cat-stage__caption" });
+  caption.setAttribute("aria-hidden", "true");
+  const shapes = [
+    { n: "01", label: { en: "it notices you", nl: "het merkt je op" } },
+    { n: "02", label: { en: "it reaches for you", nl: "het reikt naar je" } },
+    { n: "03", label: { en: "it becomes yours", nl: "het wordt van jou" } },
+  ];
+  caption.replaceChildren(
+    el("span", { className: "cat-stage__n", textContent: shapes[0].n }),
+    el("span", { className: "cat-stage__what", textContent: t(shapes[0].label) }));
+  figure.dataset.shapeIndex = "0";
+  figure._setShape = (i) => {
+    const sh = shapes[Math.max(0, Math.min(2, i))];
+    figure.dataset.shapeIndex = String(i);
+    caption.children[0].textContent = sh.n;
+    caption.children[1].textContent = t(sh.label);
+  };
+
   const wrap = el("section", { className: "intro rail", id: "intro" },
-    el("div", { className: "cat-stage" }, words, figure));
+    el("div", { className: "cat-stage" }, words,
+      el("div", { className: "cat-stage__right" }, figure, caption)));
 
   const ask = el("div", { className: "ask" },
     el("p", { className: "ask__lead", textContent: t(C.ui.audienceLabel) }),
@@ -272,6 +294,7 @@ function heroHeading() {
 let cat = null;
 let paws = null;
 let swarm = null;
+let halftone = null;
 
 /* The home page companion.
 
@@ -290,6 +313,17 @@ async function mountCompanion(host) {
                 matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   if (still) {
+    /* Print gets a two-colour risograph halftone of the same silhouette the
+       swarm is built from — light on the screen, ink on the paper. */
+    try {
+      const { Halftone } = await import("./halftone.js");
+      if (!host.isConnected) return;
+      halftone = new Halftone(host).start();
+      host.dataset.swarm = "print";
+      return;
+    } catch (err) {
+      console.warn("halftone unavailable, falling back to the drawing:", err);
+    }
     cat = new Cat(host);
     cat.start();
     return;
@@ -302,7 +336,7 @@ async function mountCompanion(host) {
     const { Swarm } = await import("./gl/swarm.js");
     /* The route may have changed while three.js was downloading. */
     if (!host.isConnected) return;
-    swarm = new Swarm(host);
+    swarm = new Swarm(host, { onShape: (i) => host._setShape?.(i) });
     host.addEventListener("swarm:lost", () => fallBackToDrawing(host), { once: true });
     await swarm.start();
     host.dataset.swarm = "ready";
@@ -329,6 +363,7 @@ function renderRoute(id) {
   cat?.destroy(); cat = null;
   paws?.destroy(); paws = null;
   swarm?.destroy(); swarm = null;
+  halftone?.destroy(); halftone = null;
 
   view.replaceChildren(...route.sections.map((key) => SECTIONS[key]?.()).filter(Boolean));
   document.title = `${t(route.label)} — ${C.meta.name}, ${t(C.meta.role)}`;
@@ -517,3 +552,48 @@ attune.addEventListener("change", (e) => {
   else if (changed === "audience") renderTabs();
   else if (changed === "mode") { syncField(); renderRoute(router.current); }
 });
+
+/* =========================================================================
+   HOVER SPOTLIGHT
+   One delegated listener for the whole document rather than two per card.
+   It writes the pointer's position, as a percentage, into the card the
+   pointer is actually inside; the gradient in hover.css does the rest.
+
+   Skipped entirely when the visitor asked for stillness — there is nothing
+   to track if nothing is going to move.
+   ========================================================================= */
+function armHoverSpotlight() {
+  let active = null;
+
+  addEventListener("pointermove", (e) => {
+    if (e.pointerType === "touch") return;      // a finger has no hover
+    const card = e.target.closest?.(".hoverable");
+
+    if (card !== active) {
+      active?.style.removeProperty("--mx");
+      active?.style.removeProperty("--my");
+      active = card;
+    }
+    if (!card) return;
+
+    const r = card.getBoundingClientRect();
+    card.style.setProperty("--mx", `${((e.clientX - r.left) / r.width) * 100}%`);
+    card.style.setProperty("--my", `${((e.clientY - r.top) / r.height) * 100}%`);
+  }, { passive: true });
+}
+
+/* Everything that reads as a container gets the shared treatment. Marked
+   here rather than in each renderer so the list of what counts as a card
+   lives in one place. */
+const HOVERABLE = [
+  ".ask__options button", ".outcomes > li", ".project",
+  ".skills > div", ".findings > li", ".steps > li",
+].join(", ");
+
+function markHoverables(root = document) {
+  root.querySelectorAll(HOVERABLE).forEach((n) => n.classList.add("hoverable"));
+}
+
+armHoverSpotlight();
+markHoverables();
+router.addEventListener("navigate", () => markHoverables());

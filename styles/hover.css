@@ -1,0 +1,125 @@
+/* =========================================================================
+   hover.css — one hover behaviour, applied everywhere something is a card.
+   -------------------------------------------------------------------------
+   Rather than a different effect per component, every container shares one
+   treatment built from three signals:
+
+     1. a spotlight that follows the pointer inside the card
+     2. the border picking up the accent
+     3. a small lift
+
+   Three rules this is written around:
+
+   · FOCUS GETS WHAT HOVER GETS. Every rule below is :hover, :focus-visible
+     and :focus-within together. A keyboard visitor who cannot see the state
+     a mouse user gets is being told the site was not built for them.
+   · THE LIFT IS BOUND TO --motion-scale, so print mode and reduced motion
+     get the border and the spotlight with nothing moving.
+   · @media (hover: hover) guards it. On a touch screen :hover sticks after
+     a tap and leaves a card lit up for no reason.
+   ========================================================================= */
+
+.hoverable {
+  position: relative;
+  isolation: isolate;                 /* keeps the spotlight under the content */
+  transition: border-color var(--dur-quick) var(--ease-out),
+              background var(--dur-quick) var(--ease-out),
+              transform var(--dur-calm) var(--ease-out);
+}
+
+/* The spotlight. A radial gradient centred on --mx/--my, which one delegated
+   pointer listener writes per card. Painted in a ::before rather than as a
+   background so the card's own background stays free. */
+.hoverable::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  opacity: 0;
+  background: radial-gradient(
+    22rem circle at var(--mx, 50%) var(--my, 50%),
+    color-mix(in oklab, var(--accent) 16%, transparent),
+    transparent 60%);
+  transition: opacity var(--dur-calm) var(--ease-out);
+  pointer-events: none;
+}
+
+@media (hover: hover) {
+  .hoverable:hover::before { opacity: 1; }
+  .hoverable:hover {
+    border-color: color-mix(in oklab, var(--accent) 45%, var(--line));
+    transform: translateY(calc(-3px * var(--motion-scale)));
+  }
+}
+.hoverable:focus-visible::before,
+.hoverable:focus-within::before { opacity: 1; }
+.hoverable:focus-within {
+  border-color: color-mix(in oklab, var(--accent) 45%, var(--line));
+}
+
+/* -------------------------------------------------------------------------
+   PRINT
+   Ink has no glow. The spotlight becomes a flat tint and the lift becomes a
+   rule that thickens — the same information, stated the way a printed page
+   states things.
+   ------------------------------------------------------------------------- */
+[data-mode="calm"] .hoverable::before {
+  background: color-mix(in oklab, var(--accent) 10%, transparent);
+}
+[data-mode="calm"] .hoverable:hover,
+[data-mode="calm"] .hoverable:focus-within {
+  border-color: var(--text);
+  box-shadow: inset 0 0 0 1px var(--text);
+}
+
+/* -------------------------------------------------------------------------
+   Per-component fit. The behaviour is shared; only the surface differs.
+   ------------------------------------------------------------------------- */
+.ask__options button { border-radius: var(--radius-md); }
+
+.outcomes > li {
+  padding: var(--s-sm);
+  border: var(--rule);
+  border-radius: var(--radius-md);
+}
+
+.project {
+  padding: var(--s-sm);
+  margin-inline: calc(var(--s-sm) * -1);
+  border: 1px solid transparent;
+  border-radius: var(--radius-lg);
+}
+@media (hover: hover) { .project:hover { background: color-mix(in oklab, var(--surface) 60%, transparent); } }
+
+.skills > div {
+  padding: var(--s-sm);
+  border: var(--rule);
+  border-radius: var(--radius-md);
+}
+
+.findings > li {
+  padding: var(--s-xs) var(--s-sm);
+  border: 1px solid transparent;
+  border-block-end: var(--rule);
+  border-radius: var(--radius-sm);
+}
+
+.steps > li {
+  padding: var(--s-sm);
+  border: var(--rule);
+  border-radius: var(--radius-md);
+}
+
+.contact__grid > dt { margin-block-start: var(--s-2xs); }
+
+/* The covers get their own smaller move: an image that lifts with its card
+   AND scales is two motions arguing about one hover. */
+.project__cover img {
+  transition: transform var(--dur-slow) var(--ease-soft);
+}
+@media (hover: hover) {
+  .project:hover .project__cover img {
+    transform: scale(calc(1 + 0.018 * var(--motion-scale)));
+  }
+}

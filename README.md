@@ -11,6 +11,23 @@ Three things about Safa are not three features here. They are one behaviour.
 | **Extreme detail** | anything can be opened one level deeper — a hex and why, a margin and why, the draft that was rejected |
 | **Accessibility** | every adaptation is also an access affordance, and the site says out loud what it changed |
 
+## Hover
+
+Every container on the site shares one hover treatment rather than a different
+effect per component: a spotlight that tracks the pointer inside the card, the
+border picking up the accent, and a small lift. One delegated listener writes
+the pointer position into whichever card it is inside; CSS does the rest.
+
+Focus gets everything hover gets — `:hover`, `:focus-visible` and
+`:focus-within` are always written together, because a keyboard visitor who
+cannot see the state a mouse user gets is being told the site was not built
+for them. The lift is bound to `--motion-scale`, so print mode and reduced
+motion get the border and the tint with nothing moving. `@media (hover: hover)`
+guards it, or a tap would leave a card lit up on a phone.
+
+In print the spotlight becomes a flat tint and the lift becomes a rule that
+thickens — the same information, stated the way a printed page states things.
+
 ## Six pages, each with its own arrival
 
 Routes are hash-based (`#/work`), so every page has a shareable URL, the back
@@ -123,7 +140,9 @@ scripts/attune.js     the six adaptation axes, persistence, announcements
 scripts/router.js     hash routing, focus management, route announcements
 scripts/transitions.js one choreography per page
 scripts/main.js       rendering, route composition, disclosure
-scripts/cat.js        the drawn cat (calm mode + fallback) and paw trail
+scripts/shapes.js     the three silhouettes, drawn once, used by both renderers
+scripts/halftone.js   print mode: the two-colour riso halftone proof
+scripts/cat.js        the line-drawn cat (last-resort fallback) and paw trail
 scripts/gl/swarm.js   the three.js particle swarm: cat → paw → cursor
 vendor/three.*        three.js r180, vendored so there is no CDN dependency
 scripts/gl/field.js   the WebGL ground (raw WebGL2, no library)

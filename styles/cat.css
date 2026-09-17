@@ -21,14 +21,44 @@
   align-items: start;
   gap: var(--s-lg);
 }
-[data-mode="full"] .cat-stage { min-height: 230vh; }
-[data-mode="full"] .cat-stage__words {
+[data-mode="full"] .cat-stage { min-height: 210vh; }
+[data-mode="full"] .cat-stage__words,
+[data-mode="full"] .cat-stage__right {
   position: sticky;
-  top: 20vh;
-  /* The words must not be taller than their sticky window, or the browser
-     has nothing to hold them by. */
-  max-height: 70vh;
+  top: 16vh;
 }
+
+/* The headline on this stage is NOT the full display size. At --t-display
+   the four lines of it ran past the bottom of the sticky window and were
+   cut off — a headline that does not fit in its own frame is not a
+   headline. Capped here so the whole statement, the subline and the scroll
+   cue all sit inside one viewport with the swarm beside them. */
+.cat-stage .intro__sub { max-width: 40ch; }
+.cat-stage h1 {
+  font-size: clamp(2.5rem, 1rem + 3.6vw, 4.75rem);
+  max-width: 15ch;
+  margin-block-end: var(--s-sm);
+}
+
+.cat-stage__right { display: grid; gap: var(--s-2xs); }
+
+/* The legend. Numbered like everything else on this site, and it names what
+   the shape is arguing rather than what the shape is — "it notices you"
+   tells you why you are looking at a cat. */
+.cat-stage__caption {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-2xs);
+  margin: 0;
+  max-width: none;
+  font-family: var(--face-detail);
+  font-size: var(--t-detail);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+.cat-stage__n { color: var(--accent); }
+.cat-stage__what { transition: opacity var(--dur-quick) var(--ease-out); }
 .cat-stage__figure {
   position: sticky;
   top: 11vh;
@@ -36,9 +66,9 @@
   width: 100%;
   /* The swarm needs real height to be worth rendering. A square-ish stage
      gives the cat room to sit and the cursor room to point. */
-  aspect-ratio: 1 / 1.05;
-  height: 78vh;
-  max-height: 78vh;
+  aspect-ratio: 1 / 1;
+  height: 62vh;
+  max-height: 62vh;
   margin: 0;
   color: var(--accent);
   /* Decoration must never intercept a click meant for the page behind it —
@@ -90,7 +120,15 @@
    holds at a weight that would disappear on a dark screen. Still, awake,
    drawn once. Exactly what calm mode means everywhere else on this site.
    ------------------------------------------------------------------------- */
-[data-mode="calm"] .cat-stage__figure { color: var(--text); }
+[data-mode="calm"] .cat-stage__figure {
+  color: var(--text);
+  position: static;
+  height: auto;
+  aspect-ratio: 1 / 1.08;
+  width: min(100%, 28rem);
+  background: var(--surface);
+  border: var(--rule);
+}
 [data-mode="calm"] .cat__all { stroke-width: 2.4; }
 [data-mode="calm"] .cat__ear, [data-mode="calm"] .cat__eye { transition: none; }
 
