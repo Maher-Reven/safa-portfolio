@@ -374,6 +374,8 @@ export const lab = {
     {
       id: "vision",
       n: "01",
+      topic: "access",
+      span: "wide",
       title: { en: "See it the way they do", nl: "Zie het zoals zij het zien" },
       note: {
         en: "The colour-vision and blurred-vision simulations from my first accessibility audit, pointed at this portfolio instead of at someone else's. Blurred vision is the one my old site failed.",
@@ -383,6 +385,7 @@ export const lab = {
     {
       id: "contrast",
       n: "02",
+      topic: "colour",
       title: { en: "Two words that failed", nl: "Twee woorden die zakten" },
       note: {
         en: "Red on yellow appeared twice on my first site and failed contrast, which is exactly why it survived every review — nobody checks two words. Drag the colours and watch the ratio decide whether a sentence exists for someone.",
@@ -392,15 +395,52 @@ export const lab = {
     {
       id: "halftone",
       n: "03",
+      topic: "print",
       title: { en: "Screen angles", nl: "Rasterhoeken" },
       note: {
         en: "The two-colour risograph screen this site prints in. Two screens less than 60° apart interfere and produce moiré — set both to the same angle and watch it happen.",
         nl: "Het tweekleuren-risoraster waarin deze site afdrukt. Twee rasters met minder dan 60° verschil interfereren en geven moiré — zet ze op dezelfde hoek en kijk wat er gebeurt.",
       },
     },
+    {
+      id: "type",
+      n: "04",
+      topic: "type",
+      title: { en: "A typeface that changes its mind", nl: "Een letter die van gedachten verandert" },
+      note: {
+        en: "Fraunces carries optical size, softness and a WONK axis — at display sizes its serifs sharpen and its curves go crooked on purpose. This site already moves it between print and screen. Drag the axes and watch one font behave like several.",
+        nl: "Fraunces heeft assen voor optische grootte, zachtheid en WONK — op displaygrootte verscherpen de schreven en gaan de rondingen bewust scheef staan. Deze site verschuift hem al tussen print en scherm. Sleep aan de assen en zie één letter zich als meerdere gedragen.",
+      },
+    },
+    {
+      id: "easing",
+      n: "05",
+      topic: "motion",
+      title: { en: "The shape of a movement", nl: "De vorm van een beweging" },
+      note: {
+        en: "Every curve below is one this site actually uses. Linear is in there as a control — it is the one that always looks wrong, because nothing in the physical world starts and stops at a constant speed.",
+        nl: "Elke curve hieronder wordt echt op deze site gebruikt. Lineair staat er als controle bij — die ziet er altijd verkeerd uit, omdat niets in de fysieke wereld op constante snelheid begint en stopt.",
+      },
+    },
+  ],
+  topics: [
+    { id: "all",    label: { en: "Everything", nl: "Alles" } },
+    { id: "access", label: { en: "Access",     nl: "Toegang" } },
+    { id: "colour", label: { en: "Colour",     nl: "Kleur" } },
+    { id: "type",   label: { en: "Type",       nl: "Letter" } },
+    { id: "motion", label: { en: "Motion",     nl: "Beweging" } },
+    { id: "print",  label: { en: "Print",      nl: "Druk" } },
   ],
   ui: {
+    filter:     { en: "Filter",            nl: "Filter" },
+    showing:    { en: "Showing",           nl: "Getoond" },
     run:        { en: "Run on this page",  nl: "Uitvoeren op deze pagina" },
+    replay:     { en: "Play",              nl: "Afspelen" },
+    optical:    { en: "Optical size",      nl: "Optische grootte" },
+    soft:       { en: "Softness",          nl: "Zachtheid" },
+    wonk:       { en: "Wonk",              nl: "Wonk" },
+    weight:     { en: "Weight",            nl: "Gewicht" },
+    specimen:   { en: "Clarity",           nl: "Helderheid" },
     stop:       { en: "Stop",              nl: "Stoppen" },
     normal:     { en: "Normal vision",     nl: "Normaal zicht" },
     ratio:      { en: "Contrast ratio",    nl: "Contrastverhouding" },

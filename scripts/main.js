@@ -93,21 +93,59 @@ const SECTIONS = {
     const wrap = section("lab", el("p", { className: "intro__sub", textContent: t(C.lab.lead) }));
     const list = el("ul", { className: "lab" });
 
-    for (const exp of C.lab.experiments) {
+    const builders = { vision: buildVision, contrast: buildContrast,
+                       halftone: buildHalftone, type: buildType, easing: buildEasing };
+
+    const cards = C.lab.experiments.map((exp) => {
       const body = el("div", { className: "lab__body" });
       const card = el("li", {},
         el("article", { className: "lab__card hoverable" },
           el("p", { className: "lab__meta" },
             el("span", { className: "lab__n", textContent: exp.n }),
-            el("span", { textContent: t(exp.title) })),
+            el("span", { textContent: t(exp.title) }),
+            el("span", { className: "lab__topic",
+                         textContent: t(C.lab.topics.find((x) => x.id === exp.topic)?.label) })),
           el("p", { className: "lab__note", textContent: t(exp.note) }),
           body));
-      if (exp.id === "vision") buildVision(body);
-      if (exp.id === "contrast") buildContrast(body);
-      if (exp.id === "halftone") buildHalftone(body);
-      list.append(card);
-    }
-    wrap.append(list);
+      card.dataset.topic = exp.topic;
+      if (exp.span) card.dataset.span = exp.span;
+      builders[exp.id]?.(body);
+      return card;
+    });
+
+    /* A filter rather than a longer list. Five instruments across five
+       disciplines is a shelf; the same five with a way to say "just the type
+       one" is a lab. Buttons, not a <select>, because the options are the
+       navigation — hiding five words behind a dropdown to save a row is a
+       trade nobody asked for. */
+    const chips = C.lab.topics.map((topic) => {
+      const b = el("button", { type: "button", className: "lab__chip",
+                               textContent: t(topic.label) });
+      b.dataset.filter = topic.id;
+      b.setAttribute("aria-pressed", String(topic.id === "all"));
+      b.addEventListener("click", () => {
+        chips.forEach((o) => o.setAttribute("aria-pressed", String(o === b)));
+        let shown = 0;
+        cards.forEach((c) => {
+          const on = topic.id === "all" || c.dataset.topic === topic.id;
+          c.hidden = !on;
+          if (on) shown++;
+        });
+        /* Said out loud, because filtering a list a screen reader cannot see
+           change is the same as doing nothing. */
+        attune.say(`${t(C.lab.ui.showing)}: ${t(topic.label)} — ${shown}`);
+      });
+      return b;
+    });
+
+    const bar = el("div", { className: "lab__filter" },
+      el("span", { className: "lab__filter-label", textContent: t(C.lab.ui.filter) }),
+      el("div", { className: "lab__choices" }, chips));
+    bar.querySelector(".lab__choices").setAttribute("role", "group");
+    bar.querySelector(".lab__choices").setAttribute("aria-label", t(C.lab.ui.filter));
+
+    list.append(...cards);
+    wrap.append(bar, list);
     return wrap;
   },
 
@@ -502,6 +540,97 @@ function buildHalftone(host) {
     slider("angleB", C.lab.ui.angleB, 0, 90),
     slider("pitch", C.lab.ui.pitch, 3, 14)), canvas, warn);
   requestAnimationFrame(draw);
+}
+
+/* ---- LAB 04 · variable type --------------------------------------------
+   Fraunces is already used on two settings by this site — print and screen.
+   Here the axes are handed over, so the visitor can find the settings
+   themselves and see that one file is several typefaces. */
+function buildType(host) {
+  const state = { opsz: 120, SOFT: 40, WONK: 1, wght: 400 };
+
+  const specimen = el("p", { className: "lab__specimen", textContent: t(C.lab.ui.specimen) });
+  const readout = el("p", { className: "lab__readout" });
+
+  const paint = () => {
+    specimen.style.fontVariationSettings =
+      `"opsz" ${state.opsz}, "SOFT" ${state.SOFT}, "WONK" ${state.WONK}, "wght" ${state.wght}`;
+    readout.textContent = `opsz ${state.opsz} · SOFT ${state.SOFT} · WONK ${state.WONK} · wght ${state.wght}`;
+  };
+
+  const slider = (key, label, min, max, step = 1) => {
+    const id = `lab-type-${key}`;
+    const input = el("input", { type: "range", id, min, max, step, value: state[key] });
+    input.addEventListener("input", () => { state[key] = +input.value; paint(); });
+    return el("label", { className: "lab__field", htmlFor: id },
+      el("span", { textContent: t(label) }), input);
+  };
+
+  host.append(specimen,
+    el("div", { className: "lab__row" },
+      slider("opsz", C.lab.ui.optical, 9, 144),
+      slider("SOFT", C.lab.ui.soft, 0, 100),
+      slider("WONK", C.lab.ui.wonk, 0, 1),
+      slider("wght", C.lab.ui.weight, 300, 600)),
+    readout);
+  paint();
+}
+
+/* ---- LAB 05 · easing ----------------------------------------------------
+   The site's own curves, drawn and run side by side, with linear as the
+   control that always looks wrong. */
+function buildEasing(host) {
+  const CURVES = [
+    { name: "ease-out",  css: "cubic-bezier(0.16, 1, 0.3, 1)",    p: [0.16, 1, 0.3, 1] },
+    { name: "ease-soft", css: "cubic-bezier(0.34, 0.6, 0.24, 1)", p: [0.34, 0.6, 0.24, 1] },
+    { name: "ease-in",   css: "cubic-bezier(0.7, 0, 0.84, 0)",    p: [0.7, 0, 0.84, 0] },
+    { name: "linear",    css: "linear",                            p: [0, 0, 1, 1] },
+  ];
+
+  const rows = CURVES.map((c) => {
+    const dot = el("span", { className: "lab__dot" });
+    const track = el("span", { className: "lab__track" }, dot);
+    return { c, dot, row: el("li", {},
+      el("span", { className: "lab__curve-name", textContent: c.name },
+        curveSvg(c.p)),
+      track) };
+  });
+
+  const play = () => {
+    rows.forEach(({ c, dot }) => {
+      dot.getAnimations().forEach((a) => a.cancel());
+      dot.animate([{ transform: "translateX(0)" },
+                   { transform: "translateX(calc(100% * 9))" }],
+                  { duration: 1100, easing: c.css, fill: "forwards" });
+    });
+  };
+
+  const button = el("button", { type: "button", className: "lab__chip",
+                                textContent: t(C.lab.ui.replay) });
+  button.addEventListener("click", play);
+
+  host.append(el("ul", { className: "lab__curves" }, rows.map((r) => r.row)), button);
+
+  /* Runs once on arrival — but only for someone who has not asked for
+     stillness, for whom the drawn curves alone carry the comparison. */
+  if (!prefersStill()) requestAnimationFrame(play);
+}
+
+/* The curve itself, drawn. Half the point of an easing is its shape. */
+function curveSvg([x1, y1, x2, y2]) {
+  const ns = "http://www.w3.org/2000/svg";
+  const svg = document.createElementNS(ns, "svg");
+  svg.setAttribute("viewBox", "0 0 100 100");
+  svg.setAttribute("class", "lab__curve");
+  svg.setAttribute("aria-hidden", "true");
+  const path = document.createElementNS(ns, "path");
+  path.setAttribute("d",
+    `M0 100 C ${x1 * 100} ${100 - y1 * 100}, ${x2 * 100} ${100 - y2 * 100}, 100 0`);
+  path.setAttribute("fill", "none");
+  path.setAttribute("stroke", "currentColor");
+  path.setAttribute("stroke-width", "4");
+  svg.append(path);
+  return svg;
 }
 
 function cvBlock(label, ...children) {

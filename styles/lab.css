@@ -8,7 +8,53 @@
    block and the field, the badge and the panel all jump. */
 body { filter: var(--vision-filter, none); }
 
-.lab { display: grid; gap: var(--s-md); margin: var(--s-md) 0 0; padding: 0; list-style: none; }
+.lab {
+  display: grid;
+  /* Two columns once there is room, so five instruments read as a set rather
+     than as a column you scroll through. A card can ask for the full width
+     when its controls need it. */
+  /* Two deliberate columns, not auto-fit. auto-fit gave three ragged
+     tracks and left one card stranded on a row of its own; five things
+     across five disciplines want a grid you can read, not a best fit. */
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--s-md);
+  margin: var(--s-md) 0 0;
+  padding: 0;
+  list-style: none;
+  align-items: start;
+}
+.lab > li[data-span="wide"] { grid-column: 1 / -1; }
+
+/* ---- the filter -------------------------------------------------------- */
+.lab__filter {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-2xs) var(--s-sm);
+  margin-block-start: var(--s-md);
+  padding-block-end: var(--s-sm);
+  border-block-end: var(--rule);
+}
+.lab__filter-label {
+  font-family: var(--face-detail);
+  font-size: var(--t-detail);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-faint);
+}
+
+/* The discipline, on the card, so a filtered view still says what it is. */
+.lab__topic {
+  margin-inline-start: auto;
+  padding: 0.15em 0.6em;
+  border: var(--rule);
+  border-radius: var(--radius-pill);
+  font-family: var(--face-detail);
+  font-size: var(--t-detail);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-faint);
+}
 .lab > li { max-width: none; }
 
 .lab__card {
@@ -100,3 +146,65 @@ body { filter: var(--vision-filter, none); }
 .vision-banner:hover { filter: brightness(1.08); }
 
 @media print { .lab { display: none; } }
+
+
+/* ---- 04 · variable type ------------------------------------------------- */
+.lab__specimen {
+  margin: 0;
+  max-width: none;
+  font-family: "Fraunces", Georgia, serif;
+  font-size: clamp(3rem, 9vw, 6rem);
+  line-height: 1;
+  text-align: center;
+  /* The axes are driven from script; declaring none here means the element
+     starts at the font's own defaults rather than at a guess. */
+}
+.lab__readout {
+  margin: 0;
+  font-family: var(--face-detail);
+  font-size: var(--t-detail);
+  color: var(--text-faint);
+  max-width: none;
+}
+
+/* ---- 05 · easing -------------------------------------------------------- */
+.lab__curves { display: grid; gap: var(--s-xs); margin: 0; padding: 0; list-style: none; }
+.lab__curves > li {
+  display: grid;
+  grid-template-columns: 9rem minmax(0, 1fr);
+  align-items: center;
+  gap: var(--s-sm);
+  max-width: none;
+}
+.lab__curve-name {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2xs);
+  font-family: var(--face-detail);
+  font-size: var(--t-detail);
+  color: var(--text-soft);
+}
+.lab__curve { width: 1.8rem; height: 1.8rem; color: var(--accent); flex: 0 0 auto; }
+.lab__track {
+  position: relative;
+  display: block;
+  height: 10px;
+  border-radius: var(--radius-pill);
+  background: color-mix(in oklab, var(--text) 8%, transparent);
+}
+.lab__dot {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+@media (max-width: 64rem) {
+  .lab { grid-template-columns: 1fr; }
+}
+@media (max-width: 40rem) {
+  .lab__curves > li { grid-template-columns: 1fr; gap: var(--s-3xs); }
+}

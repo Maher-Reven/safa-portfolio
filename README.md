@@ -248,16 +248,24 @@ focused cannot be scrolled by keyboard at all.
 
 Instruments, not screenshots. A lab of pictures would be a second Work tab; a
 lab you can operate is an argument about how she works. Each one runs on
-**this page**:
+**this page**, and each belongs to a discipline:
 
-| | |
-|---|---|
-| **01 See it the way they do** | The colour-vision and blurred-vision simulations from her audit, pointed at this portfolio. Real SVG `feColorMatrix` transforms on the live document. |
-| **02 Two words that failed** | A contrast checker that opens on red over yellow — the exact pairing that failed her first audit, at 3.01:1. Drag the colours and watch the ratio decide whether a sentence exists for someone. |
-| **03 Screen angles** | The two-colour riso screen this site prints in, with its angles exposed. Set both within 60° of each other and watch moiré appear. |
+| | discipline | |
+|---|---|---|
+| **01 See it the way they do** | Access | The colour-vision and blurred-vision simulations from her audit, as real `feColorMatrix` transforms on the live document |
+| **02 Two words that failed** | Colour | A contrast checker opening on red over yellow — the exact pairing that failed her first audit, at 3.01:1 |
+| **03 Screen angles** | Print | The two-colour riso screen this site prints in, with its angles exposed. Put them within 60° and watch moiré appear |
+| **04 A typeface that changes its mind** | Type | Fraunces' optical-size, softness and WONK axes handed over, so one font can be found behaving like several |
+| **05 The shape of a movement** | Motion | The site's own easing curves, drawn and raced side by side, with linear as the control that always looks wrong |
+
+**Filtered, not piled.** Five instruments across five disciplines is a shelf;
+the same five with a way to say *just the type one* is a lab. Buttons rather
+than a `<select>`, because the options are the navigation — and the filter
+announces its result, since filtering a list a screen reader cannot see change
+is the same as doing nothing.
 
 Under deuteranopia the red-on-yellow swatch collapses into two near-identical
-yellows, which is the entire point made without a word of explanation.
+yellows, which is the whole point made without a word of explanation.
 
 An instrument that degrades the page must be impossible to get stuck inside,
 so a fixed banner names the running simulation **and is itself the way out** —
