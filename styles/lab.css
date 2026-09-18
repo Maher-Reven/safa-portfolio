@@ -1,0 +1,102 @@
+/* =========================================================================
+   lab.css
+   ========================================================================= */
+
+/* The vision simulation is applied to the whole document. It sits on <body>
+   rather than <html> so that position: fixed children still resolve against
+   the viewport — a filter on an ancestor otherwise makes it a containing
+   block and the field, the badge and the panel all jump. */
+body { filter: var(--vision-filter, none); }
+
+.lab { display: grid; gap: var(--s-md); margin: var(--s-md) 0 0; padding: 0; list-style: none; }
+.lab > li { max-width: none; }
+
+.lab__card {
+  position: relative;
+  padding: var(--s-sm);
+  border: var(--rule);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+}
+.lab__meta { display: flex; align-items: baseline; gap: var(--s-2xs); margin: 0; font-size: var(--t-md); }
+.lab__n { font-family: var(--face-detail); font-size: var(--t-detail); color: var(--accent); }
+.lab__note { margin: var(--s-2xs) 0 var(--s-sm); font-size: var(--t-sm); color: var(--text-soft); }
+.lab__body { display: grid; gap: var(--s-xs); }
+
+.lab__choices { display: flex; flex-wrap: wrap; gap: var(--s-3xs); }
+.lab__chip {
+  min-height: 44px;
+  padding-inline: var(--s-xs);
+  border: var(--rule);
+  border-radius: var(--radius-pill);
+  font-family: var(--face-detail);
+  font-size: var(--t-sm);
+  color: var(--text-soft);
+}
+.lab__chip:hover { color: var(--text); border-color: var(--text-faint); }
+.lab__chip[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+
+.lab__row { display: flex; flex-wrap: wrap; gap: var(--s-sm); }
+.lab__field {
+  display: grid;
+  gap: var(--s-3xs);
+  font-family: var(--face-detail);
+  font-size: var(--t-detail);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-faint);
+}
+.lab__field input[type="color"] { width: 4.5rem; height: 2.5rem; padding: 0; border: var(--rule); background: none; }
+.lab__field input[type="range"] { width: 9rem; accent-color: var(--accent); }
+
+.lab__swatch {
+  display: grid;
+  place-items: center;
+  margin: 0;
+  padding: var(--s-md);
+  border-radius: var(--radius-md);
+  font-size: var(--t-lg);
+  max-width: none;
+}
+.lab__verdict {
+  margin: 0;
+  font-family: var(--face-detail);
+  font-size: var(--t-sm);
+  max-width: none;
+}
+/* The verdict is stated in words as well as colour, because a contrast tool
+   that signals only in colour is a joke at its own expense. */
+.lab__verdict[data-level="pass"] { color: var(--accent); }
+.lab__verdict[data-level="warn"] { color: var(--text); }
+.lab__verdict[data-level="fail"] { color: var(--text); text-decoration: underline; text-underline-offset: 0.25em; }
+
+.lab__canvas {
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  background: var(--ground);
+  border: var(--rule);
+  border-radius: var(--radius-md);
+}
+
+/* While a simulation is running, say so — and make the way out of it the
+   same thing that says so. It is fixed to the viewport, so it is reachable
+   from anywhere on the page rather than only from the control you used. */
+.vision-banner {
+  position: fixed;
+  inset-block-end: max(var(--s-sm), env(safe-area-inset-bottom, 0px));
+  inset-inline-start: 50%;
+  translate: -50% 0;
+  z-index: var(--z-announce);
+  padding: var(--s-2xs) var(--s-sm);
+  border: none;
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-family: var(--face-detail);
+  font-size: var(--t-sm);
+  box-shadow: 0 6px 24px rgb(0 0 0 / 0.35);
+}
+.vision-banner::before { content: "\25C9  "; }
+.vision-banner:hover { filter: brightness(1.08); }
+
+@media print { .lab { display: none; } }

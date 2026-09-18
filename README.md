@@ -244,6 +244,32 @@ is lying, and "01 / 04" is meaningless when all four are on screen at once.
 The rail is a focusable labelled region, since a scrollable box that cannot be
 focused cannot be scrolled by keyboard at all.
 
+## The Lab
+
+Instruments, not screenshots. A lab of pictures would be a second Work tab; a
+lab you can operate is an argument about how she works. Each one runs on
+**this page**:
+
+| | |
+|---|---|
+| **01 See it the way they do** | The colour-vision and blurred-vision simulations from her audit, pointed at this portfolio. Real SVG `feColorMatrix` transforms on the live document. |
+| **02 Two words that failed** | A contrast checker that opens on red over yellow — the exact pairing that failed her first audit, at 3.01:1. Drag the colours and watch the ratio decide whether a sentence exists for someone. |
+| **03 Screen angles** | The two-colour riso screen this site prints in, with its angles exposed. Set both within 60° of each other and watch moiré appear. |
+
+Under deuteranopia the red-on-yellow swatch collapses into two near-identical
+yellows, which is the entire point made without a word of explanation.
+
+An instrument that degrades the page must be impossible to get stuck inside,
+so a fixed banner names the running simulation **and is itself the way out** —
+reachable from anywhere, not just from the control you came in through. The
+filter and its SVG defs are torn down when you leave the route, and the
+contrast verdict is stated in words as well as colour, because a contrast tool
+that signals only in colour is a joke at its own expense.
+
+The filter sits on `<body>` rather than `<html>`: a filter on an ancestor makes
+it a containing block, and every `position: fixed` element on the site would
+jump.
+
 ## The CV
 
 A `#/cv` route assembled from the same content as the rest of the site, so a

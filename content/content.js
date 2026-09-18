@@ -47,7 +47,7 @@ export const audiences = [
     label:  { en: "I'm a designer",      nl: "Ik ben ontwerper" },
     detail: { en: "Process, decisions, and the accessibility work underneath all of it.",
               nl: "Proces, keuzes, en het toegankelijkheidswerk daaronder." },
-    order: ["work", "process", "accessibility", "detail-index", "about", "contact"],
+    order: ["work", "process", "accessibility", "lab", "detail-index", "about", "contact"],
   },
   {
     id: "client",
@@ -61,7 +61,7 @@ export const audiences = [
     label:  { en: "Just looking",        nl: "Ik kijk even rond" },
     detail: { en: "No order imposed. Everything is open.",
               nl: "Geen volgorde opgelegd. Alles staat open." },
-    order: ["work", "about", "process", "accessibility", "skills", "detail-index", "contact"],
+    order: ["work", "about", "process", "accessibility", "lab", "skills", "detail-index", "contact"],
   },
 ];
 
@@ -355,6 +355,76 @@ export const cv = {
   },
 };
 
+/* -------------------------------------------------------------------------
+   LAB
+   Working instruments rather than a gallery of screenshots. Each one is a
+   tool for something Safa actually tests for, and each runs on THIS page —
+   the vision simulations on her own portfolio, the contrast checker loaded
+   with the pairing that failed her first audit.
+
+   A lab of pictures would be a second Work tab. A lab you can operate is an
+   argument about how she works.
+   ------------------------------------------------------------------------- */
+export const lab = {
+  lead: {
+    en: "Accessibility is usually described. Here you can run it. Every instrument below works on this page, right now — including the ones that will make it harder to read, which is the point.",
+    nl: "Toegankelijkheid wordt meestal beschreven. Hier kun je het uitvoeren. Elk instrument hieronder werkt op deze pagina, nu — ook de instrumenten die haar moeilijker leesbaar maken, en dat is precies de bedoeling.",
+  },
+  experiments: [
+    {
+      id: "vision",
+      n: "01",
+      title: { en: "See it the way they do", nl: "Zie het zoals zij het zien" },
+      note: {
+        en: "The colour-vision and blurred-vision simulations from my first accessibility audit, pointed at this portfolio instead of at someone else's. Blurred vision is the one my old site failed.",
+        nl: "De kleurzicht- en wazigzichtsimulaties uit mijn eerste toegankelijkheidsaudit, nu gericht op dit portfolio in plaats van op dat van iemand anders. Wazig zicht is degene waarvoor mijn oude site zakte.",
+      },
+    },
+    {
+      id: "contrast",
+      n: "02",
+      title: { en: "Two words that failed", nl: "Twee woorden die zakten" },
+      note: {
+        en: "Red on yellow appeared twice on my first site and failed contrast, which is exactly why it survived every review — nobody checks two words. Drag the colours and watch the ratio decide whether a sentence exists for someone.",
+        nl: "Rood op geel kwam twee keer voor op mijn eerste site en zakte voor contrast — en juist daarom overleefde het elke review, want niemand controleert twee woorden. Sleep aan de kleuren en zie de verhouding bepalen of een zin voor iemand bestaat.",
+      },
+    },
+    {
+      id: "halftone",
+      n: "03",
+      title: { en: "Screen angles", nl: "Rasterhoeken" },
+      note: {
+        en: "The two-colour risograph screen this site prints in. Two screens less than 60° apart interfere and produce moiré — set both to the same angle and watch it happen.",
+        nl: "Het tweekleuren-risoraster waarin deze site afdrukt. Twee rasters met minder dan 60° verschil interfereren en geven moiré — zet ze op dezelfde hoek en kijk wat er gebeurt.",
+      },
+    },
+  ],
+  ui: {
+    run:        { en: "Run on this page",  nl: "Uitvoeren op deze pagina" },
+    stop:       { en: "Stop",              nl: "Stoppen" },
+    normal:     { en: "Normal vision",     nl: "Normaal zicht" },
+    ratio:      { en: "Contrast ratio",    nl: "Contrastverhouding" },
+    fg:         { en: "Text",              nl: "Tekst" },
+    bg:         { en: "Background",        nl: "Achtergrond" },
+    sample:     { en: "Two words",         nl: "Twee woorden" },
+    angleA:     { en: "Ink angle",         nl: "Inkthoek" },
+    angleB:     { en: "Accent angle",      nl: "Accenthoek" },
+    pitch:      { en: "Screen pitch",      nl: "Rasterfijnheid" },
+    moire:      { en: "Moir\u00e9 \u2014 the screens are interfering",
+                  nl: "Moir\u00e9 \u2014 de rasters interfereren" },
+    running:    { en: "Simulation running on this page",
+                  nl: "Simulatie actief op deze pagina" },
+  },
+  vision: [
+    { id: "none",         label: { en: "Normal",            nl: "Normaal" } },
+    { id: "protanopia",   label: { en: "Protanopia",        nl: "Protanopie" } },
+    { id: "deuteranopia", label: { en: "Deuteranopia",      nl: "Deuteranopie" } },
+    { id: "tritanopia",   label: { en: "Tritanopia",        nl: "Tritanopie" } },
+    { id: "achromatopsia",label: { en: "No colour at all",  nl: "Geen kleur" } },
+    { id: "blur",         label: { en: "Blurred vision",    nl: "Wazig zicht" } },
+  ],
+};
+
 export const about = {
   body: {
     en: [
@@ -528,6 +598,7 @@ export const ui = {
     accessibility: { en: "Accessibility",  nl: "Toegankelijkheid" },
     "detail-index":{ en: "Every decision on this site", nl: "Elke keuze op deze site" },
     cv:            { en: "Curriculum vitae", nl: "Curriculum vitae" },
+    lab:           { en: "Lab",              nl: "Lab" },
     contact:       { en: "Contact",        nl: "Contact" },
   },
   caseLabels: {

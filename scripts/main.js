@@ -8,6 +8,7 @@ import { Router } from "./router.js";
 import { makeTransition } from "./transitions.js";
 import { Cat, PawTrail } from "./cat.js";
 import { CursorBadge } from "./cursor.js";
+import { VisionLab as LabVision, ratio as labRatio, hexToRgb as labHex } from "./lab.js";
 import * as C from "../content/content.js";
 
 /* ---- i18n -------------------------------------------------------------
@@ -86,6 +87,29 @@ const SECTIONS = {
           el("div", {},
             el("p", { textContent: t(d.note) }),
             el("p", { style: "color:var(--text-faint)", textContent: t(proj.title) }))))))),
+
+  /* THE LAB — instruments, each one operating on this page. */
+  lab: () => {
+    const wrap = section("lab", el("p", { className: "intro__sub", textContent: t(C.lab.lead) }));
+    const list = el("ul", { className: "lab" });
+
+    for (const exp of C.lab.experiments) {
+      const body = el("div", { className: "lab__body" });
+      const card = el("li", {},
+        el("article", { className: "lab__card hoverable" },
+          el("p", { className: "lab__meta" },
+            el("span", { className: "lab__n", textContent: exp.n }),
+            el("span", { textContent: t(exp.title) })),
+          el("p", { className: "lab__note", textContent: t(exp.note) }),
+          body));
+      if (exp.id === "vision") buildVision(body);
+      if (exp.id === "contrast") buildContrast(body);
+      if (exp.id === "halftone") buildHalftone(body);
+      list.append(card);
+    }
+    wrap.append(list);
+    return wrap;
+  },
 
   /* THE CV.
      Built from the same content as the rest of the site, so a case study and
@@ -386,6 +410,100 @@ function prefersStill() {
          matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
+/* ---- LAB 01 · vision ----------------------------------------------------
+   The simulations run on the whole document, so the controls have to stay
+   legible while everything around them degrades — and there must always be
+   one obvious way back to normal. */
+function buildVision(host) {
+  const group = el("div", { className: "lab__choices" });
+  group.setAttribute("role", "group");
+  group.setAttribute("aria-label", t(C.lab.experiments[0].title));
+
+  const buttons = C.lab.vision.map((v) => {
+    const b = el("button", { type: "button", className: "lab__chip", textContent: t(v.label) });
+    b.dataset.vision = v.id;
+    b.setAttribute("aria-pressed", String(v.id === "none"));
+    b.addEventListener("click", () => {
+      visionLab ??= new LabVision({ announce: (m) => attune.say(m), t, strings: C.lab });
+      visionLab.apply(v.id);
+      buttons.forEach((o) => o.setAttribute("aria-pressed", String(o === b)));
+    });
+    return b;
+  });
+  group.append(...buttons);
+  host.append(group);
+}
+
+/* ---- LAB 02 · contrast --------------------------------------------------
+   Opens on red over yellow: the pairing that failed her first audit, and
+   the reason the whole site is measured rather than eyeballed. */
+function buildContrast(host) {
+  const state = { fg: "#e8402a", bg: "#f2e14a" };
+
+  const swatch = el("p", { className: "lab__swatch" },
+    el("span", { textContent: t(C.lab.ui.sample) }));
+  const verdict = el("p", { className: "lab__verdict" });
+
+  const field = (key, label) => {
+    const id = `lab-${key}`;
+    const input = el("input", { type: "color", id, value: state[key] });
+    input.addEventListener("input", () => { state[key] = input.value; paint(); });
+    return el("label", { className: "lab__field", htmlFor: id },
+      el("span", { textContent: t(label) }), input);
+  };
+
+  const paint = () => {
+    swatch.style.background = state.bg;
+    swatch.style.color = state.fg;
+    const r = labRatio(labHex(state.fg), labHex(state.bg));
+    const pass = r >= 7 ? "AAA" : r >= 4.5 ? "AA" : r >= 3 ? "Large only" : "Fail";
+    verdict.textContent = `${t(C.lab.ui.ratio)} ${r.toFixed(2)} : 1 — ${pass}`;
+    verdict.dataset.level = pass === "Fail" ? "fail" : pass === "Large only" ? "warn" : "pass";
+  };
+
+  host.append(el("div", { className: "lab__row" },
+    field("fg", C.lab.ui.fg), field("bg", C.lab.ui.bg)), swatch, verdict);
+  paint();
+}
+
+/* ---- LAB 03 · halftone --------------------------------------------------
+   The same screen the print mode uses, with its angles exposed so you can
+   break the 60° rule on purpose and watch moire appear. */
+function buildHalftone(host) {
+  const state = { angleA: 15, angleB: 75, pitch: 6 };
+  const canvas = el("canvas", { className: "lab__canvas" });
+  canvas.setAttribute("aria-hidden", "true");
+  const warn = el("p", { className: "lab__verdict", hidden: true });
+  warn.dataset.level = "warn";
+
+  const draw = async () => {
+    const cs = getComputedStyle(document.documentElement);
+    const ink = cs.getPropertyValue("--text").trim() || "#faf8f5";
+    const acc = cs.getPropertyValue("--accent").trim() || "#c8e65a";
+    const { renderScreen, isMoire } = await import("./lab.js");
+    await renderScreen(canvas, { ...state, inkA: ink, inkB: acc });
+    warn.hidden = !isMoire(state.angleA, state.angleB);
+    warn.textContent = t(C.lab.ui.moire);
+  };
+
+  const slider = (key, label, min, max) => {
+    const id = `lab-${key}`;
+    const out = el("output", { htmlFor: id, textContent: String(state[key]) });
+    const input = el("input", { type: "range", id, min, max, value: state[key] });
+    input.addEventListener("input", () => {
+      state[key] = +input.value; out.textContent = input.value; draw();
+    });
+    return el("label", { className: "lab__field", htmlFor: id },
+      el("span", {}, t(label), " ", out), input);
+  };
+
+  host.append(el("div", { className: "lab__row" },
+    slider("angleA", C.lab.ui.angleA, 0, 90),
+    slider("angleB", C.lab.ui.angleB, 0, 90),
+    slider("pitch", C.lab.ui.pitch, 3, 14)), canvas, warn);
+  requestAnimationFrame(draw);
+}
+
 function cvBlock(label, ...children) {
   return el("section", { className: "cv__block" },
     el("h4", { className: "cv__label", textContent: t(label) }),
@@ -439,6 +557,7 @@ export const ROUTES = [
   { id: "about",   label: { en: "About",    nl: "Over" },    sections: ["about", "process"] },
   { id: "access",  label: { en: "Access",   nl: "Toegang" }, sections: ["accessibility", "detail-index"] },
   { id: "skills",  label: { en: "Skills",   nl: "Kunde" },   sections: ["skills"] },
+  { id: "lab",     label: { en: "Lab",      nl: "Lab" },     sections: ["lab"] },
   { id: "cv",      label: { en: "CV",       nl: "CV" },      sections: ["cv"] },
   { id: "contact", label: { en: "Contact",  nl: "Contact" }, sections: ["contact"] },
 ];
@@ -579,6 +698,7 @@ let cat = null;
 let paws = null;
 let swarm = null;
 let halftone = null;
+let visionLab = null;
 
 /* The home page companion.
 
@@ -661,6 +781,9 @@ function renderRoute(id) {
   paws?.destroy(); paws = null;
   swarm?.destroy(); swarm = null;
   halftone?.destroy(); halftone = null;
+  /* A vision simulation that outlived its own page would leave the whole
+     site blurred with no visible way to undo it. */
+  visionLab?.destroy(); visionLab = null;
 
   view.replaceChildren(...route.sections.map((key) => SECTIONS[key]?.()).filter(Boolean));
   document.title = `${t(route.label)} — ${C.meta.name}, ${t(C.meta.role)}`;
