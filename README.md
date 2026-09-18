@@ -76,7 +76,7 @@ each one argues its own page's point rather than decorating the gap:
 
 | page | crossing | what it says |
 |---|---|---|
-| **Home** | the page settles out of the lime mark; outcome figures count up | the site attuning itself — its whole thesis |
+| **Home** | the page settles out of the lime mark; the work index arrives row by row | the site attuning itself — its whole thesis |
 | **Work** | covers snap from scatter into alignment | interfaces are assembled out of parts |
 | **A case** | the clicked cover morphs into the page hero | you opened *this* one, and it is the same object |
 | **About** | paragraphs rise one line at a time | the cadence of someone talking, not a page loading |
@@ -87,9 +87,6 @@ each one argues its own page's point rather than decorating the gap:
 **Access** is the only page identical in both modes, because it was always
 designed for everyone. That is the point, and the site says so out loud the
 first time you open it.
-
-The home page counts its figures up — the one effect Safa wrote in 2023 and
-couldn't get working. It works now.
 
 ## The ground
 
@@ -243,6 +240,21 @@ rail does not scroll**, along with the counter: a control that moves nothing
 is lying, and "01 / 04" is meaningless when all four are on screen at once.
 The rail is a focusable labelled region, since a scrollable box that cannot be
 focused cannot be scrolled by keyboard at all.
+
+## Selected work, as type
+
+The home page closes on the four projects set large, each row taking its own
+case colour, with the cover riding the pointer beside it.
+
+It replaced a row of business metrics — 13 cities, €150K — which were the
+*product's* numbers rather than hers, and which asked a visitor to be
+impressed before they had seen anything. A list of the actual work asks them
+to look instead, and it gives the home page somewhere to lead.
+
+The preview is decoration: every row is already a complete link, and deleting
+the image would lose nothing but the pleasure. It eases toward the pointer on
+the same lag as the cursor badge, so the two read as one language rather than
+two systems.
 
 ## The page audits itself, in front of you
 

@@ -40,7 +40,7 @@ export const audiences = [
     label:  { en: "I'm hiring",          nl: "Ik werf" },
     detail: { en: "Forty seconds. Outcomes first, then the work, then how to reach me.",
               nl: "Veertig seconden. Eerst resultaten, dan het werk, dan hoe je me bereikt." },
-    order: ["outcomes", "work", "cv", "skills", "contact"],
+    order: ["index", "work", "cv", "skills", "contact"],
   },
   {
     id: "designer",
@@ -54,7 +54,7 @@ export const audiences = [
     label:  { en: "I have a project",    nl: "Ik heb een opdracht" },
     detail: { en: "What I do, how I work, and what it asks of you.",
               nl: "Wat ik doe, hoe ik werk, en wat het van jou vraagt." },
-    order: ["outcomes", "skills", "work", "process", "contact"],
+    order: ["index", "skills", "work", "process", "contact"],
   },
   {
     id: "curious",
@@ -80,17 +80,6 @@ export const intro = {
     nl: "Deze site herschikt zichzelf op basis van wie je bent. Vertel het, of niet — alles blijft hoe dan ook bereikbaar.",
   },
 };
-
-/* -------------------------------------------------------------------------
-   OUTCOMES — the numbers, alone, for the visitor with forty seconds.
-   Every figure here is from the work itself, not from a rounding-up.
-   ------------------------------------------------------------------------- */
-export const outcomes = [
-  { figure: "13",     label: { en: "cities running VeloTech.AI",      nl: "steden draaien VeloTech.AI" } },
-  { figure: "€150K+", label: { en: "early revenue it helped generate", nl: "vroege omzet mede gegenereerd" } },
-  { figure: "7",      label: { en: "pilot clients",                    nl: "pilotklanten" } },
-  { figure: "4",      label: { en: "products shipped since 2024",      nl: "producten opgeleverd sinds 2024" } },
-];
 
 /* -------------------------------------------------------------------------
    WORK — four real projects. Copy and imagery are hers.
@@ -587,6 +576,7 @@ export const ui = {
   nextShot:      { en: "Next screen",        nl: "Volgend scherm" },
   nextCase:      { en: "Next case",          nl: "Volgende case" },
   cursorRead:    { en: "Read",               nl: "Lees" },
+  indexHint:     { en: "Four projects", nl: "Vier projecten" },
   cvTitle:       { en: "Curriculum vitae",   nl: "Curriculum vitae" },
   cvDownload:    { en: "Download as PDF",    nl: "Download als PDF" },
   cvHint: {
@@ -633,8 +623,8 @@ export const ui = {
     audience: {
       open:     { en: "Showing everything, in the default order.",
                   nl: "Alles wordt getoond, in de standaardvolgorde." },
-      hiring:   { en: "Reordered for hiring: outcomes first, then the work.",
-                  nl: "Herschikt voor werving: eerst resultaten, dan het werk." },
+      hiring:   { en: "Reordered for hiring: the work first, then the CV.",
+                  nl: "Herschikt voor werving: eerst het werk, dan het cv." },
       designer: { en: "Reordered for designers: process, decisions and the accessibility work first.",
                   nl: "Herschikt voor ontwerpers: eerst proces, keuzes en het toegankelijkheidswerk." },
       client:   { en: "Reordered for clients: what I do, how I work, what it asks of you.",
@@ -670,7 +660,7 @@ export const ui = {
   closeLabel:    { en: "Close",             nl: "Sluiten" },
   sections: {
     work:          { en: "Work",           nl: "Werk" },
-    outcomes:      { en: "Outcomes",       nl: "Resultaten" },
+    index:         { en: "Selected work",  nl: "Geselecteerd werk" },
     about:         { en: "About",          nl: "Over" },
     process:       { en: "Process",        nl: "Proces" },
     skills:        { en: "Skills",         nl: "Vaardigheden" },

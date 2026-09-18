@@ -55,47 +55,12 @@ function rise(nodes, { distance = 14, stagger = 55, duration = 620 } = {}) {
   });
 }
 
-/* Count a figure up to its written value, keeping whatever is wrapped
-   around the number. "€150K+" counts the 150 and leaves "€" and "K+" alone.
-   Intl.NumberFormat so a thousands separator is the reader's own, not
-   a hard-coded comma. */
-function countUp(node, { duration = 1100 } = {}) {
-  const text = node.textContent;
-  const match = text.match(/[\d.,]+/);
-  if (!match) return;
-
-  const target = parseFloat(match[0].replace(/,/g, ""));
-  if (!Number.isFinite(target)) return;
-
-  const before = text.slice(0, match.index);
-  const after  = text.slice(match.index + match[0].length);
-  const fmt = new Intl.NumberFormat(document.documentElement.lang || "en");
-
-  /* The figure is in the accessibility tree the whole time as its final
-     value; only the visible text counts. A screen reader announcing
-     "one… four… nine… thirteen cities" would be a cruelty. */
-  node.setAttribute("aria-label", text);
-  const live = document.createElement("span");
-  live.setAttribute("aria-hidden", "true");
-  node.replaceChildren(live);
-
-  const t0 = performance.now();
-  const step = (now) => {
-    const p = Math.min((now - t0) / duration, 1);
-    const eased = 1 - Math.pow(1 - p, 3);          // ease-out cubic
-    live.textContent = before + fmt.format(Math.round(target * eased)) + after;
-    if (p < 1) requestAnimationFrame(step);
-    else live.textContent = text;                  // land exactly on the written value
-  };
-  requestAnimationFrame(step);
-}
-
 /* Run something the first time an element is actually looked at.
 
    Anything below the fold has to be triggered by arrival, not by a timer
-   started at page load. On a landing page three and a half viewports tall
-   the difference is total: the outcome figures sit at 3.08vh, so a delay
-   measured from route entry counted them up in an empty room. */
+   started at page load. On a landing page three viewports tall the
+   difference is total: the work index sits two viewports down, so a delay
+   started at load would animate it in an empty room. */
 function whenSeen(nodes, fn, { threshold = 0.4 } = {}) {
   const list = [...nodes];
   if (!list.length) return;
@@ -107,7 +72,7 @@ function whenSeen(nodes, fn, { threshold = 0.4 } = {}) {
   const io = new IntersectionObserver((entries, obs) => {
     entries.forEach((entry) => {
       if (!entry.isIntersecting) return;
-      obs.unobserve(entry.target);         // once only — a figure that counts twice is a bug
+      obs.unobserve(entry.target);         // once only
       fn(entry.target);
     });
   }, { threshold });
@@ -117,9 +82,8 @@ function whenSeen(nodes, fn, { threshold = 0.4 } = {}) {
 /* ---- per-page choreography --------------------------------------------- */
 
 const CHOREO = {
-  /* RESOLVE — the page settles out of the mark. The outcome figures count
-     up, which is the one effect Safa wrote in 2023 that she could not get
-     working. It works now. */
+  /* RESOLVE — the page settles out of the mark, and the work index arrives
+     row by row as it is reached. */
   home(view) {
     rise(view.querySelectorAll(".intro__kicker"), { stagger: 0, duration: 500 });
     resolveView(view);
@@ -127,9 +91,9 @@ const CHOREO = {
     marks.forEach((m) => m.animate(
       [{ transform: "scale(0)", opacity: 0 }, { transform: "scale(1)", opacity: 1 }],
       { duration: 520, delay: 240, easing: "cubic-bezier(0.34, 1.56, 0.64, 1)", fill: "backwards" }));
-    /* The figures count when they are reached, not when the route opens. */
-    whenSeen(view.querySelectorAll(".outcome__figure"),
-             (f) => countUp(f), { threshold: 0.9 });
+    /* The work index arrives as you reach it, row by row. */
+    whenSeen(view.querySelectorAll(".index > li"),
+             (n) => rise([n], { stagger: 0, duration: 620 }), { threshold: 0.35 });
 
     /* Same for the audience question, which sits two viewports down. */
     whenSeen(view.querySelectorAll(".ask"), (n) => rise([n], { stagger: 0 }));
@@ -253,4 +217,3 @@ export function makeTransition({ announce, t }) {
   };
 }
 
-export { countUp };

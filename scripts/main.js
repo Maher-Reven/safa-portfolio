@@ -33,11 +33,63 @@ const el = (tag, props = {}, ...kids) => {
    ========================================================================= */
 
 const SECTIONS = {
-  outcomes: () => section("outcomes",
-    el("ul", { className: "outcomes" }, C.outcomes.map((o) =>
-      el("li", {},
-        el("span", { className: "outcome__figure", textContent: o.figure }),
-        el("span", { className: "outcome__label", textContent: t(o.label) }))))),
+  /* SELECTED WORK, AS TYPE.
+     The four projects set large, each line taking its own case colour, with
+     the cover riding the pointer beside it. It replaced a row of business
+     metrics — 13 cities, EUR 150K — which were the product's numbers rather
+     than hers, and which asked a visitor to be impressed before they had
+     seen anything. A list of the actual work asks them to look instead, and
+     it gives the home page somewhere to lead.
+
+     The preview is decoration: every row is a complete link, and deleting
+     the image would lose nothing but the pleasure. */
+  index: () => {
+    const preview = el("figure", { className: "index__preview" });
+    preview.setAttribute("aria-hidden", "true");
+    const img = el("img", { alt: "", decoding: "async" });
+    preview.append(img);
+
+    const rows = C.projects.map((p, i) => {
+      const row = el("li", {},
+        el("a", { href: `#/work/${p.slug}`, className: "index__row" },
+          el("span", { className: "index__n", textContent: String(i + 1).padStart(2, "0") }),
+          el("span", { className: "index__name", textContent: t(p.title) }),
+          el("span", { className: "index__meta", textContent: t(p.discipline) }),
+          el("span", { className: "index__year", textContent: p.year })));
+      row.style.setProperty("--case", p.colour);
+      const link = row.querySelector("a");
+      link.dataset.cursor = t(C.ui.cursorRead);
+      link.addEventListener("pointerenter", () => {
+        if (prefersStill()) return;
+        img.src = p.cover.src;
+        preview.dataset.on = "true";
+      });
+      link.addEventListener("pointerleave", () => { preview.dataset.on = "false"; });
+      return row;
+    });
+
+    /* One delegated tracker rather than a listener per row, eased so the
+       cover trails the hand the way the cursor badge does — the same
+       object-with-weight language, so the two do not feel like two systems. */
+    let at = { x: 0, y: 0 }, target = { x: 0, y: 0 }, raf = 0;
+    const tick = () => {
+      at.x += (target.x - at.x) * 0.14;
+      at.y += (target.y - at.y) * 0.14;
+      preview.style.transform = `translate3d(${at.x}px, ${at.y}px, 0) translate(-50%, -50%)`;
+      raf = preview.dataset.on === "true" ? requestAnimationFrame(tick) : 0;
+    };
+    const list = el("ul", { className: "index" }, rows);
+    list.addEventListener("pointermove", (e) => {
+      if (e.pointerType === "touch") return;
+      target.x = e.clientX; target.y = e.clientY;
+      if (!raf && preview.dataset.on === "true") {
+        at = { ...target };
+        raf = requestAnimationFrame(tick);
+      }
+    }, { passive: true });
+
+    return section("index", list, preview);
+  },
 
   work: () => section("work",
     el("ul", { className: "work-index" }, C.projects.map(caseCard))),
@@ -805,7 +857,7 @@ function detailPair(d, slug) {
    become routable: the sections never knew where they were.
    ========================================================================= */
 export const ROUTES = [
-  { id: "home",    label: { en: "Home",     nl: "Start" },   sections: ["intro", "outcomes"] },
+  { id: "home",    label: { en: "Home",     nl: "Start" },   sections: ["intro", "index"] },
   { id: "work",    label: { en: "Work",     nl: "Werk" },    sections: ["work"] },
   { id: "about",   label: { en: "About",    nl: "Over" },    sections: ["about", "process"] },
   { id: "access",  label: { en: "Access",   nl: "Toegang" }, sections: ["accessibility", "detail-index"] },
@@ -1315,7 +1367,7 @@ function armHoverSpotlight() {
    here rather than in each renderer so the list of what counts as a card
    lives in one place. */
 const HOVERABLE = [
-  ".ask__options button", ".outcomes > li", ".project", ".case-card",
+  ".ask__options button", ".project", ".case-card",
   ".skills > div", ".findings > li", ".steps > li",
 ].join(", ");
 
