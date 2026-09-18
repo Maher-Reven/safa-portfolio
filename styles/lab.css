@@ -208,3 +208,94 @@ body { filter: var(--vision-filter, none); }
 @media (max-width: 40rem) {
   .lab__curves > li { grid-template-columns: 1fr; gap: var(--s-3xs); }
 }
+
+/* =========================================================================
+   THE LIVE AUDIT
+   The page's own score, stated plainly. Failures are not softened: a red
+   number you can see is the only reason this is worth publishing.
+   ========================================================================= */
+.audit {
+  margin-block-start: var(--s-xl);
+  padding: var(--s-md);
+  border: var(--rule-strong);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+}
+.audit__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-2xs) var(--s-sm);
+}
+.audit__title { font-size: var(--t-md); margin: 0; }
+.audit__score {
+  margin: 0;
+  font-family: var(--face-detail);
+  font-size: var(--t-sm);
+  font-variant-numeric: tabular-nums;
+}
+.audit__score[data-level="pass"] { color: var(--accent); }
+/* Failing is stated in a word as well as a colour — an audit that signals
+   only in colour would be failing its own first check. */
+.audit__score[data-level="fail"] { color: var(--text); text-decoration: underline; text-underline-offset: 0.25em; }
+
+.audit__lead { margin: var(--s-2xs) 0 var(--s-sm); font-size: var(--t-sm); color: var(--text-soft); }
+.audit__caveat { margin: var(--s-xs) 0 0; font-size: var(--t-detail); color: var(--text-faint); max-width: 56ch; }
+
+.audit__list { display: grid; gap: 0; margin: 0 0 var(--s-sm); padding: 0; list-style: none; }
+.audit__list > li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: baseline;
+  gap: var(--s-sm);
+  padding-block: var(--s-2xs);
+  border-block-end: var(--rule);
+  max-width: none;
+}
+.audit__list > li:last-child { border-block-end: none; }
+.audit__detail, .audit__verdict {
+  font-family: var(--face-detail);
+  font-size: var(--t-detail);
+  font-variant-numeric: tabular-nums;
+}
+.audit__detail { color: var(--text-faint); }
+.audit__list > li[data-level="pass"] .audit__verdict { color: var(--accent); }
+.audit__list > li[data-level="fail"] .audit__verdict { color: var(--text); text-decoration: underline; }
+/* A marker as well as colour, for the same reason. */
+.audit__list > li[data-level="fail"] .audit__label::before { content: "! "; color: var(--text); }
+
+@media (max-width: 40rem) {
+  .audit__list > li { grid-template-columns: 1fr auto; }
+  .audit__detail { grid-column: 1 / -1; }
+}
+
+/* =========================================================================
+   THE KEYBOARD ROUTE
+   Drawn over the document, in document coordinates, so it stays pinned to
+   the elements it describes while the page scrolls.
+   ========================================================================= */
+.focus-path {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;      /* it describes controls; it must not block them */
+  z-index: var(--z-detail);
+}
+.focus-path__line {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2;
+  stroke-dasharray: 6 5;
+  opacity: 0.85;
+}
+.focus-path__dot { fill: var(--accent); }
+.focus-path__n {
+  fill: var(--accent-ink);
+  font-family: var(--face-detail);
+  font-size: 11px;
+  font-weight: 500;
+}

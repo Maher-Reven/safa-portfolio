@@ -9,6 +9,7 @@ import { makeTransition } from "./transitions.js";
 import { Cat, PawTrail } from "./cat.js";
 import { CursorBadge } from "./cursor.js";
 import { VisionLab as LabVision, ratio as labRatio, hexToRgb as labHex } from "./lab.js";
+import { runAudit } from "./audit.js";
 import * as C from "../content/content.js";
 
 /* ---- i18n -------------------------------------------------------------
@@ -74,7 +75,8 @@ const SECTIONS = {
     el("p", { textContent: t(C.accessibility.close) }),
     el("p", {}, el("a", { className: "detail-trigger",
                           href: C.accessibility.source.href,
-                          textContent: C.accessibility.source.label }))),
+                          textContent: C.accessibility.source.label })),
+    auditBlock()),
 
   /* The footnotes, promoted to a chapter: every annotation on the site as
      one document, for the visitor who wants decisions without pictures. */
@@ -94,7 +96,8 @@ const SECTIONS = {
     const list = el("ul", { className: "lab" });
 
     const builders = { vision: buildVision, contrast: buildContrast,
-                       halftone: buildHalftone, type: buildType, easing: buildEasing };
+                       halftone: buildHalftone, type: buildType,
+                       easing: buildEasing, focus: buildFocus };
 
     const cards = C.lab.experiments.map((exp) => {
       const body = el("div", { className: "lab__body" });
@@ -446,6 +449,127 @@ function deviceRail(shots, slug) {
 function prefersStill() {
   return document.documentElement.dataset.mode === "calm" ||
          matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
+/* THE PAGE, MEASURED.
+   Runs against the live DOM after the route has settled, and again whenever
+   an Attune axis changes — so turning on high contrast visibly moves the
+   numbers, which is the argument the whole adaptation system is making. */
+function auditBlock() {
+  const wrap = el("div", { className: "audit" });
+  const head = el("div", { className: "audit__head" },
+    el("h3", { className: "audit__title", textContent: t(C.accessibility.audit.title) }),
+    el("p", { className: "audit__score" }));
+  const list = el("ul", { className: "audit__list" });
+  const button = el("button", { type: "button", className: "lab__chip",
+                                textContent: t(C.accessibility.audit.rerun) });
+
+  const paint = () => {
+    const { checks, passed, total } = runAudit();
+    head.querySelector(".audit__score").textContent =
+      `${passed} / ${total} ${t(C.accessibility.audit.score)}`;
+    head.querySelector(".audit__score").dataset.level = passed === total ? "pass" : "fail";
+
+    list.replaceChildren(...checks.map((c) => {
+      const li = el("li", {},
+        el("span", { className: "audit__label",
+                     textContent: t(C.accessibility.audit.labels[c.id]) }),
+        el("span", { className: "audit__detail", textContent: c.detail }),
+        el("span", { className: "audit__verdict",
+                     textContent: c.pass ? t(C.accessibility.audit.pass)
+                                         : `${c.fails} ${t(C.accessibility.audit.fail)}` }));
+      li.dataset.level = c.pass ? "pass" : "fail";
+      return li;
+    }));
+  };
+
+  button.addEventListener("click", () => {
+    paint();
+    attune.say(head.querySelector(".audit__score").textContent);
+  });
+
+  wrap.append(head,
+    el("p", { className: "audit__lead", textContent: t(C.accessibility.audit.lead) }),
+    list, button,
+    el("p", { className: "audit__caveat", textContent: t(C.accessibility.audit.caveat) }));
+
+  /* Measured after layout has settled, or the bounding boxes it reads are
+     from a page that has not finished arriving. */
+  requestAnimationFrame(() => requestAnimationFrame(paint));
+  auditRepaint = paint;
+  return wrap;
+}
+
+/* ---- LAB 06 · the keyboard route ---------------------------------------
+   The tab order is inherited from the markup and is the only route a
+   keyboard user has. Drawing it shows whether the reading order and the
+   operating order are the same thing. */
+function buildFocus(host) {
+  let overlay = null;
+  const button = el("button", { type: "button", className: "lab__chip",
+                                textContent: t(C.lab.ui.showPath) });
+  const count = el("span", { className: "lab__readout" });
+
+  const draw = () => {
+    const stops = [...document.querySelectorAll(
+      'a[href], button:not([disabled]), input:not([disabled]), select, [tabindex]:not([tabindex="-1"])')]
+      .filter((el) => {
+        const s = getComputedStyle(el);
+        if (s.display === "none" || s.visibility === "hidden") return false;
+        const r = el.getBoundingClientRect();
+        return r.width > 0 && r.height > 0 && r.bottom > 0 && r.top < innerHeight * 3;
+      });
+
+    const ns = "http://www.w3.org/2000/svg";
+    overlay = document.createElementNS(ns, "svg");
+    overlay.setAttribute("class", "focus-path");
+    overlay.setAttribute("aria-hidden", "true");
+    overlay.setAttribute("width", "100%");
+    overlay.setAttribute("height", "100%");
+
+    const pts = stops.map((el) => {
+      const r = el.getBoundingClientRect();
+      return [r.left + r.width / 2 + scrollX, r.top + r.height / 2 + scrollY];
+    });
+
+    if (pts.length > 1) {
+      const path = document.createElementNS(ns, "path");
+      path.setAttribute("d", pts.map((p, i) => `${i ? "L" : "M"}${p[0]} ${p[1]}`).join(" "));
+      path.setAttribute("class", "focus-path__line");
+      overlay.append(path);
+    }
+    pts.forEach(([x, y], i) => {
+      const g = document.createElementNS(ns, "g");
+      g.setAttribute("transform", `translate(${x} ${y})`);
+      const c = document.createElementNS(ns, "circle");
+      c.setAttribute("r", "11");
+      c.setAttribute("class", "focus-path__dot");
+      const tx = document.createElementNS(ns, "text");
+      tx.setAttribute("class", "focus-path__n");
+      tx.setAttribute("text-anchor", "middle");
+      tx.setAttribute("dy", "3.5");
+      tx.textContent = String(i + 1);
+      g.append(c, tx);
+      overlay.append(g);
+    });
+
+    document.body.append(overlay);
+    count.textContent = `${pts.length} ${t(C.lab.ui.stops)}`;
+    button.textContent = t(C.lab.ui.hidePath);
+    button.setAttribute("aria-pressed", "true");
+  };
+
+  const clear = () => {
+    overlay?.remove(); overlay = null;
+    button.textContent = t(C.lab.ui.showPath);
+    button.setAttribute("aria-pressed", "false");
+    count.textContent = "";
+  };
+
+  button.setAttribute("aria-pressed", "false");
+  button.addEventListener("click", () => (overlay ? clear() : draw()));
+  focusPathClear = clear;
+  host.append(el("div", { className: "lab__row" }, button, count));
 }
 
 /* ---- LAB 01 · vision ----------------------------------------------------
@@ -828,6 +952,8 @@ let paws = null;
 let swarm = null;
 let halftone = null;
 let visionLab = null;
+let auditRepaint = null;
+let focusPathClear = null;
 
 /* The home page companion.
 
@@ -913,6 +1039,9 @@ function renderRoute(id) {
   /* A vision simulation that outlived its own page would leave the whole
      site blurred with no visible way to undo it. */
   visionLab?.destroy(); visionLab = null;
+  /* An overlay drawn over a page that no longer exists is just litter. */
+  focusPathClear?.(); focusPathClear = null;
+  auditRepaint = null;
 
   view.replaceChildren(...route.sections.map((key) => SECTIONS[key]?.()).filter(Boolean));
   document.title = `${t(route.label)} — ${C.meta.name}, ${t(C.meta.role)}`;
@@ -1109,6 +1238,9 @@ router.start();
 
 attune.addEventListener("change", (e) => {
   const { changed } = e.detail;
+  /* The audit is only interesting if it responds: switch to high contrast
+     and the contrast row has to move, or the claim is decoration. */
+  if (auditRepaint) requestAnimationFrame(() => requestAnimationFrame(auditRepaint));
   if (changed === "lang") {
     renderStatic(); renderAttune(); renderTabs(); renderLang(); renderRoute(router.current);
   }

@@ -22,7 +22,7 @@
   --surface: #232323;
   --text: #faf8f5;
   --text-soft: #c9c4bc;
-  --text-faint: #8a857e;
+  --text-faint: #948f87;
   --line: rgba(250, 248, 245, 0.10);
   --line-strong: rgba(250, 248, 245, 0.22);
   --accent: #c8e65a;
@@ -130,7 +130,13 @@
   --surface: #232323;
   --text: #faf8f5;
   --text-soft: #c9c4bc;   /* 10.4:1 — secondary, still comfortably readable */
-  --text-faint: #8a857e;  /*  4.7:1 — metadata only, never below 15px */
+  /* 5.3:1 on --ground AND 4.9:1 on --surface. It was #8a857e, measured only
+     against the ground at 4.7:1 — but nearly every faint label on this site
+     sits on a card, where --surface is lighter and the same colour falls to
+     4.29:1. The site's own live audit caught it on five pages. A token has
+     to clear its threshold on every ground it is actually used on, not the
+     one it was designed against. */
+  --text-faint: #948f87;
   --line: rgba(250, 248, 245, 0.10);
   --line-strong: rgba(250, 248, 245, 0.22);
   --accent: #c8e65a;      /* 12.1:1 on ground */

@@ -309,6 +309,31 @@ export const accessibility = {
     nl: "Daarom vraagt deze site aan je apparaat wat je nodig hebt voordat hij besluit wat hij wordt, daarom heeft hij twee volledig ontworpen modi in plaats van één plus een terugval, en daarom zegt hij hardop wanneer hij iets verandert.",
   },
   source: { label: "github.com/sofy98/Blokweb", href: "https://github.com/sofy98/Blokweb" },
+
+  /* The page grades itself, live. */
+  audit: {
+    title: { en: "And this page, right now", nl: "En deze pagina, nu" },
+    lead: {
+      en: "Everything above is something I found in my own old work. Below is this page, measured against the live DOM as you are reading it — in whatever state you have put it into. Change a setting in Attune and the numbers move.",
+      nl: "Alles hierboven vond ik in mijn eigen oude werk. Hieronder staat deze pagina, gemeten aan de live DOM terwijl je hem leest — in de staat waarin jij hem hebt gezet. Verander een instelling in Afstemmen en de cijfers bewegen.",
+    },
+    caveat: {
+      en: "Six checks a browser can make honestly. Not a substitute for a real audit — no automated pass tells you whether a sentence made sense to the person reading it.",
+      nl: "Zes controles die een browser eerlijk kan uitvoeren. Geen vervanging voor een echte audit — geen enkele geautomatiseerde test vertelt je of een zin klopte voor wie hem las.",
+    },
+    rerun: { en: "Measure again", nl: "Opnieuw meten" },
+    score:  { en: "checks passing", nl: "controles geslaagd" },
+    labels: {
+      contrast: { en: "Text contrast",        nl: "Tekstcontrast" },
+      alt:      { en: "Images with alt text", nl: "Afbeeldingen met alt-tekst" },
+      headings: { en: "Heading order",        nl: "Kopvolgorde" },
+      targets:  { en: "Target size",          nl: "Klikgebied" },
+      names:    { en: "Controls with a name", nl: "Bedieningen met een naam" },
+      lang:     { en: "Language declared",    nl: "Taal gedeclareerd" },
+    },
+    pass: { en: "pass", nl: "geslaagd" },
+    fail: { en: "fail", nl: "gezakt" },
+  },
 };
 
 /* -------------------------------------------------------------------------
@@ -422,6 +447,17 @@ export const lab = {
         nl: "Elke curve hieronder wordt echt op deze site gebruikt. Lineair staat er als controle bij — die ziet er altijd verkeerd uit, omdat niets in de fysieke wereld op constante snelheid begint en stopt.",
       },
     },
+    {
+      id: "focus",
+      n: "06",
+      topic: "access",
+      span: "wide",
+      title: { en: "The route a keyboard takes", nl: "De route die een toetsenbord neemt" },
+      note: {
+        en: "Nobody designs the tab order; it is inherited from the markup, and it is the only route a keyboard user has. Draw it over the page and you can see whether the reading order and the operating order are the same thing.",
+        nl: "Niemand ontwerpt de tabvolgorde; die volgt uit de markup, en het is de enige route die een toetsenbordgebruiker heeft. Teken hem over de pagina en je ziet of de leesvolgorde en de bedieningsvolgorde hetzelfde zijn.",
+      },
+    },
   ],
   topics: [
     { id: "all",    label: { en: "Everything", nl: "Alles" } },
@@ -441,6 +477,9 @@ export const lab = {
     wonk:       { en: "Wonk",              nl: "Wonk" },
     weight:     { en: "Weight",            nl: "Gewicht" },
     specimen:   { en: "Clarity",           nl: "Helderheid" },
+    showPath:   { en: "Draw the tab order", nl: "Teken de tabvolgorde" },
+    hidePath:   { en: "Hide it",            nl: "Verberg" },
+    stops:      { en: "stops",              nl: "stops" },
     stop:       { en: "Stop",              nl: "Stoppen" },
     normal:     { en: "Normal vision",     nl: "Normaal zicht" },
     ratio:      { en: "Contrast ratio",    nl: "Contrastverhouding" },

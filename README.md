@@ -244,6 +244,32 @@ is lying, and "01 / 04" is meaningless when all four are on screen at once.
 The rail is a focusable labelled region, since a scrollable box that cannot be
 focused cannot be scrolled by keyboard at all.
 
+## The page audits itself, in front of you
+
+Almost every portfolio *asserts* rigour. This one lets you check it. At the
+foot of the Access page the site measures **the live DOM** — resolved colours
+walked up the tree, real bounding boxes, the real heading sequence — and
+publishes the score.
+
+Two rules, and the second is the only one that matters:
+
+1. It measures what is actually rendered, not a checklist someone ticked.
+2. **It reports failures.** An audit that can only pass is marketing.
+
+It re-runs whenever an Attune axis changes, so switching to high contrast
+visibly moves the numbers — which turns the whole adaptation system from a
+claim into a measured one.
+
+> Warm: worst text contrast **4.89:1**, 6/6 passing.
+> High contrast: **10.34:1**.
+
+**It immediately caught a real bug in this site.** `--text-faint` is documented
+in `tokens.css` as 4.6:1 — measured against `--ground`. But nearly every faint
+label sits on a card, where `--surface` is lighter and the same colour fell to
+**4.29:1**, failing on five pages. The token is now `#948f87`: 5.3:1 on the
+ground and 4.9:1 on the surface. A token has to clear its threshold on every
+ground it is used on, not the one it was designed against.
+
 ## The Lab
 
 Instruments, not screenshots. A lab of pictures would be a second Work tab; a
