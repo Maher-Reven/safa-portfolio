@@ -1273,8 +1273,8 @@ function renderStatic() {
   }
   $("#colophon").textContent =
     attune.get("lang") === "nl"
-      ? "Met de hand gebouwd in HTML, CSS en JavaScript, zonder build-stap. DM Sans, DM Mono, Fraunces en Atkinson Hyperlegible. Twee volledig ontworpen modi, geen van beide een excuus."
-      : "Hand-built in HTML, CSS and JavaScript, no build step. DM Sans, DM Mono, Fraunces and Atkinson Hyperlegible. Two fully designed modes, neither one an apology.";
+      ? "Met de hand gebouwd in HTML, CSS en JavaScript, zonder build-stap. DM Sans, DM Mono, Fraunces en Atkinson Hyperlegible. Twee modi op twee thema's, alle vier ontworpen, geen van alle een excuus."
+      : "Hand-built in HTML, CSS and JavaScript, no build step. DM Sans, DM Mono, Fraunces and Atkinson Hyperlegible. Two modes across two themes, all four designed, none of them an apology.";
 }
 
 /* =========================================================================

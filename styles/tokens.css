@@ -66,6 +66,13 @@
   --line: rgba(250, 248, 245, 0.10);
   --line-strong: rgba(250, 248, 245, 0.22);
   --edge: rgba(250, 248, 245, 0.35);
+
+  /* A cast shadow is a colour too. These were written inline as black at 45%
+     and 35%, which is a shadow on a near-black ground and a bruise on paper —
+     ink scatters into warm paper, it does not blacken it. */
+  --shadow-lift: 0 18px 50px rgb(0 0 0 / 0.45);
+  --shadow-pop:  0 6px 24px rgb(0 0 0 / 0.35);
+
   --accent: #c8e65a;
   --accent-ink: #1c1c1c;     /* what sits ON the accent — never white */
   --accent-text: #c8e65a;
@@ -196,6 +203,8 @@
   --line: rgba(250, 248, 245, 0.10);
   --line-strong: rgba(250, 248, 245, 0.22);
   --edge: rgba(250, 248, 245, 0.35);   /* 3.1:1 on both grounds */
+  --shadow-lift: 0 18px 50px rgb(0 0 0 / 0.45);
+  --shadow-pop:  0 6px 24px rgb(0 0 0 / 0.35);
   --accent: #c8e65a;      /* 12.1:1 on ground */
   --accent-ink: #1c1c1c;
   --accent-text: #c8e65a; /* on this ground the fill and the mark can be one colour */
@@ -242,6 +251,8 @@
   --line: rgba(20, 18, 15, 0.14);
   --line-strong: rgba(20, 18, 15, 0.42);
   --edge: rgba(20, 18, 15, 0.46);      /* 3.0:1 on paper, 3.1:1 on a card */
+  --shadow-lift: 0 14px 34px rgb(20 18 15 / 0.16);
+  --shadow-pop:  0 4px 14px rgb(20 18 15 / 0.20);
   --accent: #c8e65a;       /* the same lime, and still a fill */
   --accent-ink: #1c1c1c;   /* 12.1:1 on it — the pill is legible on paper */
   --accent-text: #5c7210;  /* 4.8:1 on paper, 5.2:1 on a card. The old value

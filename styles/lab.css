@@ -140,7 +140,7 @@ body { filter: var(--vision-filter, none); }
   color: var(--accent-ink);
   font-family: var(--face-detail);
   font-size: var(--t-sm);
-  box-shadow: 0 6px 24px rgb(0 0 0 / 0.35);
+  box-shadow: var(--shadow-pop);
 }
 .vision-banner::before { content: "\25C9  "; }
 .vision-banner:hover { filter: brightness(1.08); }
