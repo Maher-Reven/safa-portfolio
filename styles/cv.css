@@ -100,16 +100,45 @@
     --text: #000; --text-soft: #222; --text-faint: #444;
     --line: rgba(0,0,0,0.25); --line-strong: rgba(0,0,0,0.6);
     --accent: #000; --accent-ink: #fff;
+
+    /* The type and space scales are redeclared in points, not just the
+       colours. Setting `body { font-size }` alone changed nothing below it:
+       every size on this sheet comes from a rem-based token, so the notes
+       and dates went on printing at their screen size — 15px of secondary
+       text under 9.8pt of primary — and the CV ran onto a second page. On
+       paper the scale is absolute, so it is written in the unit paper uses. */
+    --t-lg:     15pt;
+    --t-md:     11pt;
+    --t-body:   9.4pt;
+    --t-sm:     8.4pt;
+    --t-detail: 7.6pt;
+
+    --s-3xs: 1pt;  --s-2xs: 2.5pt; --s-xs: 4pt;
+    --s-sm:  6pt;  --s-md:  8pt;   --s-lg: 10pt;
   }
   html, body { background: #fff !important; color: #000 !important; }
-  body { font-size: 9.8pt; line-height: 1.34; }
+  body { font-size: 9.4pt; line-height: 1.32; }
 
   #view, main, .rail { width: auto; margin: 0; padding: 0; }
   .cv { border: none; padding: 0; background: none; }
-  .cv__name { font-size: 18pt; }
-  .cv__head { padding-block-end: 6pt; }
-  .cv__block { padding-block: 5pt; }
-  .cv__list, .cv__skills { gap: 6pt; }
+  .cv__name { font-size: 16pt; }
+  .cv__head { padding-block-end: 5pt; }
+  .cv__block { padding-block: 4pt; }
+  .cv__list, .cv__skills { gap: 5pt; }
+
+  /* The label gutter is 9rem on screen, where it sits in a column of white
+     space anyway. On paper that width is taken from the only column that
+     wraps: shrinking it to the width of the longest label — EXPERIENCE —
+     gives every note line about 90 more characters of room, and each line
+     that stops wrapping is a line the page does not have to find. */
+  .cv__block { grid-template-columns: 5.5rem minmax(0, 1fr); gap: 8pt; }
+
+  /* The gutter is sized to the longest label in either language, and in Dutch
+     that is VAARDIGHEDEN, three characters longer than SKILLS. Sized to the
+     English word it overlapped the first line of the column beside it — a
+     bilingual page has to be measured in both languages, not translated
+     after it fits. */
+  .cv__label { font-size: 7pt; letter-spacing: 0.06em; }
 
   /* The page heading duplicates the name directly beneath it. */
   #view .section__label { display: none; }

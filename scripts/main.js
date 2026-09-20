@@ -238,25 +238,37 @@ const SECTIONS = {
         el("p", { textContent: t(C.cv.summary) })),
     );
 
-    /* Experience is the projects, read back. */
-    const jobs = C.cv.experienceFrom
-      .map((slug) => C.projects.find((x) => x.slug === slug))
-      .filter(Boolean);
+    /* Experience. An entry that names a project is read back out of it, so a
+       case study and the CV cannot drift apart; an entry without one carries
+       its own copy, because two of her roles have no case here and leaving
+       them off would make the CV the incomplete document, not the site. */
+    const jobs = C.cv.experience.map((e) => {
+      const p = e.from ? C.projects.find((x) => x.slug === e.from) : null;
+      return {
+        year:       e.year       ?? p?.year,
+        role:       e.role       ?? p?.role,
+        title:      e.title      ?? p?.title,
+        company:    e.company    ?? p?.company,
+        discipline: e.discipline ?? p?.discipline,
+        note:       e.note       ?? p?.sections?.result ?? p?.summary,
+      };
+    }).filter((j) => j.title);
+
     sheet.append(cvBlock(C.cv.sectionLabels.experience,
       el("ul", { className: "cv__list" }, jobs.map((j) =>
         el("li", {},
           el("p", { className: "cv__row" },
             el("span", { className: "cv__what", textContent: `${t(j.role)}, ${t(j.title)}` }),
-            el("span", { className: "cv__when", textContent: j.year })),
-          el("p", { className: "cv__where", textContent: `${t(j.company)} · ${t(j.discipline)}` }),
-          el("p", { className: "cv__note", textContent: t(j.sections?.result || j.summary) }))))));
+            el("span", { className: "cv__when", textContent: t(j.year) })),
+          el("p", { className: "cv__where", textContent: cvWhere(j) }),
+          el("p", { className: "cv__note", textContent: t(j.note) }))))));
 
     sheet.append(cvBlock(C.cv.sectionLabels.education,
       el("ul", { className: "cv__list" }, C.cv.education.map((e) =>
         el("li", {},
           el("p", { className: "cv__row" },
             el("span", { className: "cv__what", textContent: t(e.what) }),
-            el("span", { className: "cv__when", textContent: e.period })),
+            el("span", { className: "cv__when", textContent: t(e.period) })),
           el("p", { className: "cv__where", textContent: t(e.where) }))))));
 
     sheet.append(cvBlock(C.cv.sectionLabels.skills,
@@ -807,6 +819,18 @@ function curveSvg([x1, y1, x2, y2]) {
   path.setAttribute("stroke-width", "4");
   svg.append(path);
   return svg;
+}
+
+/* "Product Designer, VeloTech.AI" followed by "VeloTech.AI · Freelance" says
+   the client's name twice in two lines. The project records it that way because
+   a case study is read on its own, where the company line is the only place the
+   client appears; on the CV the name is already in the row above, so the second
+   one is dropped and what is left is the shape of the engagement. */
+function cvWhere(j) {
+  const name = t(j.title);
+  let where = t(j.company);
+  if (where.startsWith(name)) where = where.slice(name.length).replace(/^\s*[·,-]\s*/, "");
+  return [where, t(j.discipline)].filter(Boolean).join(" · ");
 }
 
 function cvBlock(label, ...children) {

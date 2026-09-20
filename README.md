@@ -328,8 +328,14 @@ would go stale the first time a fact changed.
 searchable PDF through *Save as PDF* — text, not a picture of text, which is
 what a canvas-rendered PDF would be.
 
-Experience is not invented: each entry is a project already on the site, read
-back with its own year, role, client and result.
+Experience is one list, newest first, and nothing in it is invented. An entry
+that names a project is read straight back out of it — year, role, client,
+result — so a case study and the CV cannot drift apart. The two roles with no
+case study here carry their own copy instead of being left off, because a CV
+that omits a job to protect an architectural invariant has the priorities the
+wrong way round. The client's name is dropped from the line below the role,
+where the project records it for readers who arrive at a case on its own: on
+the CV it is already in the row above.
 
 In print, the site's chrome goes (it is navigation, and paper does not
 navigate), colour drops to black on white rather than being converted — a lime
@@ -338,7 +344,22 @@ actually meet — and jobs get `break-inside: avoid`, because a CV that splits a
 entry across two pages has failed at its one task. External links print their
 address, since a printed word "LinkedIn" is a dead end.
 
-It fits **one A4 page**: 1024px of the 1032px usable at 12mm margins.
+It fits **one A4 page** — six roles, three education entries and all of it —
+in both languages.
+
+Getting there meant fixing something the first version only looked like it had
+done. `body { font-size: 9.8pt }` set the body and nothing else: every size on
+the sheet comes from a rem-based token, so the dates, the client lines and the
+result notes went on printing at their screen size — 15px of secondary text
+sitting under 9.8pt of primary. The print block now redeclares the type and
+space scales in points, the unit paper actually uses.
+
+The label gutter is 9rem on screen, where it sits in white space anyway; on
+paper that width is taken from the only column that wraps, so it shrinks to the
+width of the longest label. That label is Dutch — `VAARDIGHEDEN`, three
+characters longer than `SKILLS` — and sizing the gutter to the English word
+made it overlap the column beside it. A bilingual page has to be measured in
+both languages, not translated once it fits.
 
 ## Both languages, all the way down
 

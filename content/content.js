@@ -333,24 +333,62 @@ export const accessibility = {
    clicking it. A CV built from the same content as the site can never be the
    stale one.
 
-   The experience below is not invented: every entry is a project already on
-   this site, with its own year, role and client.
+   Experience is one list, newest first. Where a role has a case study here it
+   is read straight out of it; the two roles without one carry their own copy.
+   Nothing is invented — entries without a case simply say less.
    ------------------------------------------------------------------------- */
 export const cv = {
   summary: {
-    en: "UX / UI designer in Amsterdam. Healthcare, civic infrastructure and community platforms — products where a confusing screen has a cost somebody else pays. Human-centred by training, accessibility-led by practice.",
-    nl: "UX / UI-designer in Amsterdam. Zorg, publieke infrastructuur en communityplatforms — producten waar een verwarrend scherm een prijs heeft die iemand anders betaalt. Human-centred opgeleid, toegankelijkheid als uitgangspunt.",
+    en: "UX / UI designer in Amsterdam. Healthcare, civic infrastructure and community platforms — products where a confusing screen has a cost somebody else pays. Human-centred by training, accessibility-led by practice, and as comfortable in the brand layer around a product as in the product itself.",
+    nl: "UX / UI-designer in Amsterdam. Zorg, publieke infrastructuur en communityplatforms — producten waar een verwarrend scherm een prijs heeft die iemand anders betaalt. Human-centred opgeleid, toegankelijkheid als uitgangspunt, en net zo thuis in de merklaag rondom een product als in het product zelf.",
   },
 
-  /* Pulled from the projects so a case and the CV can never disagree. */
-  experienceFrom: ["velotech", "dentara", "pubhubs", "medialab"],
+  /* EXPERIENCE
+     One chronological list, newest first. An entry is either `{ from: slug }`
+     — read straight back out of the project on this site, so a case study and
+     the CV can never disagree — or a role that has no case here and carries
+     its own fields. Nothing is invented for her either way; the freelance
+     dates overlap because the work did. */
+  experience: [
+    {
+      year: { en: "2026 — now", nl: "2026 — heden" },
+      role:  { en: "Product & Brand Designer", nl: "Product & Brand Designer" },
+      title: { en: "Instituut Marie", nl: "Instituut Marie" },
+      company:    { en: "Freelance", nl: "Freelance" },
+      discipline: { en: "Identity · Visual communication",
+                    nl: "Identiteit · Visuele communicatie" },
+      note: { en: "Identity and visual communication, and the content and campaigns that carry it across channels.",
+              nl: "Identiteit en visuele communicatie, en de content en campagnes die dat over de kanalen heen dragen." },
+    },
+    { from: "dentara" },
+    { from: "velotech" },
+    { from: "pubhubs" },
+    { from: "medialab" },
+    {
+      year: { en: "2023 — 2024", nl: "2023 — 2024" },
+      role:  { en: "UX / UI & Marketing Designer", nl: "UX / UI & Marketing Designer" },
+      title: { en: "Pulse Sport Amsterdam", nl: "Pulse Sport Amsterdam" },
+      company:    { en: "Freelance", nl: "Freelance" },
+      discipline: { en: "Dashboard · Social", nl: "Dashboard · Social" },
+      note: { en: "A coach dashboard that makes complex player data readable at a glance — information architecture and usability, plus the social content around the club.",
+              nl: "Een coachdashboard dat complexe spelersdata in één oogopslag leesbaar maakt — informatiearchitectuur en usability, plus de social content rondom de club." },
+    },
+  ],
 
   education: [
-    { period: "2022 — 2026",
+    { period: { en: "2022 — 2026", nl: "2022 — 2026" },
       what:  { en: "BA Communication and Multimedia Design",
                nl: "BA Communication and Multimedia Design" },
       where: { en: "Amsterdam University of Applied Sciences (HvA)",
                nl: "Hogeschool van Amsterdam (HvA)" } },
+    /* The school is named in full once, above. Repeating it twice more would
+       cost two lines of a page that has to end at one, and say nothing. */
+    { period: { en: "Feb — Aug 2025", nl: "feb — aug 2025" },
+      what:  { en: "Minor Visual Interface Design", nl: "Minor Visual Interface Design" },
+      where: { en: "HvA · graded 8.5", nl: "HvA · cijfer 8,5" } },
+    { period: { en: "Sep 2024 — Feb 2025", nl: "sep 2024 — feb 2025" },
+      what:  { en: "Minor User Experience Design", nl: "Minor User Experience Design" },
+      where: { en: "HvA · graded 8.5", nl: "HvA · cijfer 8,5" } },
   ],
 
   languages: [
@@ -538,6 +576,7 @@ export const skills = {
         { en: "Visual interface", nl: "Visuele interface" },
         { en: "Design systems", nl: "Designsystemen" },
         { en: "Usability testing", nl: "Usability-testen" },
+        { en: "Design thinking", nl: "Design thinking" },
         { en: "Accessibility auditing", nl: "Toegankelijkheidsaudits" },
       ] },
     { key: "B", eyebrow: { en: "Daily drivers", nl: "Dagelijks gereedschap" },
