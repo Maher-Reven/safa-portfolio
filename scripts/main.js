@@ -930,6 +930,84 @@ function routesForAudience() {
    Each carries its own lang attribute so a screen reader pronounces
    Nederlands in Dutch rather than reading it as English, and aria-pressed
    states which one you are actually in. */
+/* =========================================================================
+   THE THEME PAIR
+   In the header, beside the language pair, for the reason the language pair
+   is there: someone deciding whether they can read this page in daylight is
+   not going to open a settings panel to find out, any more than a Dutch
+   reader goes looking for a language menu. It was in Attune and only in
+   Attune, and the first person to want it could not find it.
+
+   TWO BUTTONS, NOT ONE SWITCH — the same argument the EN / NL pair makes.
+   A lone button showing a moon never says whether it means "you are in the
+   dark theme" or "press for the dark theme", and the two readings are
+   opposites. A pair shows the choice and which half of it you are in, and
+   aria-pressed says so out loud.
+
+   The glyphs are drawn rather than typed. ☀ and ☾ are at the mercy of the
+   platform's emoji font — the same character arrives as flat text on one
+   machine and a colour pictograph on another, and a colour pictograph
+   cannot take --accent-ink when its half is filled.
+   ========================================================================= */
+function themeIcon(kind) {
+  const ns = "http://www.w3.org/2000/svg";
+  const svg = document.createElementNS(ns, "svg");
+  svg.setAttribute("viewBox", "0 0 24 24");
+  svg.setAttribute("class", "theme__icon");
+  svg.setAttribute("aria-hidden", "true");   /* the button carries the name */
+  svg.setAttribute("focusable", "false");
+
+  if (kind === "light") {
+    const disc = document.createElementNS(ns, "circle");
+    disc.setAttribute("cx", "12"); disc.setAttribute("cy", "12");
+    disc.setAttribute("r", "4.6"); disc.setAttribute("fill", "currentColor");
+    svg.append(disc);
+    /* Eight rays, placed by angle rather than written out, so they cannot
+       drift apart when one of them is edited. */
+    for (let i = 0; i < 8; i++) {
+      const a = (i * Math.PI) / 4;
+      const ray = document.createElementNS(ns, "line");
+      ray.setAttribute("x1", (12 + Math.cos(a) * 7.4).toFixed(2));
+      ray.setAttribute("y1", (12 + Math.sin(a) * 7.4).toFixed(2));
+      ray.setAttribute("x2", (12 + Math.cos(a) * 9.8).toFixed(2));
+      ray.setAttribute("y2", (12 + Math.sin(a) * 9.8).toFixed(2));
+      ray.setAttribute("stroke", "currentColor");
+      ray.setAttribute("stroke-width", "1.9");
+      ray.setAttribute("stroke-linecap", "round");
+      svg.append(ray);
+    }
+  } else {
+    const moon = document.createElementNS(ns, "path");
+    moon.setAttribute("d", "M20.2 15.1A8.6 8.6 0 0 1 9.4 4.2a8.2 8.2 0 1 0 10.8 10.9z");
+    moon.setAttribute("fill", "currentColor");
+    svg.append(moon);
+  }
+  return svg;
+}
+
+function renderTheme() {
+  const root = document.getElementById("theme-root");
+  if (!root) return;
+
+  const group = el("div", { className: "theme" });
+  group.setAttribute("role", "group");
+  group.setAttribute("aria-label", t(C.ui.themeLabel));
+
+  for (const [value, label] of [["light", t(C.ui.themeLight)], ["dark", t(C.ui.themeDark)]]) {
+    const on = attune.get("theme") === value;
+    const btn = el("button", { type: "button" }, themeIcon(value));
+    /* The glyph is the whole visible label, so the name has to be given.
+       "Light" and "Dark" are the same two words the Attune panel uses —
+       one control, named one way, wherever a visitor meets it. */
+    btn.setAttribute("aria-label", label);
+    btn.setAttribute("aria-pressed", String(on));
+    btn.dataset.theme = value;
+    btn.addEventListener("click", () => attune.set("theme", value));
+    group.append(btn);
+  }
+  root.replaceChildren(group);
+}
+
 function renderLang() {
   const root = document.getElementById("lang-root");
   if (!root) return;
@@ -1264,6 +1342,13 @@ function renderStatic() {
     if (fn) node.textContent = fn();
   });
 
+  /* The opener's word is hidden below 40rem to keep the header on one line,
+     and its glyph is aria-hidden, which would leave the button with no name
+     at all on the screens where it is hardest to guess. The name is set on
+     the button itself so it survives the word going away — and it is the
+     same word, so nothing a screen reader says changes at any width. */
+  $("#attune-open")?.setAttribute("aria-label", t(C.ui.attuneTitle));
+
   const banner = $("#banner");
   if (banner) {
     banner.replaceChildren(
@@ -1317,15 +1402,28 @@ router = new Router({
 router.addEventListener("navigate", renderTabs);
 renderTabs();
 renderLang();
+renderTheme();
 router.start();
 
 attune.addEventListener("change", (e) => {
-  const { changed } = e.detail;
+  const { changed, state } = e.detail;
+
+  /* An axis can now be changed from two places, so the two have to agree.
+     The panel's radios were rendered once with their checked state baked in;
+     press the header pair and the panel would still be showing the theme the
+     visitor just left. Written for every axis rather than for this one,
+     because the next control put outside the panel would have the same bug
+     and nobody would think to look for it. */
+  if (changed) {
+    const radio = document.getElementById(`attune-${changed}-${state[changed]}`);
+    if (radio) radio.checked = true;
+  }
   /* The audit is only interesting if it responds: switch to high contrast
      and the contrast row has to move, or the claim is decoration. */
   if (auditRepaint) requestAnimationFrame(() => requestAnimationFrame(auditRepaint));
   if (changed === "lang") {
-    renderStatic(); renderAttune(); renderTabs(); renderLang(); renderRoute(router.current);
+    renderStatic(); renderAttune(); renderTabs(); renderLang(); renderTheme();
+    renderRoute(router.current);
   }
   else if (changed === "audience") renderTabs();
   else if (changed === "mode") { syncField(); renderRoute(router.current); }
@@ -1333,7 +1431,7 @@ attune.addEventListener("change", (e) => {
      was drawn, and cannot hear a CSS variable change. The field watches the
      attribute itself; the drawn cat and the halftone screen are redrawn by
      re-rendering the route. */
-  else if (changed === "theme") renderRoute(router.current);
+  else if (changed === "theme") { renderTheme(); renderRoute(router.current); }
 });
 
 /* =========================================================================

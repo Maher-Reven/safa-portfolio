@@ -421,7 +421,36 @@ near-black — is a state the site could not previously say.
 
 The theme follows `prefers-color-scheme`, on the same rule as the other axes:
 the operating system is asked first and believed. A machine that expresses no
-preference gets her dark ground, and either is one press away in Attune.
+preference gets her dark ground.
+
+**The control is in the header**, beside EN / NL, for the reason EN / NL is
+there: someone deciding whether they can read this page in daylight is not
+going to open a settings panel to find out. It lived only in Attune at first,
+and the first person to want it could not find it — which is the whole
+argument, made by the only test that counts.
+
+It is the language pair's component, wearing drawn glyphs instead of two
+letters: **two buttons, not one switch**, because a lone button showing a moon
+never says whether it means *you are in the dark theme* or *press for the dark
+theme*, and those are opposites. `aria-pressed` states which half you are in,
+the active half is filled rather than tinted so the state survives greyscale,
+and the glyphs are inline SVG rather than ☀ and ☾ — the same character arrives
+as flat text on one machine and a colour pictograph on another, and a colour
+pictograph cannot take `--accent-ink` when its half is filled.
+
+The panel control stays, and the two stay in sync — the panel's radios are
+rendered once with their state baked in, so a change from anywhere now writes
+back to them. That is written for every axis rather than for this one, because
+the next control moved out of the panel would have the same bug and nobody
+would think to look for it.
+
+Adding a fourth item to the header meant admitting it already overflowed: at
+430px the Attune button was cut in half, before any of this. The three
+controls now travel as one group that will not shrink, so on a narrow phone
+they wrap together to their own line instead of the last of them falling off
+the edge — and below 40rem the opener drops to its glyph, keeping its name in
+`aria-label`. It holds at 330px and at the largest text size, which the site
+offers and which makes every one of these numbers bigger.
 
 ### The accent is three roles
 

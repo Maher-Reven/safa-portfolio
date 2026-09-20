@@ -82,12 +82,19 @@
   </a>
   <nav class="tabs" id="tabs" aria-label="Sections"></nav>
 
-  <div id="lang-root"></div>
+  <!-- The three controls travel as one. Four separate flex items in the
+       header meant the last of them — Attune — was the one that fell off
+       the edge of a phone when the others grew; as a single item the group
+       wraps whole, at any text size, in any language. -->
+  <div class="head-tools">
+    <div id="lang-root"></div>
+    <div id="theme-root"></div>
 
-  <button id="attune-open" type="button" aria-expanded="false" aria-controls="attune-panel">
-    <span aria-hidden="true">◐</span>
-    <span data-i18n="attuneTitle">Attune</span>
-  </button>
+    <button id="attune-open" type="button" aria-expanded="false" aria-controls="attune-panel">
+      <span aria-hidden="true">◐</span>
+      <span data-i18n="attuneTitle">Attune</span>
+    </button>
+  </div>
 </header>
 
 <main id="main" tabindex="-1">

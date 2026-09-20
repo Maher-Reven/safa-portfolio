@@ -183,14 +183,14 @@
    whether it means "you are reading Dutch" or "press for Dutch"; a pair
    shows the choice and which half of it you are in.
    ========================================================================= */
-.lang {
+.lang, .theme {
   display: inline-flex;
   align-items: stretch;
   border: var(--rule-edge);
   border-radius: var(--radius-pill);
   overflow: hidden;
 }
-.lang button {
+.lang button, .theme button {
   min-height: 38px;
   padding-inline: var(--s-xs);
   font-family: var(--face-detail);
@@ -200,15 +200,17 @@
   transition: color var(--dur-quick) var(--ease-out),
               background var(--dur-quick) var(--ease-out);
 }
-.lang button:hover { color: var(--text); }
+.lang button:hover, .theme button:hover { color: var(--text); }
 
 /* The pressed one is filled, so the state survives greyscale and a
    colour-blind reader — aria-pressed carries it to everyone else. */
-.lang button[aria-pressed="true"] {
+.lang button[aria-pressed="true"],
+.theme button[aria-pressed="true"] {
   background: var(--accent);
   color: var(--accent-ink);
 }
-.lang button:focus-visible {
+.lang button:focus-visible,
+.theme button:focus-visible {
   outline: 3px solid var(--focus);
   outline-offset: -3px;      /* inset, or the ring is clipped by the pill */
 }
@@ -218,8 +220,56 @@
    1:1, invisible, on the only control in the header. On the fill it takes
    the colour the fill was designed to carry, which is 12.1:1 in both
    themes. */
-.lang button[aria-pressed="true"]:focus-visible { outline-color: var(--accent-ink); }
+.lang button[aria-pressed="true"]:focus-visible,
+.theme button[aria-pressed="true"]:focus-visible { outline-color: var(--accent-ink); }
+
+/* The theme pair is the language pair's component, wearing drawn glyphs
+   instead of two letters. It shares the styling rather than copying it, so
+   the two controls beside each other in the header can never drift into
+   looking like two different kinds of thing. */
+.theme button { display: grid; place-items: center; padding-inline: var(--s-2xs); }
+.theme__icon { width: 1.05rem; height: 1.05rem; display: block; }
 
 @media (max-width: 30rem) {
-  .lang button { padding-inline: var(--s-2xs); min-height: 34px; }
+  .lang button, .theme button { padding-inline: var(--s-2xs); min-height: 34px; }
+}
+
+/* THE HEADER ON A PHONE.
+   At 430px the row ran past the edge and cut the Attune button in half.
+   That was true before the theme pair was added — but a row that is already
+   overflowing is not somewhere to quietly add a fourth control.
+
+   Two fixes, and the order matters. The group wraps as a unit, so nothing
+   can be the item that falls off the end: that one holds at any text size,
+   in either language, whatever the wordmark grows to. Then the opener drops
+   to its glyph below 40rem, which is what keeps the group on the first line
+   at all on the smallest phones rather than pushing it to a line of its
+   own. Its word is the least load-bearing in the row — it sits in the
+   corner every settings control sits in — and aria-label means a screen
+   reader still hears "Attune" at every width. */
+.head-tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--s-2xs);
+  /* Refusing to shrink is the whole mechanism. Left shrinkable, the group
+     was squeezed narrower than the controls inside it and they spilled out
+     of its right-hand edge — the same clipping as before, one box further
+     in. A group that will not shrink has to be wrapped to the next line
+     instead, which is the behaviour being asked for. */
+  flex: 0 0 auto;
+}
+
+@media (max-width: 40rem) {
+  #attune-open [data-i18n] {
+    position: absolute;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  #attune-open { padding-inline: var(--s-2xs); }
+  .site-head { gap: var(--s-2xs); }
 }
