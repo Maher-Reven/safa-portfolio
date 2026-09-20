@@ -47,7 +47,7 @@
   height: 0.4em;
   margin-inline-end: 0.5em;
   border-radius: 50%;
-  background: var(--accent);
+  background: var(--accent-text);
 }
 
 @media (max-width: 62rem) {
@@ -164,7 +164,7 @@
   inset-block: 0.12em 0.12em;
   width: 3px;
   border-radius: 2px;
-  background: var(--accent);
+  background: var(--accent-text);
 }
 /* At narrow widths there is no margin to put it in, so it goes underneath. */
 @media (max-width: 68rem) {
@@ -186,7 +186,7 @@
 .lang {
   display: inline-flex;
   align-items: stretch;
-  border: var(--rule-strong);
+  border: var(--rule-edge);
   border-radius: var(--radius-pill);
   overflow: hidden;
 }
@@ -212,6 +212,13 @@
   outline: 3px solid var(--focus);
   outline-offset: -3px;      /* inset, or the ring is clipped by the pill */
 }
+/* The one ring on this site that does not land on the page. Inset on the
+   pressed half, it lands on the lime fill — and in the dark theme --focus
+   IS that lime, so the ring was drawn in the colour it was drawn on:
+   1:1, invisible, on the only control in the header. On the fill it takes
+   the colour the fill was designed to carry, which is 12.1:1 in both
+   themes. */
+.lang button[aria-pressed="true"]:focus-visible { outline-color: var(--accent-ink); }
 
 @media (max-width: 30rem) {
   .lang button { padding-inline: var(--s-2xs); min-height: 34px; }

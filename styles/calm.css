@@ -33,7 +33,7 @@
   letter-spacing: -0.02em;
 }
 [data-mode="calm"] .intro h1 em { font-style: italic; }
-[data-mode="calm"] .intro h1 .stop { color: var(--accent); }
+[data-mode="calm"] .intro h1 .stop { color: var(--accent-text); }
 [data-mode="calm"] h2, [data-mode="calm"] h3 {
   font-family: var(--face-display);
   font-variation-settings: "opsz" 72, "SOFT" 0, "WONK" 0;
@@ -58,7 +58,7 @@
 /* Sections are numbered, as a printed document numbers its parts. */
 [data-mode="calm"] .section__label::before {
   content: counter(section, decimal-leading-zero) " / ";
-  color: var(--accent);
+  color: var(--accent-text);
 }
 [data-mode="calm"] #flow { counter-reset: section; }
 [data-mode="calm"] .section { counter-increment: section; }

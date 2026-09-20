@@ -2,8 +2,9 @@
    attune.js — the mechanic the whole site is built on.
    -------------------------------------------------------------------------
    One store holds every way the site can adapt to the person reading it.
-   Six independent axes, composable in any combination:
+   Seven independent axes, composable in any combination:
 
+     theme     dark | light       what colour everything is
      mode      full | calm        which of the two art directions
      audience  who is looking     reorders and re-depths the content
      reading   default | legible  Atkinson Hyperlegible for the text face
@@ -26,6 +27,17 @@ const STORE_KEY = "afstemmen.v1";
 
 /** The axes, their allowed values, and how to describe a change out loud. */
 const AXES = {
+  /* Colour and behaviour were one axis until they were pulled apart. "Calm"
+     meant paper AND stillness, so wanting the work to hold still meant
+     giving up her dark ground, and reading the site in daylight meant
+     giving up the canvas. Nobody asked for either trade. */
+  theme: {
+    values: ["dark", "light"],
+    announce: {
+      dark:  "Dark theme.",
+      light: "Light theme. The same work on paper.",
+    },
+  },
   mode: {
     values: ["full", "calm"],
     announce: {
@@ -62,9 +74,16 @@ const AXES = {
 function systemDefaults() {
   const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
   const moreContrast  = matchMedia("(prefers-contrast: more)").matches;
+  const prefersDark   = matchMedia("(prefers-color-scheme: dark)").matches;
   const prefersNL     = (navigator.language || "").toLowerCase().startsWith("nl");
 
   return {
+    /* Rule 1 applies to colour as much as to motion: a laptop set to light
+       has said something, and arguing with it on the grounds that the brand
+       is dark would be the site talking over the reader on its first
+       sentence. Her dark ground is what a machine that said nothing gets,
+       and it is one press away from anywhere. */
+    theme:    prefersDark ? "dark" : "light",
     mode:     reducedMotion ? "calm" : "full",
     audience: "open",
     reading:  "default",
@@ -125,6 +144,11 @@ class Attune extends EventTarget {
   systemAsked(axis) {
     if (axis === "mode")     return matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (axis === "contrast") return matchMedia("(prefers-contrast: more)").matches;
+    /* Only dark can be claimed as a request. "(prefers-color-scheme: light)"
+       also matches a machine with no preference at all, so treating it as an
+       answer would put "your device asked for this" under a choice nobody
+       made. */
+    if (axis === "theme")    return matchMedia("(prefers-color-scheme: dark)").matches;
     return false;
   }
 
@@ -197,6 +221,7 @@ class Attune extends EventTarget {
     this.addEventListener("change", (e) => {
       if (e.detail.changed) this._touched.add(e.detail.changed);
     });
+    bind("(prefers-color-scheme: dark)", "theme", "dark", "light");
     bind("(prefers-reduced-motion: reduce)", "mode", "calm", "full");
     bind("(prefers-contrast: more)", "contrast", "high", "normal");
   }

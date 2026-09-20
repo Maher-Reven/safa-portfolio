@@ -8,27 +8,69 @@
 
    The palette is Safa's own, taken from her live portfolio: #1C1C1C ground,
    #C8E65A lime, DM Sans and DM Mono. It is not replaced here. It is given a
-   second form — see the two mode blocks below.
+   second form — see the two theme blocks below.
+
+   COLOUR AND MODE ARE TWO AXES, NOT ONE.
+   They used to be one: "full" meant dark and moving, "calm" meant paper and
+   still, and a visitor who wanted the work to hold still could not have it
+   on her dark ground — nor could a visitor on a light desktop read this site
+   in daylight without also giving up the canvas. They are different
+   questions. [data-theme] now decides what colour everything is; [data-mode]
+   decides how it behaves and how it is set. All four combinations are
+   designed states, which is what the rest of this file's axes already
+   promised.
+
+   EVERY PAIRING IN HERE IS MEASURED, NOT ESTIMATED.
+   `node tools/contrast.mjs` reads this file, composites the translucent
+   rules over the grounds they actually sit on, and checks every pairing in
+   both themes at both contrast settings. It is how the three failures that
+   were shipping in here were found. If a value below carries a ratio, that
+   ratio came out of the tool.
    ========================================================================= */
 
 :root {
   /* ---------------------------------------------------------------------
      SEMANTIC COLOUR
-     Components never name a colour. They name a role, and the two mode
+     Components never name a colour. They name a role, and the two theme
      blocks below decide what that role looks like. This is the single
-     reason one set of components can carry two art directions.
+     reason one set of components can carry two palettes.
+
+     THE ACCENT IS THREE ROLES, NOT ONE.
+     The lime was a single token doing two incompatible jobs: a fill with
+     dark text on it, and a mark drawn on the page. On the dark ground one
+     value could do both, which is why it was never noticed. On paper it
+     cannot: #c8e65a is 12:1 against the ink sitting on it and 1.2:1
+     against the paper beside it, so the same token that makes a perfect
+     button makes an invisible active-tab dot. Hence:
+
+       --accent       the fill. The brand lime, in both themes.
+       --accent-ink   what sits ON that fill — never white.
+       --accent-text  the accent when it is the figure rather than the
+                      ground: link hovers, the tab dot, focus bars, the
+                      numeral beside a step. Clears 4.5:1 in both themes.
+
+     Everything below is the dark theme's value, so that a document with no
+     theme attribute at all is still the site people know.
      --------------------------------------------------------------------- */
   --ground: #1c1c1c;
   --surface: #232323;
   --text: #faf8f5;
   --text-soft: #c9c4bc;
   --text-faint: #948f87;
+  /* Three weights of line, and the difference between them is what they are
+     asked to prove. --line divides, --line-strong frames, and --edge is the
+     boundary of something you can press — the only one of the three that
+     carries a requirement, because WCAG 1.4.11 asks 3:1 of anything that
+     tells you where a control is. The old sheet drew buttons with
+     --line-strong at 2.0:1. */
   --line: rgba(250, 248, 245, 0.10);
   --line-strong: rgba(250, 248, 245, 0.22);
+  --edge: rgba(250, 248, 245, 0.35);
   --accent: #c8e65a;
   --accent-ink: #1c1c1c;     /* what sits ON the accent — never white */
+  --accent-text: #c8e65a;
 
-  /* The detail layer's own voice. Distinct from --accent in both modes so
+  /* The detail layer's own voice. Distinct from --accent in both themes so
      an annotation is never mistaken for emphasis. */
   --note: #8fd4e8;
   --note-soft: rgba(143, 212, 232, 0.12);
@@ -38,11 +80,23 @@
   /* ---------------------------------------------------------------------
      PROJECT COLOURS — one per case, carried from her own site. Each is a
      ground for its case, chosen from the work itself rather than assigned.
+
+     Each case has two values, because the colour does two jobs: it rules a
+     3px line across the top of a card, and it colours the project's name on
+     hover. A 3px line needs 3:1; a name needs 4.5:1. The blue that was doing
+     both was at 2.5:1 on the dark ground — the identity of a whole case,
+     invisible on the page it identified. The hue is the same in both
+     themes and at both jobs; only the lightness moves, toward whichever end
+     the ground is not.
      --------------------------------------------------------------------- */
-  --c-dentara:  #e8a598;   /* blush — the calm of the holistic practice */
-  --c-velotech: #2f5d8c;   /* municipal blue — the dashboard's own chrome */
-  --c-medialab: #f2d4b0;   /* sand — warm against that product's dark UI */
-  --c-pubhubs:  #4a6b8a;   /* slate — the community platform's quiet */
+  --c-dentara:      #e8a598;   /* blush — the calm of the holistic practice */
+  --c-dentara-ink:  #e8a598;
+  --c-velotech:     #4b739b;   /* municipal blue — the dashboard's own chrome */
+  --c-velotech-ink: #6e8eaf;
+  --c-medialab:     #f2d4b0;   /* sand — warm against that product's dark UI */
+  --c-medialab-ink: #f2d4b0;
+  --c-pubhubs:      #537390;   /* slate — the community platform's quiet */
+  --c-pubhubs-ink:  #748ea5;
 
   /* ---------------------------------------------------------------------
      TYPE
@@ -109,6 +163,7 @@
 
   --rule:     1px solid var(--line);
   --rule-strong: 1px solid var(--line-strong);
+  --rule-edge:   1px solid var(--edge);
 
   --radius-sm: 4px;
   --radius-md: 10px;
@@ -120,16 +175,17 @@
 }
 
 /* =========================================================================
-   MODE: full — the screen object
-   Her own world: near-black ground, lime, DM Sans, a live field behind
-   everything. This is the mode a visitor arrives in unless their device
-   has already asked for less.
+   THEME: dark — her ground
+   Near-black, lime, warm off-white. The site people know, and what a
+   document with no theme attribute falls back to.
    ========================================================================= */
-[data-mode="full"] {
+[data-theme="dark"] {
+  color-scheme: dark;
+
   --ground: #1c1c1c;
   --surface: #232323;
   --text: #faf8f5;
-  --text-soft: #c9c4bc;   /* 10.4:1 — secondary, still comfortably readable */
+  --text-soft: #c9c4bc;   /* 9.8:1 — secondary, still comfortably readable */
   /* 5.3:1 on --ground AND 4.9:1 on --surface. It was #8a857e, measured only
      against the ground at 4.7:1 — but nearly every faint label on this site
      sits on a card, where --surface is lighter and the same colour falls to
@@ -139,12 +195,83 @@
   --text-faint: #948f87;
   --line: rgba(250, 248, 245, 0.10);
   --line-strong: rgba(250, 248, 245, 0.22);
+  --edge: rgba(250, 248, 245, 0.35);   /* 3.1:1 on both grounds */
   --accent: #c8e65a;      /* 12.1:1 on ground */
   --accent-ink: #1c1c1c;
-  --note: #8fd4e8;        /* 9.6:1 */
+  --accent-text: #c8e65a; /* on this ground the fill and the mark can be one colour */
+  --note: #8fd4e8;        /* 10.3:1 */
   --note-soft: rgba(143, 212, 232, 0.10);
   --focus: #c8e65a;
 
+  /* The two blues had to come up off the ground to be seen on it; the two
+     warm colours were already clear of it and are untouched. */
+  --c-dentara:      #e8a598;   /* 8.3:1 / 7.7:1 — unchanged */
+  --c-dentara-ink:  #e8a598;
+  --c-velotech:     #4b739b;   /* was #2f5d8c: 2.5:1, a rule you could not see */
+  --c-velotech-ink: #6e8eaf;   /* 5.0:1 / 4.6:1 as the project's name */
+  --c-medialab:     #f2d4b0;   /* 12.0:1 / 11.1:1 — unchanged */
+  --c-medialab-ink: #f2d4b0;
+  --c-pubhubs:      #537390;   /* was #4a6b8a: 3.1:1, under the line for a mark */
+  --c-pubhubs-ink:  #748ea5;   /* 5.0:1 / 4.6:1 */
+}
+
+/* =========================================================================
+   THEME: light — her ground in daylight
+   Warm paper rather than white: pure white under a near-black headline
+   reads as glare, and the warmth costs nothing in ratio. This palette
+   began as calm mode's paper and is now available to either mode, which
+   is the whole point of pulling the two axes apart.
+
+   The lime survives the inversion because it is the one thing that should
+   be recognisable in both. It survives as a FILL — a lime pill with her
+   near-black on it, exactly as on the dark ground. What cannot survive is
+   the lime as a mark: at 1.2:1 against paper it is a highlighter drawn on
+   a highlighter. --accent-text carries that job down to #5c7210, which is
+   the same hue with the light taken out of it.
+   ========================================================================= */
+[data-theme="light"] {
+  color-scheme: light;
+
+  --ground: #f4f0e8;       /* warm paper. 16.5:1 under the text */
+  --surface: #fbf9f4;      /* cards lift off the paper rather than sink into it */
+  --text: #14120f;
+  --text-soft: #46403a;    /*  9.0:1 */
+  --text-faint: #6f675d;   /*  4.9:1 — raised from the dark theme's faint,
+                               because light grounds hide low-contrast text
+                               far more readily than dark ones do */
+  --line: rgba(20, 18, 15, 0.14);
+  --line-strong: rgba(20, 18, 15, 0.42);
+  --edge: rgba(20, 18, 15, 0.46);      /* 3.0:1 on paper, 3.1:1 on a card */
+  --accent: #c8e65a;       /* the same lime, and still a fill */
+  --accent-ink: #1c1c1c;   /* 12.1:1 on it — the pill is legible on paper */
+  --accent-text: #5c7210;  /* 4.8:1 on paper, 5.2:1 on a card. The old value
+                              was #6f8a12, documented in this file as 4.9:1
+                              and measuring 3.5:1 — it had never been run. */
+  --note: #1e5670;         /* 7.1:1 */
+  --note-soft: rgba(30, 86, 112, 0.07);
+  --focus: #1b6ef3;        /* 4.0:1 on paper, and 3.3:1 against the lime pill
+                              it has to be visible on top of */
+
+  /* The same four hues, dropped instead of lifted. Blush and sand were
+     1.8:1 and 1.3:1 on paper — decoration that vanished; the two blues were
+     already dark enough to keep. */
+  --c-dentara:      #ad7b72;   /* 3.2:1 as a rule */
+  --c-dentara-ink:  #8a625b;   /* 4.6:1 as a name */
+  --c-velotech:     #2f5d8c;   /* 6.0:1 — the true municipal blue, at last */
+  --c-velotech-ink: #2f5d8c;
+  --c-medialab:     #97846e;   /* 3.2:1 */
+  --c-medialab-ink: #796a58;   /* 4.6:1 */
+  --c-pubhubs:      #4a6b8a;   /* 4.9:1 */
+  --c-pubhubs-ink:  #4a6b8a;
+}
+
+/* =========================================================================
+   MODE: full — the screen object
+   Motion, the live canvas, the grotesk. Says nothing about colour any
+   more: this is a visitor in full mode on paper, or in calm mode on her
+   dark ground, and both are now sentences the site can say.
+   ========================================================================= */
+[data-mode="full"] {
   --motion-scale: 1;
   --section-rhythm: var(--s-3xl);
   --display-wonk: 0;
@@ -153,30 +280,11 @@
 
 /* =========================================================================
    MODE: calm — the printed object
-   Not full mode with the effects stripped out. The same work, set as print:
-   warm paper, ink, a serif display face that only exists here, hairline
-   rules instead of glow, numbered sections, nothing moving.
-
-   The lime survives the inversion — darkened to #6f8a12 so it still passes
-   on paper — because it is the one thing that should be recognisable in
-   both. Both objects are signed. Neither is an apology for the other.
+   Not full mode with the effects stripped out. The same work, set as
+   print: a serif display face that only exists here, hairline rules
+   instead of glow, numbered sections, nothing moving.
    ========================================================================= */
 [data-mode="calm"] {
-  --ground: #f4f0e8;       /* warm paper. Pure white on pure black reads as */
-  --surface: #fbf9f4;      /* glare; warm neutrals keep the ratio and lose  */
-  --text: #14120f;         /* the sting. 16.1:1 */
-  --text-soft: #46403a;    /*  7.4:1 */
-  --text-faint: #6f675d;   /*  5.4:1 — raised from the dark mode's faint,   */
-                           /*  because light grounds hide low-contrast text */
-                           /*  far more readily than dark ones do           */
-  --line: rgba(20, 18, 15, 0.14);
-  --line-strong: rgba(20, 18, 15, 0.42);
-  --accent: #6f8a12;       /* the lime, taken down until it passes on paper: 4.9:1 */
-  --accent-ink: #f4f0e8;
-  --note: #1e5670;         /* 7.3:1 */
-  --note-soft: rgba(30, 86, 112, 0.07);
-  --focus: #1b6ef3;
-
   /* Fraunces appears only here. Calm mode is not a setting, it is a second
      piece of design work, and it gets its own display voice. */
   --face-display: "Fraunces", "Iowan Old Style", Georgia, serif;
@@ -190,8 +298,9 @@
 
 /* =========================================================================
    PREFERENCE OVERLAYS — independent axes that compose. A visitor can be in
-   calm mode, at the largest text, in high contrast, reading Atkinson, in
-   Dutch, all at once, and every combination is a designed state.
+   calm mode, on paper, at the largest text, in high contrast, reading
+   Atkinson, in Dutch, all at once, and every combination is a designed
+   state.
    ========================================================================= */
 
 [data-reading="legible"] {
@@ -203,10 +312,11 @@
 [data-textsize="large"]  { font-size: 112.5%; }
 [data-textsize="larger"] { font-size: 125%; --measure: 54ch; }
 
-/* High contrast, per mode: pushing every pairing past 7:1 means something
+/* High contrast, per theme: pushing every pairing past 7:1 means something
    different on ink than it does on paper, so it is written twice rather
-   than once badly. */
-[data-mode="full"][data-contrast="high"] {
+   than once badly. These used to hang off [data-mode], which is why asking
+   for high contrast also decided what colour the page was. */
+[data-theme="dark"][data-contrast="high"] {
   --ground: #000000;
   --surface: #0d0d0d;
   --text: #ffffff;
@@ -214,10 +324,23 @@
   --text-faint: #bdbdbd;   /* 11.6:1 — no longer "faint", by design */
   --line: rgba(255, 255, 255, 0.34);
   --line-strong: rgba(255, 255, 255, 0.62);
+  --edge: rgba(255, 255, 255, 0.62);   /* 7.9:1 */
   --accent: #d8f56a;
+  --accent-ink: #000000;
+  --accent-text: #d8f56a;  /* 15.9:1 */
   --note: #a8e4f5;
+  --focus: #d8f56a;
+
+  --c-dentara:      #e8a598;   /* 7.3:1 — already past the bar on black */
+  --c-dentara-ink:  #e8a598;
+  --c-velotech:     #587da2;   /* 4.6:1 as a rule */
+  --c-velotech-ink: #839eba;   /* 7.1:1 as a name */
+  --c-medialab:     #f2d4b0;
+  --c-medialab-ink: #f2d4b0;
+  --c-pubhubs:      #607d98;   /* 4.6:1 */
+  --c-pubhubs-ink:  #889eb2;   /* 7.1:1 */
 }
-[data-mode="calm"][data-contrast="high"] {
+[data-theme="light"][data-contrast="high"] {
   --ground: #ffffff;
   --surface: #ffffff;
   --text: #000000;
@@ -225,6 +348,26 @@
   --text-faint: #3d3d3d;   /* 10.9:1 */
   --line: rgba(0, 0, 0, 0.38);
   --line-strong: rgba(0, 0, 0, 0.72);
-  --accent: #4e6300;       /* 7.4:1 — AAA on white */
+  --edge: rgba(0, 0, 0, 0.72);         /* 9.2:1 */
+  /* The fill stays a lime a highlighter would recognise, and takes black
+     rather than her near-black: 17.2:1 on it. The previous value here put
+     #4e6300 in --accent, which was both the fill and the mark — so the
+     mark was AAA and the pill was dark olive under near-black text at
+     2:1. Splitting the roles is what makes high contrast survivable on
+     paper without losing the brand. */
+  --accent: #d8f56a;
+  --accent-ink: #000000;
+  --accent-text: #455800;  /* 7.9:1 — the old #4e6300 measured 6.8, not the
+                              7.4 written beside it */
   --note: #10405a;
+  --focus: #0a46b8;        /* 8.1:1 on white, 6.7:1 on the lime it lands on */
+
+  --c-dentara:      #986c64;   /* 4.6:1 */
+  --c-dentara-ink:  #72514b;   /* 7.1:1 */
+  --c-velotech:     #2f5d8c;   /* 6.8:1 */
+  --c-velotech-ink: #2e5b8a;   /* 7.0:1 */
+  --c-medialab:     #857460;   /* 4.6:1 */
+  --c-medialab-ink: #635748;   /* 7.1:1 */
+  --c-pubhubs:      #4a6b8a;   /* 5.7:1 */
+  --c-pubhubs-ink:  #3f5b76;   /* 7.1:1 */
 }

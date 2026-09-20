@@ -57,6 +57,7 @@ const SECTIONS = {
           el("span", { className: "index__meta", textContent: t(p.discipline) }),
           el("span", { className: "index__year", textContent: p.year })));
       row.style.setProperty("--case", p.colour);
+      row.style.setProperty("--case-ink", p.ink);
       const link = row.querySelector("a");
       link.dataset.cursor = t(C.ui.cursorRead);
       link.addEventListener("pointerenter", () => {
@@ -322,6 +323,7 @@ function section(id, ...children) {
 function caseCard(p) {
   const article = el("article", { className: "case-card hoverable" });
   article.style.setProperty("--case", p.colour);
+  article.style.setProperty("--case-ink", p.ink);
   /* Summons the cursor badge. The word is the promise the card is making. */
   article.dataset.cursor = t(C.ui.cursorRead);
 
@@ -368,6 +370,7 @@ function caseDetail(slug) {
 
   const wrap = el("section", { className: "case rail", id: "case" });
   wrap.style.setProperty("--case", p.colour);
+  wrap.style.setProperty("--case-ink", p.ink);
 
   const index = C.projects.indexOf(p);
   const next = C.projects[(index + 1) % C.projects.length];
@@ -705,7 +708,7 @@ function buildHalftone(host) {
   const draw = async () => {
     const cs = getComputedStyle(document.documentElement);
     const ink = cs.getPropertyValue("--text").trim() || "#faf8f5";
-    const acc = cs.getPropertyValue("--accent").trim() || "#c8e65a";
+    const acc = cs.getPropertyValue("--accent-text").trim() || "#c8e65a";
     const { renderScreen, isMoire } = await import("./lab.js");
     await renderScreen(canvas, { ...state, inkA: ink, inkB: acc });
     warn.hidden = !isMoire(state.angleA, state.angleB);
@@ -1170,6 +1173,10 @@ function renderAttune() {
       closeButton()),
     el("p", { className: "attune__intro", textContent: t(C.ui.attuneIntro) }),
 
+    axisGroup("theme", "themeLabel", [
+      { value: "dark", label: t(C.ui.themeDark) },
+      { value: "light", label: t(C.ui.themeLight) },
+    ]),
     axisGroup("mode", "modeLabel", [
       { value: "full", label: t(C.ui.modeFull) },
       { value: "calm", label: t(C.ui.modeCalm) },
@@ -1322,6 +1329,11 @@ attune.addEventListener("change", (e) => {
   }
   else if (changed === "audience") renderTabs();
   else if (changed === "mode") { syncField(); renderRoute(router.current); }
+  /* Anything painted into a canvas read its colour once, at the moment it
+     was drawn, and cannot hear a CSS variable change. The field watches the
+     attribute itself; the drawn cat and the halftone screen are redrawn by
+     re-rendering the route. */
+  else if (changed === "theme") renderRoute(router.current);
 });
 
 /* =========================================================================

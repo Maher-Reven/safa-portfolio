@@ -60,7 +60,7 @@
   text-transform: uppercase;
   color: var(--text-faint);
 }
-.cat-stage__n { color: var(--accent); }
+.cat-stage__n { color: var(--accent-text); }
 .cat-stage__what { transition: opacity var(--dur-quick) var(--ease-out); }
 .cat-stage__figure {
   position: sticky;
@@ -78,7 +78,7 @@
   max-width: 100%;
   max-height: 68vh;
   margin: 0;
-  color: var(--accent);
+  color: var(--accent-text);
   /* Decoration must never intercept a click meant for the page behind it —
      but pointerdown still reaches the window, so the burst still fires. */
   pointer-events: none;
@@ -196,7 +196,7 @@
               transform var(--dur-calm) var(--ease-out);
 }
 .paws li:nth-child(even) svg { transform: translateX(7px) rotate(10deg); }
-.paws li[data-passed="true"] svg { opacity: 1; color: var(--accent); }
+.paws li[data-passed="true"] svg { opacity: 1; color: var(--accent-text); }
 
 /* Print mode does not need a live progress indicator, and a printed page
    does not have one. */

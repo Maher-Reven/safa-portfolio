@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-mode="full" data-audience="open">
+<html lang="en" data-theme="dark" data-mode="full" data-audience="open">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -30,11 +30,15 @@
 <link rel="stylesheet" href="styles/calm.css">
 
 <!-- Applied before first paint so nobody in calm mode ever sees one frame
-     of the thing they asked not to see. -->
+     of the thing they asked not to see — and nobody on a light desktop gets
+     a flash of near-black before the theme resolves. The attribute is on
+     <html> in the markup too, so a document with no JavaScript at all is
+     still a designed one rather than an unstyled one. -->
 <script>
   try {
     const s = JSON.parse(localStorage.getItem("afstemmen.v1") || "{}");
     const r = document.documentElement;
+    r.dataset.theme    = s.theme    || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
     r.dataset.mode     = s.mode     || (matchMedia("(prefers-reduced-motion: reduce)").matches ? "calm" : "full");
     r.dataset.contrast = s.contrast || (matchMedia("(prefers-contrast: more)").matches ? "high" : "normal");
     r.dataset.reading  = s.reading  || "default";

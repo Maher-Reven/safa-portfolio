@@ -95,11 +95,23 @@
   .site-head, .banner, .site-foot, .paws, .cursor-badge, #field,
   #attune-root, .attune, .attune__scrim, .cv__hint, .skip { display: none !important; }
 
-  :root, [data-mode="full"], [data-mode="calm"] {
+  /* Paper has one palette, and it is not the screen's. The selector is
+     written to outrank every theme and contrast block in tokens.css rather
+     than to match them: it listed the two modes before, which had exactly
+     the same specificity as [data-theme][data-contrast] and lost to it —
+     so a visitor who had asked for high contrast printed --text: #ffffff
+     onto white paper. Their CV came out of the printer blank. Attribute
+     selectors are cheap and a blank page is not. */
+  :root, :root[data-theme], :root[data-theme][data-contrast] {
     --ground: #fff; --surface: #fff;
     --text: #000; --text-soft: #222; --text-faint: #444;
     --line: rgba(0,0,0,0.25); --line-strong: rgba(0,0,0,0.6);
-    --accent: #000; --accent-ink: #fff;
+    --edge: rgba(0,0,0,0.6);
+    --accent: #000; --accent-ink: #fff; --accent-text: #000;
+    --c-dentara: #000; --c-dentara-ink: #000;
+    --c-velotech: #000; --c-velotech-ink: #000;
+    --c-medialab: #000; --c-medialab-ink: #000;
+    --c-pubhubs: #000; --c-pubhubs-ink: #000;
 
     /* The type and space scales are redeclared in points, not just the
        colours. Setting `body { font-size }` alone changed nothing below it:

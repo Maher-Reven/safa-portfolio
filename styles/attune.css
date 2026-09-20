@@ -15,7 +15,7 @@
   font-family: var(--face-detail);
   font-size: var(--t-sm);
   letter-spacing: 0.02em;
-  border: var(--rule-strong);
+  border: var(--rule-edge);
   border-radius: var(--radius-pill);
   background: var(--surface);
   transition: background var(--dur-quick) var(--ease-out),
@@ -133,7 +133,7 @@
   align-items: center;
   min-height: 44px;
   padding-inline: var(--s-xs);
-  border: var(--rule);
+  border: var(--rule-edge);
   border-radius: var(--radius-sm);
   font-size: var(--t-sm);
   line-height: 1.2;

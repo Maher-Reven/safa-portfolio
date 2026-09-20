@@ -406,6 +406,92 @@ editorial grid, numbered sections, hairline rules, paper grain laid in CSS.
 Neither is an apology for the other. If your device asks for reduced motion you
 land in calm, and the site tells you it listened.
 
+## Dark and light are a separate question
+
+They used not to be. `full` meant dark **and** moving; `calm` meant paper **and**
+still. So a visitor who wanted the work to hold still could not have it on her
+dark ground, and a visitor reading on a light desktop in daylight could not have
+the canvas. Nobody asked for either trade — it was an accident of two decisions
+sharing one attribute.
+
+`[data-theme]` now decides colour and `[data-mode]` decides behaviour, so all
+four combinations exist and all four are designed. Calm on the dark theme —
+Fraunces, numbered sections, the risograph cat, nothing moving, on her own
+near-black — is a state the site could not previously say.
+
+The theme follows `prefers-color-scheme`, on the same rule as the other axes:
+the operating system is asked first and believed. A machine that expresses no
+preference gets her dark ground, and either is one press away in Attune.
+
+### The accent is three roles
+
+The lime was one token doing two incompatible jobs. On the dark ground a single
+value could be both a fill with text on it and a mark drawn on the page, which
+is why it was never noticed. On paper it cannot be: `#C8E65A` is 12.1:1 against
+the ink sitting on it and 1.2:1 against the paper beside it — a perfect button
+and an invisible active-tab dot, from the same value.
+
+| token | job | dark | light |
+| --- | --- | --- | --- |
+| `--accent` | the fill | `#C8E65A` | `#C8E65A` — the brand lime survives |
+| `--accent-ink` | what sits on it | `#1C1C1C` | `#1C1C1C` — 12.1:1 |
+| `--accent-text` | the mark on the page | `#C8E65A` | `#5C7210` — 4.8:1 |
+
+Project colours split the same way, for the same reason: `--c-velotech` rules a
+3px line across a card and `--c-velotech-ink` writes the project's name, and a
+line needs 3:1 where a name needs 4.5:1.
+
+### Every pairing is measured
+
+```sh
+node tools/contrast.mjs        # 144 pairings, four palettes, non-zero on failure
+```
+
+It reads `styles/tokens.css` rather than keeping its own copy of the palette —
+a checker with its own copy is a checker that passes while the site fails — and
+composites the translucent rules over the grounds they actually sit on. Running
+it against the file for the first time turned up five things that were already
+shipping:
+
+- **The light accent was documented at 4.9:1 and measured 3.5:1.** It had never
+  been run.
+- **The light high-contrast accent was documented at 7.4:1 and measured 6.8:1.**
+- **VeloTech's blue sat at 2.5:1 on the dark ground** — the identity of a whole
+  case, on a rule you could not see. Its annotation on the Access page claimed
+  3.1:1, which is the argument for the tool in one line.
+- **The focus ring on the language toggle was drawn in the colour it was drawn
+  on.** That ring is the one on this site that sits inset rather than on the
+  page, so on the pressed half it landed on the lime fill — in the dark theme
+  `--focus` *is* that lime. 1:1, on the only control in the header.
+- **Printing in high contrast produced a blank page.** The print block's
+  selector listed the two modes, which had exactly the same specificity as
+  `[data-theme][data-contrast]` and lost to it, so `--text: #ffffff` went onto
+  white paper. Someone would have found that by printing their own CV.
+
+A sixth is a judgement rather than a failure: control borders were drawn with
+`--line-strong` at 2.0:1. There is now a third weight, `--edge`, which clears
+3:1 in all four palettes and is used only where a line is the boundary of
+something you can press. `--line-strong` frames a card and `--line` divides a
+list; the checker reports both without a target, because "not required here" is
+a judgement worth being able to see and argue with.
+
+### What the canvas had to learn
+
+The live ground and the particle cat were both written against a dark sky, in
+ways that are invisible until the sky changes.
+
+The field added its mesh to the ground — the same thing as mixing, while the
+ground is near-black, and nothing at all once it is paper, since adding lime to
+`#F4F0E8` pushes every channel to 1.0. It mixes now, which lands within about 1%
+of the dark values it was tuned at. Its vignette multiplied toward black, which
+on paper is not a vignette but a smudge; it now mixes toward whichever end the
+ground is not.
+
+The swarm blended additively, so density read as light. Sixteen layers of
+`#14120F` add up to cream: on the light theme the cat's eyes — the densest part
+of the cloud — came out as two pale holes punched through its face. On ink the
+particles still build light; on paper they build ink.
+
 ## Running it
 
 No build step, no dependencies, no tooling.
@@ -433,6 +519,7 @@ content/content.js    ← the file to edit
 styles/tokens.css     every design decision, with the reason written next to it
 styles/base.css       reset + the accessibility primitives everything assumes
 styles/layout.css     structure shared by both modes
+tools/contrast.mjs    every pairing in four palettes, measured from the tokens
 styles/full.css       art direction one — the live surface
 styles/calm.css       art direction two — the printed piece
 styles/attune.css     the panel

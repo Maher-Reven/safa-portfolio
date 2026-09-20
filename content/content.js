@@ -84,11 +84,16 @@ export const intro = {
 /* -------------------------------------------------------------------------
    WORK — four real projects. Copy and imagery are hers.
    ------------------------------------------------------------------------- */
+/* Two colours per project, not one: `colour` rules the 3px line across the
+   top of its card, `ink` writes its name. A line needs 3:1 against the page
+   and a name needs 4.5:1, and no single value cleared both on both themes —
+   see the PROJECT COLOURS note in tokens.css. */
 export const projects = [
   {
     slug: "velotech",
     format: { en: "Web app", nl: "Webapp" },
     colour: "var(--c-velotech)",
+    ink:    "var(--c-velotech-ink)",
     year: "2025 — 2026",
     title:      { en: "VeloTech.AI", nl: "VeloTech.AI" },
     company:    { en: "VeloTech.AI · Freelance", nl: "VeloTech.AI · Freelance" },
@@ -122,8 +127,8 @@ export const projects = [
     ],
     details: [
       { kind: "colour", value: "#2F5D8C",
-        note: { en: "Municipal blue, taken from the product's own chrome rather than assigned. On the dark ground it measures 3.1:1 — enough for a large surface, never enough for text, so no label is ever set in it.",
-                nl: "Gemeenteblauw, genomen uit de chrome van het product zelf in plaats van toegewezen. Op de donkere ondergrond meet het 3,1:1 — genoeg voor een groot vlak, nooit genoeg voor tekst, dus geen enkel label is erin gezet." } },
+        note: { en: "Municipal blue, taken from the product's own chrome rather than assigned. It is the colour on paper; on the dark theme it is lifted to #4B739B, because the true blue measured 2.5:1 there — a case identified by a rule you cannot see. The claim on this card used to be 3.1:1, which is what makes a checker that reads the stylesheet worth more than a note that remembers it.",
+                nl: "Gemeenteblauw, genomen uit de chrome van het product zelf in plaats van toegewezen. Dit is de kleur op papier; in het donkere thema wordt hij opgelicht naar #4B739B, want het echte blauw mat daar 2,5:1 — een case herkenbaar aan een lijn die je niet ziet. Op deze kaart stond 3,1:1, en juist daarom is een checker die de stylesheet leest meer waard dan een notitie die het zich herinnert." } },
       { kind: "constraint",
         note: { en: "Severity is never carried by colour alone. An inspector reading a map in daylight, or with any colour vision deficiency, still needs to rank damage — so severity is a score and a shape, and the colour is the third signal, not the first.",
                 nl: "Ernst wordt nooit alleen door kleur gedragen. Een inspecteur die bij daglicht een kaart leest, of met welke kleurzichtstoornis dan ook, moet schade nog steeds kunnen rangschikken — dus ernst is een score en een vorm, en kleur is het derde signaal, niet het eerste." } },
@@ -134,6 +139,7 @@ export const projects = [
     slug: "dentara",
     format: { en: "Mobile app", nl: "Mobiele app" },
     colour: "var(--c-dentara)",
+    ink:    "var(--c-dentara-ink)",
     year: "2026",
     title:      { en: "Dentara", nl: "Dentara" },
     company:    { en: "Graduation project", nl: "Afstudeerproject" },
@@ -186,6 +192,7 @@ export const projects = [
     slug: "pubhubs",
     format: { en: "Web app", nl: "Webapp" },
     colour: "var(--c-pubhubs)",
+    ink:    "var(--c-pubhubs-ink)",
     year: "2024 — 2025",
     title:      { en: "PubHubs", nl: "PubHubs" },
     company:    { en: "PubHubs · Freelance", nl: "PubHubs · Freelance" },
@@ -227,6 +234,7 @@ export const projects = [
     slug: "medialab",
     format: { en: "Mobile + web", nl: "Mobiel + web" },
     colour: "var(--c-medialab)",
+    ink:    "var(--c-medialab-ink)",
     year: "2024 — 2025",
     title:      { en: "MediaLab", nl: "MediaLab" },
     company:    { en: "MediaLab · Internship", nl: "MediaLab · Stage" },
@@ -597,6 +605,9 @@ export const ui = {
   attuneTitle:   { en: "Attune",            nl: "Afstemmen" },
   attuneIntro:   { en: "This is not a settings menu hidden in a footer. It is how the site works.",
                    nl: "Dit is geen instellingenmenu verstopt in een footer. Zo werkt deze site." },
+  themeLabel:    { en: "Theme",             nl: "Thema" },
+  themeDark:     { en: "Dark",              nl: "Donker" },
+  themeLight:    { en: "Light",             nl: "Licht" },
   modeLabel:     { en: "Mode",              nl: "Modus" },
   modeFull:      { en: "Screen",            nl: "Scherm" },
   modeCalm:      { en: "Print",             nl: "Print" },
@@ -653,6 +664,11 @@ export const ui = {
      of announcing a change is that the person understands it, so saying it
      in English to someone reading Dutch defeats the feature entirely. */
   announce: {
+    theme: {
+      dark:  { en: "Dark theme.", nl: "Donker thema." },
+      light: { en: "Light theme. The same work on paper.",
+               nl: "Licht thema. Hetzelfde werk op papier." },
+    },
     mode: {
       full: { en: "Screen mode. Motion and the live canvas are on.",
               nl: "Schermmodus. Beweging en het levende canvas staan aan." },

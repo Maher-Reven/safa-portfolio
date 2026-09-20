@@ -80,7 +80,7 @@
   height: 100%;
   padding: var(--s-xs) var(--s-sm);
   text-align: start;
-  border: var(--rule-strong);
+  border: var(--rule-edge);
   border-radius: var(--radius-md);
   background: var(--surface);
   transition: transform var(--dur-quick) var(--ease-out),
@@ -206,7 +206,7 @@
   font-weight: 300;
   letter-spacing: -0.03em;
   line-height: 1;
-  color: var(--accent);
+  color: var(--accent-text);
 }
 .outcome__label {
   display: block;
@@ -239,7 +239,7 @@
 .case__section p { font-size: var(--t-sm); color: var(--text-soft); }
 /* The result is the one that gets the accent, because it is the one a
    client is actually buying. */
-.case__section[data-key="result"] h4 { color: var(--accent); }
+.case__section[data-key="result"] h4 { color: var(--accent-text); }
 .case__section[data-key="result"] p { color: var(--text); }
 
 .shots {
@@ -326,7 +326,7 @@
 .findings__value {
   font-family: var(--face-detail);
   font-size: var(--t-sm);
-  color: var(--accent);
+  color: var(--accent-text);
 }
 .findings p { margin: 0; font-size: var(--t-sm); color: var(--text-soft); }
 
@@ -408,7 +408,7 @@
   color: var(--text-faint);
   margin-block-end: var(--s-md);
 }
-.steps__n { color: var(--accent); font-family: var(--face-detail); font-size: 0.6em; }
+.steps__n { color: var(--accent-text); font-family: var(--face-detail); font-size: 0.6em; }
 
 
 /* On a phone the second half of the banner is the same two facts the header
@@ -458,10 +458,10 @@
 }
 
 @media (hover: hover) {
-  .index__row:hover .index__name { color: var(--case, var(--accent)); }
-  .index__row:hover .index__n { color: var(--case, var(--accent)); }
+  .index__row:hover .index__name { color: var(--case-ink, var(--accent-text)); }
+  .index__row:hover .index__n { color: var(--case-ink, var(--accent-text)); }
 }
-.index__row:focus-visible .index__name { color: var(--case, var(--accent)); }
+.index__row:focus-visible .index__name { color: var(--case-ink, var(--accent-text)); }
 
 /* The cover, riding the pointer. Decoration: every row is already a complete
    link, and deleting this would lose nothing but the pleasure. */

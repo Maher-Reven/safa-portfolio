@@ -45,7 +45,8 @@ uniform float uPresence;   // 0..1, eased
 uniform float uVel;        // 0..1, smoothed pointer speed
 uniform float uOrder;      // 0 turbulent .. 1 resolved, driven by scroll
 uniform vec3  uGround;
-uniform vec3  uAccent;
+uniform vec3  uMark;
+uniform vec3  uCorner;
 uniform vec3  uCool;
 
 float hash(vec2 p) {
@@ -161,27 +162,42 @@ void main() {
   float near = pow(1.0 - clamp(d, 0.0, 1.0), 2.6) * uPresence;
 
   /* ---- COLOUR ------------------------------------------------------------
-     Everything below is scaled to stay inside the 9% ceiling set at the top
-     of this file. The cool tone only ever appears in the turbulent half, so
-     resolving the field literally drains the confusion out of it. */
+     Everything below is scaled to stay inside the ceiling set at the top of
+     this file. The cool tone only ever appears in the turbulent half, so
+     resolving the field literally drains the confusion out of it.
+
+     THE MARK IS MIXED IN, NOT ADDED ON. This was `col += accent * mesh`,
+     which is the same thing as mixing while the ground is near-black, and
+     nothing at all once the ground is paper: adding lime to #f4f0e8 pushes
+     every channel to 1.0 and the mesh disappears into white. mix() draws
+     the same field on either ground, because it asks how far to go toward
+     the mark rather than how much light to add — and on the dark ground it
+     lands within about 1% of the values this was tuned at.
+
+     uMark is the lime on ink and the deep lime on paper: --accent-text,
+     the token that already exists for exactly this question. */
   vec3 col = uGround;
-  col += uAccent * mesh * (loud + near * 0.05 + push * 0.10);
+  col = mix(col, uMark, clamp(mesh * (loud + near * 0.05 + push * 0.10), 0.0, 1.0));
   /* A chromatic shift toward the cool tone where the cursor is, so the
      disturbance reads as a different material rather than a brighter one. */
-  col += uCool * mesh * push * loud * 1.6;
+  col = mix(col, uCool, clamp(mesh * push * loud * 1.6, 0.0, 1.0));
   /* The cool tone exists only in the turbulent half, so resolving the field
      literally drains the confusion out of it. */
-  col += uCool * mesh * (1.0 - order) * loud * 0.55;
+  col = mix(col, uCool, clamp(mesh * (1.0 - order) * loud * 0.55, 0.0, 1.0));
 
   /* A standing grid over everything at the edge of visibility: the drawing
      surface, always there, under both states. */
   vec2 fine = p * 22.0;
   float scaffold = max(lineband(fine.x, 0.02), lineband(fine.y, 0.02));
-  col += uAccent * scaffold * 0.012;
+  col = mix(col, uMark, scaffold * 0.012);
 
   /* A slow vignette toward the corners so the centre of the page, where the
-     reading happens, is always the quietest part of it. */
-  col *= 1.0 - 0.35 * pow(length(p * vec2(0.62, 1.0)), 2.2);
+     reading happens, is always the quietest part of it. Quietest means
+     furthest from the reader's eye, not darker: on ink the corners fall
+     away toward black, on paper they lift toward the page. Multiplying, as
+     this did, does the first on both — which on paper is not a vignette but
+     a smudge around the writing. */
+  col = mix(col, uCorner, 0.35 * pow(length(p * vec2(0.62, 1.0)), 2.2));
 
   /* Grain. Kills the banding an 8-bit gradient shows across a flat wall, and
      gives the ground the same tooth the print mode gets from its paper. */
@@ -236,7 +252,8 @@ export class PresenceField {
     gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
 
     this.u = Object.fromEntries(
-      ["uRes", "uTime", "uPointer", "uPresence", "uVel", "uOrder", "uGround", "uAccent", "uCool"]
+      ["uRes", "uTime", "uPointer", "uPresence", "uVel", "uOrder",
+       "uGround", "uMark", "uCorner", "uCool"]
         .map((n) => [n, gl.getUniformLocation(program, n)]));
 
     this.bind();
@@ -306,15 +323,22 @@ export class PresenceField {
 
     this.paletteObserver = new MutationObserver(() => this.readPalette());
     this.paletteObserver.observe(document.documentElement,
-      { attributes: true, attributeFilter: ["data-contrast", "data-mode"] });
+      { attributes: true, attributeFilter: ["data-contrast", "data-mode", "data-theme"] });
 
     this.onScroll();
   }
 
   readPalette() {
     this.ground = cssColor("--ground", "#1c1c1c");
-    this.accent = cssColor("--accent", "#c8e65a");
+    this.mark   = cssColor("--accent-text", "#c8e65a");
     this.cool   = cssColor("--note", "#8fd4e8");
+
+    /* Which way "quieter" points. The vignette pulls the corners away from
+       the reader, and away is toward black on ink and toward the page on
+       paper — so it is read off the ground rather than assumed, and a
+       future theme gets the right answer without touching this file. */
+    const l = 0.2126 * this.ground[0] + 0.7152 * this.ground[1] + 0.0722 * this.ground[2];
+    this.corner = l < 0.5 ? [0, 0, 0] : [1, 1, 1];
   }
 
   resize() {
@@ -350,7 +374,8 @@ export class PresenceField {
     gl.uniform1f(this.u.uVel, this.vel);
     gl.uniform1f(this.u.uOrder, this.order);
     gl.uniform3fv(this.u.uGround, this.ground);
-    gl.uniform3fv(this.u.uAccent, this.accent);
+    gl.uniform3fv(this.u.uMark, this.mark);
+    gl.uniform3fv(this.u.uCorner, this.corner);
     gl.uniform3fv(this.u.uCool, this.cool);
 
     gl.drawArrays(gl.TRIANGLES, 0, 3);

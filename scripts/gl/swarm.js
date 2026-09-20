@@ -188,6 +188,7 @@ const FRAG = /* glsl */`
 precision highp float;
 uniform vec3 uColor;
 uniform vec3 uColorAlt;
+uniform vec3 uPeak;
 varying float vSeed;
 varying float vGlow;
 varying float vRegion;
@@ -199,8 +200,13 @@ void main() {
   float a = smoothstep(0.5, 0.12, d);
 
   vec3 col = mix(uColor, uColorAlt, vSeed * 0.75);
-  col = mix(col, vec3(1.0), vGlow * 0.3);               // what you touch lights up, a little
-  col = mix(col, vec3(1.0), vRegion * 0.8);             // the eyes are the brightest thing
+  /* uPeak, not vec3(1.0). "Brightest" is the wrong word for what these two
+     lines want — they want the most present the palette gets, and on paper
+     that is the ink, not the white. Hard-coded white turned the eyes into
+     two holes punched in the cat the moment the ground stopped being dark.
+     In the dark theme uPeak is #faf8f5, so nothing about it changes. */
+  col = mix(col, uPeak, vGlow * 0.3);                   // what you touch lights up, a little
+  col = mix(col, uPeak, vRegion * 0.8);                 // the eyes are the most present thing
   float alpha = a * (0.45 + 0.55 * vSeed);
   gl_FragColor = vec4(col, mix(alpha, a, vRegion));     // and the most opaque
 }
@@ -304,17 +310,28 @@ export class Swarm {
        stops three.js frustum-culling the whole cloud mid-morph. */
     g.boundingSphere = new THREE.Sphere(new THREE.Vector3(), 4);
 
-    const accent = cssRGB("--accent", "#c8e65a");
+    const accent = cssRGB("--accent-text", "#c8e65a");
     const text   = cssRGB("--text", "#faf8f5");
+
+    /* WHICH WAY DENSITY GOES.
+       Additive blending means overlapping particles sum, so density reads as
+       light — exactly right on a near-black ground, and exactly backwards on
+       paper. Summed often enough, even the ink colour climbs to white: the
+       eyes are the densest part of the cloud, and on the light theme they
+       came out as two pale holes punched through the cat's face, because
+       sixteen layers of #14120f add up to cream.
+
+       So the ground decides. On ink, particles build light; on paper, they
+       build ink, and the dense parts of the shape get their body from
+       opacity instead of from sum. */
+    const onInk = 0.2126 * text[0] + 0.7152 * text[1] + 0.0722 * text[2] > 0.5;
 
     this.material = new THREE.ShaderMaterial({
       vertexShader: VERT,
       fragmentShader: FRAG,
       transparent: true,
       depthWrite: false,
-      /* Additive on a near-black ground: overlapping particles build light,
-         which is what gives the dense parts of the shape their body. */
-      blending: THREE.AdditiveBlending,
+      blending: onInk ? THREE.AdditiveBlending : THREE.NormalBlending,
       uniforms: {
         uTime: { value: 0 },
         uMorph: { value: 0 },
@@ -326,6 +343,7 @@ export class Swarm {
         uPixelRatio: { value: this.dpr },
         uColor: { value: new THREE.Vector3(...accent) },
         uColorAlt: { value: new THREE.Vector3(...text) },
+        uPeak: { value: new THREE.Vector3(...text) },
       },
     });
 

@@ -63,7 +63,7 @@ a {
   transition: text-decoration-color var(--dur-quick) var(--ease-out),
               color var(--dur-quick) var(--ease-out);
 }
-a:hover { text-decoration-color: currentColor; color: var(--accent); }
+a:hover { text-decoration-color: currentColor; color: var(--accent-text); }
 
 /* -------------------------------------------------------------------------
    FOCUS

@@ -47,7 +47,7 @@ body { filter: var(--vision-filter, none); }
 .lab__topic {
   margin-inline-start: auto;
   padding: 0.15em 0.6em;
-  border: var(--rule);
+  border: var(--rule-edge);
   border-radius: var(--radius-pill);
   font-family: var(--face-detail);
   font-size: var(--t-detail);
@@ -65,7 +65,7 @@ body { filter: var(--vision-filter, none); }
   background: var(--surface);
 }
 .lab__meta { display: flex; align-items: baseline; gap: var(--s-2xs); margin: 0; font-size: var(--t-md); }
-.lab__n { font-family: var(--face-detail); font-size: var(--t-detail); color: var(--accent); }
+.lab__n { font-family: var(--face-detail); font-size: var(--t-detail); color: var(--accent-text); }
 .lab__note { margin: var(--s-2xs) 0 var(--s-sm); font-size: var(--t-sm); color: var(--text-soft); }
 .lab__body { display: grid; gap: var(--s-xs); }
 
@@ -92,8 +92,8 @@ body { filter: var(--vision-filter, none); }
   letter-spacing: 0.08em;
   color: var(--text-faint);
 }
-.lab__field input[type="color"] { width: 4.5rem; height: 2.5rem; padding: 0; border: var(--rule); background: none; }
-.lab__field input[type="range"] { width: 9rem; accent-color: var(--accent); }
+.lab__field input[type="color"] { width: 4.5rem; height: 2.5rem; padding: 0; border: var(--rule-edge); background: none; }
+.lab__field input[type="range"] { width: 9rem; accent-color: var(--accent-text); }
 
 .lab__swatch {
   display: grid;
@@ -112,7 +112,7 @@ body { filter: var(--vision-filter, none); }
 }
 /* The verdict is stated in words as well as colour, because a contrast tool
    that signals only in colour is a joke at its own expense. */
-.lab__verdict[data-level="pass"] { color: var(--accent); }
+.lab__verdict[data-level="pass"] { color: var(--accent-text); }
 .lab__verdict[data-level="warn"] { color: var(--text); }
 .lab__verdict[data-level="fail"] { color: var(--text); text-decoration: underline; text-underline-offset: 0.25em; }
 
@@ -184,7 +184,7 @@ body { filter: var(--vision-filter, none); }
   font-size: var(--t-detail);
   color: var(--text-soft);
 }
-.lab__curve { width: 1.8rem; height: 1.8rem; color: var(--accent); flex: 0 0 auto; }
+.lab__curve { width: 1.8rem; height: 1.8rem; color: var(--accent-text); flex: 0 0 auto; }
 .lab__track {
   position: relative;
   display: block;
@@ -199,7 +199,7 @@ body { filter: var(--vision-filter, none); }
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: var(--accent);
+  background: var(--accent-text);
 }
 
 @media (max-width: 64rem) {
@@ -235,7 +235,7 @@ body { filter: var(--vision-filter, none); }
   font-size: var(--t-sm);
   font-variant-numeric: tabular-nums;
 }
-.audit__score[data-level="pass"] { color: var(--accent); }
+.audit__score[data-level="pass"] { color: var(--accent-text); }
 /* Failing is stated in a word as well as a colour — an audit that signals
    only in colour would be failing its own first check. */
 .audit__score[data-level="fail"] { color: var(--text); text-decoration: underline; text-underline-offset: 0.25em; }
@@ -260,7 +260,7 @@ body { filter: var(--vision-filter, none); }
   font-variant-numeric: tabular-nums;
 }
 .audit__detail { color: var(--text-faint); }
-.audit__list > li[data-level="pass"] .audit__verdict { color: var(--accent); }
+.audit__list > li[data-level="pass"] .audit__verdict { color: var(--accent-text); }
 .audit__list > li[data-level="fail"] .audit__verdict { color: var(--text); text-decoration: underline; }
 /* A marker as well as colour, for the same reason. */
 .audit__list > li[data-level="fail"] .audit__label::before { content: "! "; color: var(--text); }
@@ -287,12 +287,12 @@ body { filter: var(--vision-filter, none); }
 }
 .focus-path__line {
   fill: none;
-  stroke: var(--accent);
+  stroke: var(--accent-text);
   stroke-width: 2;
   stroke-dasharray: 6 5;
   opacity: 0.85;
 }
-.focus-path__dot { fill: var(--accent); }
+.focus-path__dot { fill: var(--accent-text); }
 .focus-path__n {
   fill: var(--accent-ink);
   font-family: var(--face-detail);

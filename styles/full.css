@@ -35,7 +35,7 @@
   font-weight: 300;
 }
 /* The one lime full stop. It is the whole brand mark. */
-[data-mode="full"] .intro h1 .stop { color: var(--accent); }
+[data-mode="full"] .intro h1 .stop { color: var(--accent-text); }
 
 /* Arrival. Elements are placed, not faded — a fade says "loading", a rise
    says "this was always here, you have just reached it".

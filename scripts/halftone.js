@@ -191,7 +191,7 @@ export class Halftone {
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.clearRect(0, 0, W, H);
 
-    const inks = { text: ink("--text", "#14120f"), accent: ink("--accent", "#6f8a12") };
+    const inks = { text: ink("--text", "#14120f"), accent: ink("--accent-text", "#5c7210") };
 
     /* Screen pitch in device pixels, so the dot size on a retina display
        matches the dot size everywhere else. */

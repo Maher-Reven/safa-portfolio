@@ -48,7 +48,7 @@
    as a stray character rather than as a divider. */
 .case-card .project__meta { display: grid; gap: 0; }
 .case-card .project__meta > span + span::before { content: none; }
-.case-card .project__meta > span:first-child { color: var(--case, var(--accent)); }
+.case-card .project__meta > span:first-child { color: var(--case-ink, var(--accent-text)); }
 
 /* The heading holds the only link; this stretches its hit area over the whole
    card, so a pointer gets the card and a screen reader gets one clean link. */
@@ -64,14 +64,14 @@
   font-family: var(--face-detail);
   font-size: var(--t-detail);
   letter-spacing: 0.06em;
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 /* A colour bar per case, so the four are told apart before they are read.
    It is a border rather than a pseudo-element: ::after is already the hover
    sweep and ::before the spotlight, and the later stylesheet was silently
    winning — the bar never rendered at all. */
-.case-card { border-block-start: 3px solid var(--case, var(--accent)); }
+.case-card { border-block-start: 3px solid var(--case, var(--accent-text)); }
 
 /* =========================================================================
    A CASE
@@ -82,7 +82,7 @@
   font-size: var(--t-sm);
   text-decoration: none;
 }
-.case__back a:hover { color: var(--accent); }
+.case__back a:hover { color: var(--accent-text); }
 
 .case__title {
   font-size: var(--t-xl);
@@ -90,7 +90,7 @@
   /* The case colour, as a rule under the title rather than as the type
      colour: several of the four do not carry text at any size. */
   padding-block-end: var(--s-xs);
-  border-block-end: 3px solid var(--case, var(--accent));
+  border-block-end: 3px solid var(--case, var(--accent-text));
 }
 
 .case__facts {
@@ -140,7 +140,7 @@
   color: var(--text-faint);
 }
 .case__next-name { font-size: var(--t-lg); font-family: var(--face-display); }
-.case__next a:hover .case__next-name { color: var(--accent); }
+.case__next a:hover .case__next-name { color: var(--accent-text); }
 
 /* The morph between a card's cover and the case hero. Both carry the same
    view-transition-name, so the browser tweens the real element rather than
@@ -199,13 +199,13 @@
   place-items: center;
   width: 44px;                          /* fingertip, not the 24px minimum */
   height: 44px;
-  border: var(--rule);
+  border: var(--rule-edge);
   border-radius: 50%;
   color: var(--text-soft);
   transition: color var(--dur-quick) var(--ease-out),
               border-color var(--dur-quick) var(--ease-out);
 }
-.screens__arrow:hover { color: var(--accent); border-color: var(--accent); }
+.screens__arrow:hover { color: var(--accent-text); border-color: var(--accent-text); }
 
 .screens__scroll {
   min-width: 0;

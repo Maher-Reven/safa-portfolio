@@ -22,9 +22,18 @@
 /* ---- colour ------------------------------------------------------------ */
 const parseColour = (c) => {
   const m = c.match(/rgba?\(([^)]+)\)/);
-  if (!m) return null;
-  const [r, g, b, a = 1] = m[1].split(",").map((v) => parseFloat(v));
-  return { r, g, b, a };
+  if (m) {
+    const [r, g, b, a = 1] = m[1].split(",").map((v) => parseFloat(v));
+    return { r, g, b, a };
+  }
+  /* getComputedStyle hands back rgb() for anything it resolved, but a custom
+     property comes back exactly as it was written — and every colour in
+     tokens.css is written as a hex. */
+  const h = c.trim().match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i);
+  if (!h) return null;
+  const x = h[1].length === 3 ? h[1].split("").map((v) => v + v).join("") : h[1];
+  return { r: parseInt(x.slice(0, 2), 16), g: parseInt(x.slice(2, 4), 16),
+           b: parseInt(x.slice(4, 6), 16), a: 1 };
 };
 
 const lum = ({ r, g, b }) => {
@@ -48,7 +57,13 @@ function effectiveBg(el) {
     if (c && c.a > 0.85) return c;
     node = node.parentElement;
   }
-  return parseColour(getComputedStyle(document.body).backgroundColor) || { r: 28, g: 28, b: 28, a: 1 };
+  /* Last resort: the ground token, not a remembered value. This used to
+     fall back to #1c1c1c, which was the dark theme's ground written out by
+     hand — on the light theme that would have had the checker measuring
+     against a page that was not there. */
+  return parseColour(getComputedStyle(document.body).backgroundColor)
+      || parseColour(getComputedStyle(document.documentElement).getPropertyValue("--ground").trim())
+      || { r: 28, g: 28, b: 28, a: 1 };
 }
 
 const visible = (el) => {
