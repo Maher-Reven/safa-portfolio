@@ -324,11 +324,19 @@ page for ITC Benguiat. It is a separate tab from Work because it is read
 differently — a case study is an argument you follow from problem to result,
 and a set of carousels is a body of work you look at.
 
-**The filter is multi-select**, unlike the Lab's. The Lab's topics are a
-taxonomy and you ask it one question at a time; these are five clients, and
-"the two social ones" is an ordinary thing to want. Chips toggle, Everything
-is the way back, and the count is announced, because filtering a list a
-screen reader cannot see change is the same as doing nothing.
+**The filter asks what kind of work, not which client.** The client is
+already printed on every card, and "the branding ones" is the question a
+client name cannot answer — three of these five sets are print work and no
+two of them are for the same company. A set can be more than one kind, so
+they are tags rather than a folder each: Instituut Marie is social, branding
+and print at once.
+
+It is multi-select, unlike the Lab's. The Lab's topics are a taxonomy and you
+ask it one question at a time; here, selecting two kinds shows the union,
+because the alternative is asking somebody to press a chip, look, press it
+again, and hold the first answer in their head. Unpressing the last kind is
+the same request as pressing All. The count is announced, because filtering a
+list a screen reader cannot see change is the same as doing nothing.
 
 **Opening a set** morphs its cover into the viewer through a view transition
 named on both ends, so the picture you pressed is visibly the picture you are

@@ -607,7 +607,7 @@ export const graphic = {
   projects: [
     {
       slug: "instituut-marie",
-      chip:  { en: "Instituut Marie", nl: "Instituut Marie" },
+      tags: ["social", "branding", "print"],
       title: { en: "Instituut Marie", nl: "Instituut Marie" },
       client:{ en: "Instituut Marie · Amsterdam", nl: "Instituut Marie · Amsterdam" },
       discipline: { en: "Editorial · Social carousels", nl: "Redactioneel · Social carrousels" },
@@ -655,7 +655,7 @@ export const graphic = {
 
     {
       slug: "velotech-brand",
-      chip:  { en: "VeloTech", nl: "VeloTech" },
+      tags: ["branding", "print"],
       title: { en: "VeloTech.AI brand guidelines", nl: "VeloTech.AI-merkrichtlijnen" },
       client:{ en: "VeloTech.AI", nl: "VeloTech.AI" },
       discipline: { en: "Brand identity · Guidelines", nl: "Merkidentiteit · Richtlijnen" },
@@ -693,12 +693,12 @@ export const graphic = {
 
     {
       slug: "medialab-social",
+      tags: ["social", "print"],
       /* Which piece fronts the set. The first one is the default and is
          usually right — a cover page is made to be a cover — but this set
          opens on a diagram, and a diagram at card size is a grey mesh. The
          Invictus frame is the one that reads at a glance. */
       cover: 3,
-      chip:  { en: "MediaLab", nl: "MediaLab" },
       title: { en: "MediaLab campaign graphics", nl: "MediaLab-campagnebeelden" },
       client:{ en: "MediaLab", nl: "MediaLab" },
       discipline: { en: "Social · Campaign", nl: "Social · Campagne" },
@@ -726,7 +726,7 @@ export const graphic = {
 
     {
       slug: "pulse-social",
-      chip:  { en: "Pulse", nl: "Pulse" },
+      tags: ["social"],
       title: { en: "Pulse Sport campaign", nl: "Pulse Sport-campagne" },
       client:{ en: "Pulse Sport Amsterdam", nl: "Pulse Sport Amsterdam" },
       discipline: { en: "Social · Sport", nl: "Social · Sport" },
@@ -749,7 +749,7 @@ export const graphic = {
 
     {
       slug: "type-specimen",
-      chip:  { en: "Type", nl: "Letter" },
+      tags: ["typography"],
       title: { en: "ITC Benguiat specimen", nl: "ITC Benguiat-letterproef" },
       /* TODO (Safa): who this was made for — a course, a client, your own
          shelf. The typeface names itself at the top of the page, so that one
@@ -768,9 +768,23 @@ export const graphic = {
     },
   ],
 
+  /* The filter asks what kind of work, not which client. A client is already
+     on every card; "the branding ones" is the question somebody browsing a
+     graphic design page actually has, and it is the one a client name cannot
+     answer — three of these five sets are print work and no two of them are
+     for the same company. A set can be more than one thing, which is why
+     these are tags rather than a folder each. */
+  filters: [
+    { id: "all",        label: { en: "All",          nl: "Alles" } },
+    { id: "social",     label: { en: "Social media", nl: "Social media" } },
+    { id: "branding",   label: { en: "Branding",     nl: "Branding" } },
+    { id: "print",      label: { en: "Print",        nl: "Druk" } },
+    { id: "typography", label: { en: "Typography",   nl: "Typografie" } },
+  ],
+
   ui: {
     filter:    { en: "Filter",          nl: "Filter" },
-    all:       { en: "Everything",      nl: "Alles" },
+    all:       { en: "All",             nl: "Alles" },
     showing:   { en: "Showing",         nl: "Getoond" },
     pieces:    { en: "pieces",          nl: "stuks" },
     piece:     { en: "piece",           nl: "stuk" },

@@ -248,46 +248,53 @@ const SECTIONS = {
 
       const item = el("li", { className: "gd__item" }, open);
       item.dataset.slug = project.slug;
+      item.dataset.tags = (project.tags || []).join(" ");
       return item;
     });
 
-    /* THE FILTER, MULTI-SELECT.
+    /* THE FILTER, MULTI-SELECT AND BY KIND.
        The Lab's filter is one topic at a time, because its topics are a
-       taxonomy and you are asking a question of it. These are five clients,
-       and "the two social ones" is a perfectly ordinary thing to want to
-       see, so the chips are toggles and Everything is the way back. */
+       taxonomy and you are asking a question of it. This one asks what kind
+       of work rather than which client — the client is already printed on
+       every card, and "the branding ones" is the question a client name
+       cannot answer. Selecting two kinds shows the union of them, because
+       the alternative is asking somebody to press a chip, look, press it
+       again, and hold the first answer in their head. */
     const selected = new Set();
     const chips = [];
 
     const apply = (label) => {
       let shown = 0;
       cards.forEach((c) => {
-        const on = selected.size === 0 || selected.has(c.dataset.slug);
+        const tags = (c.dataset.tags || "").split(" ");
+        const on = selected.size === 0 || tags.some((tag) => selected.has(tag));
         c.hidden = !on;
         if (on) shown++;
       });
       chips.forEach((c) => c.setAttribute("aria-pressed",
         String(c.dataset.filter === "all" ? selected.size === 0 : selected.has(c.dataset.filter))));
+      /* Said out loud, because filtering a list a screen reader cannot see
+         change is the same as doing nothing. */
       attune.say(`${t(C.graphic.ui.showing)}: ${label} — ${shown}`);
     };
 
-    const chip = (id, label) => {
-      const b = el("button", { type: "button", className: "lab__chip", textContent: label });
+    const chip = ({ id, label }) => {
+      const b = el("button", { type: "button", className: "lab__chip", textContent: t(label) });
       b.dataset.filter = id;
       b.setAttribute("aria-pressed", String(id === "all"));
       b.addEventListener("click", () => {
         if (id === "all") selected.clear();
         else if (selected.has(id)) selected.delete(id);
         else selected.add(id);
-        apply(id === "all" ? t(C.graphic.ui.all) : label);
+        /* Unpressing the last kind is the same request as pressing All. */
+        apply(selected.size === 0 ? t(C.graphic.ui.all) : t(label));
       });
       chips.push(b);
       return b;
     };
 
     const choices = el("div", { className: "lab__choices" },
-      chip("all", t(C.graphic.ui.all)),
-      ...C.graphic.projects.map((p) => chip(p.slug, t(p.chip))));
+      ...C.graphic.filters.map(chip));
     choices.setAttribute("role", "group");
     choices.setAttribute("aria-label", t(C.graphic.ui.filter));
 
