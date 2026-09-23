@@ -949,7 +949,7 @@ export const ui = {
   },
   closeLabel:    { en: "Close",             nl: "Sluiten" },
   sections: {
-    work:          { en: "Work",           nl: "Werk" },
+    work:          { en: "UX Work",        nl: "UX-werk" },
     index:         { en: "Selected work",  nl: "Geselecteerd werk" },
     about:         { en: "About",          nl: "Over" },
     process:       { en: "Process",        nl: "Proces" },
