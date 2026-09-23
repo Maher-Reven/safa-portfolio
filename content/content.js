@@ -610,11 +610,12 @@ export const graphic = {
       tags: ["social", "branding", "print"],
       title: { en: "Instituut Marie", nl: "Instituut Marie" },
       client:{ en: "Instituut Marie · Amsterdam", nl: "Instituut Marie · Amsterdam" },
-      discipline: { en: "Editorial · Social carousels", nl: "Redactioneel · Social carrousels" },
+      discipline: { en: "Brand & social media",
+                    nl: "Merk & social media" },
       year: "2026",
       summary: {
-        en: "Two educational carousels for a holistic dental practice — fourteen pages explaining what a biological mouth is, and what half an hour in a plasma field does. Serif headlines on slate and cream, diagrams drawn rather than stock.",
-        nl: "Twee educatieve carrousels voor een holistische tandartspraktijk — veertien pagina's over wat een biologische mond is, en wat een half uur in een plasmaveld doet. Schreefletters op leisteen en crème, diagrammen getekend in plaats van stock.",
+        en: "Brand and graphic design for a medical spa in Amsterdam. I create their social media content, in-clinic print materials and visuals that clearly explain every treatment, plus carousels for Instagram and LinkedIn.",
+        nl: "Merk- en grafisch ontwerp voor een medische spa in Amsterdam. Ik maak hun socialmediacontent, drukwerk voor in de kliniek en beeld dat elke behandeling helder uitlegt, plus carrousels voor Instagram en LinkedIn.",
       },
       /* The carousels people actually swipe through, kept as they were made. */
       downloads: [
@@ -656,13 +657,14 @@ export const graphic = {
     {
       slug: "velotech-brand",
       tags: ["branding", "print"],
-      title: { en: "VeloTech.AI brand guidelines", nl: "VeloTech.AI-merkrichtlijnen" },
+      title: { en: "VeloTech.AI", nl: "VeloTech.AI" },
       client:{ en: "VeloTech.AI", nl: "VeloTech.AI" },
-      discipline: { en: "Brand identity · Guidelines", nl: "Merkidentiteit · Richtlijnen" },
+      discipline: { en: "Branding, brochures & pitch deck",
+                    nl: "Branding, brochures & pitchdeck" },
       year: "2025 — 2026",
       summary: {
-        en: "The identity underneath the dashboard case: the mark and its construction, a four-colour palette, Montserrat over Manrope, and the applications that prove it survives a street sweeper and a billboard.",
-        nl: "De identiteit onder de dashboardcase: het merkteken en zijn constructie, een vierkleurenpalet, Montserrat boven Manrope, en de toepassingen die bewijzen dat het een veegwagen en een billboard overleeft.",
+        en: "Brand identity for an AI company that inspects public infrastructure. I designed the logo, colour palette and typography and captured it all in brand guidelines. I also created brochures and a pitch deck the team uses to present their products to new clients.",
+        nl: "Merkidentiteit voor een AI-bedrijf dat publieke infrastructuur inspecteert. Ik ontwierp het logo, het kleurenpalet en de typografie en legde alles vast in merkrichtlijnen. Daarnaast maakte ik brochures en een pitchdeck waarmee het team hun producten aan nieuwe klanten presenteert.",
       },
       /* The case study for this client is on the Work tab; the brand book is
          the other half of the same engagement. */
@@ -699,13 +701,14 @@ export const graphic = {
          opens on a diagram, and a diagram at card size is a grey mesh. The
          Invictus frame is the one that reads at a glance. */
       cover: 3,
-      title: { en: "MediaLab campaign graphics", nl: "MediaLab-campagnebeelden" },
+      title: { en: "MediaLab", nl: "MediaLab" },
       client:{ en: "MediaLab", nl: "MediaLab" },
-      discipline: { en: "Social · Campaign", nl: "Social · Campagne" },
+      discipline: { en: "Social, video & print",
+                    nl: "Social, video & druk" },
       year: "2024 — 2025",
       summary: {
-        en: "Launch and event graphics for a media platform that works in sport: an ecosystem diagram that has to hold twenty logos and stay readable, and campaign posts set on cycling and the Invictus Games.",
-        nl: "Lancerings- en eventbeelden voor een mediaplatform in de sport: een ecosysteemdiagram dat twintig logo's moet dragen en leesbaar blijven, en campagneposts rond wielrennen en de Invictus Games.",
+        en: "Ongoing design work for a media management platform for sports. I design their social media content and edit videos, build presentations, and create magazine ads, event visuals and partnership announcements.",
+        nl: "Doorlopend ontwerpwerk voor een mediamanagementplatform voor sport. Ik ontwerp hun socialmediacontent en monteer video's, bouw presentaties en maak magazineadvertenties, eventbeeld en aankondigingen van samenwerkingen.",
       },
       caseSlug: "medialab",
       pieces: [
@@ -727,13 +730,14 @@ export const graphic = {
     {
       slug: "pulse-social",
       tags: ["social"],
-      title: { en: "Pulse Sport campaign", nl: "Pulse Sport-campagne" },
+      title: { en: "PULSE", nl: "PULSE" },
       client:{ en: "Pulse Sport Amsterdam", nl: "Pulse Sport Amsterdam" },
-      discipline: { en: "Social · Sport", nl: "Social · Sport" },
+      discipline: { en: "Social media & app content",
+                    nl: "Social media & appcontent" },
       year: "2023 — 2024",
       summary: {
-        en: "Social posts for the club whose coach dashboard is on the CV. Black, white and one wordmark, with the product's own questionnaire screens dropped into the photography.",
-        nl: "Socialposts voor de club waarvan het coachdashboard op het cv staat. Zwart, wit en één woordmerk, met de vragenlijstschermen van het product in de fotografie gelegd.",
+        en: "Social media content for a platform that personalises training and nutrition for athletes. I designed nutrition tips, reminders and questionnaire screens in a clean, dark style that matches the PULSE app.",
+        nl: "Socialmediacontent voor een platform dat training en voeding voor atleten personaliseert. Ik ontwierp voedingstips, herinneringen en vragenlijstschermen in een strakke, donkere stijl die aansluit op de PULSE-app.",
       },
       pieces: [
         { alt: { en: "Did you know? A sprinter in a dark tunnel, over a note that every athlete has different training needs",
@@ -750,15 +754,16 @@ export const graphic = {
     {
       slug: "type-specimen",
       tags: ["typography"],
-      title: { en: "ITC Benguiat specimen", nl: "ITC Benguiat-letterproef" },
+      title: { en: "ITC Benguiat", nl: "ITC Benguiat" },
       /* TODO (Safa): who this was made for — a course, a client, your own
          shelf. The typeface names itself at the top of the page, so that one
          is not a guess; this one would be. */
       client:{ en: "TODO", nl: "TODO" },
-      discipline: { en: "Typography · Long-form page", nl: "Typografie · Longread" },
+      discipline: { en: "Typography",
+                    nl: "Typografie" },
       summary: {
-        en: "A specimen page for ITC Benguiat, built as one long scroll: Ed Benguiat's face at display size, where it works, three lock-ups using it, the full character set, and an anatomy diagram naming what makes it itself — including the Stranger Things logo, which is the reason most people can already picture it.",
-        nl: "Een letterproef voor ITC Benguiat, gebouwd als één lange scroll: de letter van Ed Benguiat op displaygrootte, waar hij werkt, drie lockups ermee, de volledige tekenset, en een anatomiediagram dat benoemt wat hem zichzelf maakt — inclusief het Stranger Things-logo, de reden dat de meeste mensen hem al voor zich zien.",
+        en: "A typography project on the typeface by Ed Benguiat. A long web poster that shows the history, character and uses of the letterforms, with an overview of the full character set and its details.",
+        nl: "Een typografieproject over de letter van Ed Benguiat. Een lange webposter die de geschiedenis, het karakter en de toepassingen van de lettervormen laat zien, met een overzicht van de volledige tekenset en de details ervan.",
       },
       pieces: [
         { tall: true,

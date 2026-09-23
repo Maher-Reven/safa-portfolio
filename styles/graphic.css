@@ -96,15 +96,12 @@
   font-size: var(--t-sm);
   color: var(--text-soft);
   max-width: 46ch;
-  /* Three lines, then it stops. The whole summary is in the viewer's own
-     header; on the wall it is a taste of the set, and a taste that runs to
-     five lines on one card and two on the next is what made the cards
-     different sizes in the first place. */
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
-  line-clamp: 3;
-  overflow: hidden;
+  /* No clamp. It was three lines while the summaries were mine and roughly
+     the same length; they are Safa's now, they run to five or six, and the
+     card is the only place any of it is written. Truncating an author's own
+     description of her work to keep a grid tidy is the grid winning an
+     argument it should not have been in — the rows are 1fr, so the cards
+     stay identical by being as tall as the longest of them. */
 }
 
 /* -------------------------------------------------------------------------
