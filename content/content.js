@@ -47,21 +47,21 @@ export const audiences = [
     label:  { en: "I'm a designer",      nl: "Ik ben ontwerper" },
     detail: { en: "Process, decisions, and the accessibility work underneath all of it.",
               nl: "Proces, keuzes, en het toegankelijkheidswerk daaronder." },
-    order: ["work", "process", "accessibility", "lab", "graphic", "detail-index", "about", "contact"],
+    order: ["work", "graphic", "process", "accessibility", "lab", "detail-index", "about", "contact"],
   },
   {
     id: "client",
     label:  { en: "I have a project",    nl: "Ik heb een opdracht" },
     detail: { en: "What I do, how I work, and what it asks of you.",
               nl: "Wat ik doe, hoe ik werk, en wat het van jou vraagt." },
-    order: ["index", "skills", "work", "graphic", "process", "contact"],
+    order: ["index", "work", "graphic", "skills", "process", "contact"],
   },
   {
     id: "curious",
     label:  { en: "Just looking",        nl: "Ik kijk even rond" },
     detail: { en: "No order imposed. Everything is open.",
               nl: "Geen volgorde opgelegd. Alles staat open." },
-    order: ["work", "about", "process", "accessibility", "lab", "graphic", "skills", "detail-index", "contact"],
+    order: ["work", "graphic", "about", "process", "accessibility", "lab", "skills", "detail-index", "contact"],
   },
 ];
 

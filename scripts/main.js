@@ -1335,11 +1335,11 @@ function detailPair(d, slug) {
 export const ROUTES = [
   { id: "home",    label: { en: "Home",     nl: "Start" },   sections: ["intro", "index"] },
   { id: "work",    label: { en: "Work",     nl: "Werk" },    sections: ["work"] },
+  { id: "graphic", label: { en: "Graphic design", nl: "Grafisch ontwerp" }, sections: ["graphic"] },
   { id: "about",   label: { en: "About",    nl: "Over" },    sections: ["about", "process"] },
   { id: "access",  label: { en: "Access",   nl: "Toegang" }, sections: ["accessibility", "detail-index"] },
   { id: "skills",  label: { en: "Skills",   nl: "Kunde" },   sections: ["skills"] },
   { id: "lab",     label: { en: "Lab",      nl: "Lab" },     sections: ["lab"] },
-  { id: "graphic", label: { en: "Graphic design", nl: "Grafisch ontwerp" }, sections: ["graphic"] },
   { id: "cv",      label: { en: "CV",       nl: "CV" },      sections: ["cv"] },
   { id: "contact", label: { en: "Contact",  nl: "Contact" }, sections: ["contact"] },
 ];
