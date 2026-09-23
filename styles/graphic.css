@@ -220,9 +220,16 @@
 }
 /* A long page is read by scrolling, so it is given a frame to scroll inside
    rather than being shrunk until its type is a texture. */
+/* Both frames occupy the same cell during a slide, and the cell clips them,
+   so the outgoing picture leaves the frame rather than the panel. */
+.gd-view__figure > .gd-view__img { grid-area: 1 / 1; }
+.gd-view__figure { overflow: clip; }
+.gd-view__img--ghost { pointer-events: none; }
+
 .gd-view__figure[data-tall="true"] {
   display: block;
   overflow-y: auto;
+  overflow-x: clip;
   overscroll-behavior: contain;
   border: var(--rule);
   border-radius: var(--radius-sm);
@@ -295,12 +302,65 @@
   color: var(--accent-text);
 }
 
-/* The hero. Both ends carry the same name, so the browser tweens the cover
-   into the stage instead of cross-fading two unrelated rectangles. */
+/* =========================================================================
+   OPENING AND CLOSING
+   The set does not appear, it comes out of the card you pressed — and goes
+   back into it. Three things move together and have to agree:
+
+   1. --gd-open, the group: the browser tweens the cover's rectangle into the
+      stage's. This is the zoom, and it does the real work.
+   2. The two snapshots cross-fade inside that moving box, fast, so the
+      morph reads as one picture growing rather than two pictures mixing.
+   3. The panel and the scrim, which arrive around it.
+
+   All three share a duration and a curve. An easing that overshoots would
+   be wrong here: this is a thing being enlarged, not a thing being thrown,
+   and the visitor's eye is already on the picture.
+   ========================================================================= */
+::view-transition-group(gd-hero) {
+  animation-duration: 460ms;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.32, 1);
+}
 ::view-transition-old(gd-hero),
 ::view-transition-new(gd-hero) {
-  animation-duration: 420ms;
-  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  animation-duration: 200ms;
+  animation-timing-function: linear;
+}
+/* The cover is cropped and the stage is not, so their snapshots are
+   different shapes. Filling the group with the new one and letting the old
+   fade off it keeps the crop from visibly snapping open halfway through. */
+::view-transition-new(gd-hero) { object-fit: contain; }
+::view-transition-old(gd-hero) { object-fit: cover; }
+
+@keyframes gd-panel-in {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes gd-scrim-in { from { opacity: 0; } to { opacity: 1; } }
+
+.gd-view__panel {
+  animation: gd-panel-in 320ms cubic-bezier(0.22, 1, 0.32, 1) both;
+  /* The panel scales; the picture inside it must not, or the zoom and the
+     morph would be two different sizes of the same movement. */
+  transform-origin: center;
+}
+.gd-view__scrim { animation: gd-scrim-in 260ms linear both; }
+
+/* When the hero is doing the work, the panel only fades — two zooms at once
+   is one too many. This is keyed to what actually happened rather than to
+   what the browser supports: a deep link opens with no cover to come out
+   of, and that opening still deserves its zoom. */
+.gd-view[data-morph="true"] .gd-view__panel { animation-name: gd-scrim-in; }
+
+/* Stillness means stillness: no arrival, no slide, no morph. The site
+   promises this everywhere else and a new page does not get an exception. */
+[data-mode="calm"] .gd-view__panel,
+[data-mode="calm"] .gd-view__scrim { animation: none; }
+@media (prefers-reduced-motion: reduce) {
+  .gd-view__panel, .gd-view__scrim { animation: none; }
+  ::view-transition-group(gd-hero),
+  ::view-transition-old(gd-hero),
+  ::view-transition-new(gd-hero) { animation-duration: 1ms; }
 }
 
 @media (max-width: 52rem) {

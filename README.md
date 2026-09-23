@@ -337,6 +337,27 @@ given back to the card you came from, Escape, arrows, Home and End, and the
 tab order held inside it. The strip along the bottom is the whole set, the
 current one marked by a border as well as opacity.
 
+**The motion says which way you went.** Opening zooms: the browser tweens the
+cover's rectangle into the stage's over 460ms while the two snapshots
+cross-fade inside it in 200ms, so it reads as one picture growing rather than
+two pictures mixing. The panel only fades while that happens — two zooms at
+once is one too many — and an opening with no cover to grow from, a deep
+link, gets the zoom on the panel instead. Closing is the same thing
+backwards, into the card it came from, which answers the question a closing
+dialog always raises: where did the thing I was looking at go.
+
+Between images the frames slide, out to the left and in from the right, or
+the reverse going back. The outgoing frame is a real second image rather than
+a cross-fade of one: fading a photograph into another photograph passes
+through a midpoint where both are equally present and neither is legible.
+Nothing animates until the incoming picture has decoded — sliding in an empty
+box says the arrival is finished before it is — but the decode is raced
+against 220ms, because the first version simply awaited it and on a machine
+whose decoder was not running the counter said 2 of 14 while the picture on
+screen was still 1. Long pages never slide: they are a scroll container, and
+moving one sideways while it is scrolled down is a movement nobody can
+follow.
+
 **The URL changes but the route does not.** Opening pushes `#/graphic/<slug>`
 with `pushState`, which fires no `hashchange`, so the wall underneath is never
 re-rendered — and Back closes the viewer rather than leaving the page, which

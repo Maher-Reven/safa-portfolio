@@ -626,6 +626,18 @@ function deviceRail(shots, slug) {
    are now looking at. Where the API is missing it simply appears, and where
    stillness was asked for it is never animated at all.
    ========================================================================= */
+/* A ViewTransition hands back three promises, and a transition that gets
+   superseded — open, then close before the open has finished — rejects the
+   ones nobody happened to be holding. That surfaces as
+   "AbortError: Transition was skipped" in the console of a site whose whole
+   argument is that it was built carefully. They are all acknowledged here;
+   being interrupted is not an error, it is a visitor who moved on. */
+function settleTransition(vt, onEnd) {
+  vt.ready?.catch(() => {});
+  vt.updateCallbackDone?.catch(() => {});
+  vt.finished?.catch(() => {}).finally(onEnd);
+}
+
 let viewerOpen = null;
 
 function openViewer(project, index = 0, fromEl = null, { push = true } = {}) {
@@ -670,8 +682,7 @@ function openViewer(project, index = 0, fromEl = null, { push = true } = {}) {
   try {
     morphing = true;
     fromEl.style.viewTransitionName = "gd-hero";
-    const vt = document.startViewTransition(mount);
-    vt.finished.catch(() => {}).finally(release);
+    settleTransition(document.startViewTransition(mount), release);
     /* If no frame ever comes — a background tab, a machine mid-stall — the
        viewer still opens, and it opens visible. */
     setTimeout(() => { mount(); release(); }, 700);
@@ -708,7 +719,7 @@ function mountViewer(project, index, fromEl, { morph = false } = {}) {
     const b = el("button", { type: "button", className: "gd-view__thumb" },
       el("img", { src: src(i, true), alt: "", loading: "lazy", decoding: "async" }));
     b.setAttribute("aria-label", `${i + 1} ${t(ui.counter)} ${pieces.length}`);
-    b.addEventListener("click", () => show(i));
+    b.addEventListener("click", () => show(i, { dir: Math.sign(i - at) }));
     return b;
   });
   strip.append(...thumbs);
@@ -718,19 +729,33 @@ function mountViewer(project, index, fromEl, { morph = false } = {}) {
       el("span", { "aria-hidden": "true", textContent: dir < 0 ? "\u2190" : "\u2192" }));
     b.setAttribute("aria-label", label);
     b.dataset.dir = String(dir);
-    b.addEventListener("click", () => show(at + dir));
+    b.addEventListener("click", () => show(at + dir, { dir }));
     return b;
   };
 
-  function show(i, { announce = true } = {}) {
+  /* THE SLIDE.
+     Pressing next means the set moved, and a set moves in a direction. A
+     picture that simply replaces another says an image changed; one that
+     leaves to the left while its successor arrives from the right says you
+     went forwards, and the strip along the bottom agrees with it. The
+     outgoing frame is a real second image rather than a cross-fade of one:
+     fading a photograph into another photograph through 50% of each is a
+     muddle at the midpoint, where two pictures are equally present and
+     neither is legible.
+
+     Nothing is animated until the incoming picture has decoded. Sliding in
+     an empty box and filling it afterwards is worse than not animating at
+     all — the motion would be telling you the arrival is done before it is. */
+  let sliding = null;
+
+  async function show(i, { announce = true, dir = 0 } = {}) {
+    const from = at;
     at = (i + pieces.length) % pieces.length;
     const piece = pieces[at];
-    stage.src = src(at);
-    stage.alt = t(piece.alt);
-    stage.removeAttribute("width");
-    figure.dataset.tall = String(!!piece.tall);
-    caption.textContent = piece.tall ? t(ui.scrollHint) : "";
-    caption.hidden = !piece.tall;
+
+    /* Chrome first, always: the counter, the strip and the announcement do
+       not wait on a picture to decode, so a keyboard user is never told
+       later than a sighted one. */
     counter.textContent = `${at + 1} ${t(ui.counter)} ${pieces.length}`;
     thumbs.forEach((b, i2) => {
       if (i2 === at) b.setAttribute("aria-current", "true");
@@ -738,13 +763,72 @@ function mountViewer(project, index, fromEl, { morph = false } = {}) {
     });
     thumbs[at]?.scrollIntoView({ inline: "center", block: "nearest",
                                 behavior: prefersStill() ? "auto" : "smooth" });
-    /* The stage is one image swapping its src; without this a screen reader
-       is told nothing at all when the picture changes. */
     if (announce) attune.say(`${at + 1} ${t(ui.counter)} ${pieces.length}. ${t(piece.alt)}`);
-    /* The one either side, fetched now so pressing next is instant. */
-    [at + 1, at - 1].forEach((j) => {
-      const k = (j + pieces.length) % pieces.length;
-      if (k !== at) new Image().src = src(k);
+
+    const href = src(at);
+    const still = prefersStill();
+    /* A long page scrolls inside its frame; sliding a scroll container
+       sideways while it is scrolled down is a movement nobody can follow.
+       It is also always a set of one, so this costs nothing. */
+    const canSlide = !still && dir !== 0 && from !== at && !piece.tall && !pieces[from]?.tall;
+
+    const settle = () => {
+      stage.alt = t(piece.alt);
+      figure.dataset.tall = String(!!piece.tall);
+      caption.textContent = piece.tall ? t(ui.scrollHint) : "";
+      caption.hidden = !piece.tall;
+      figure.scrollTop = 0;
+      /* The one either side, fetched now so the next press is instant. */
+      [at + 1, at - 1].forEach((j) => {
+        const k = (j + pieces.length) % pieces.length;
+        if (k !== at) new Image().src = src(k);
+      });
+    };
+
+    if (!canSlide) { stage.src = href; settle(); return; }
+
+    /* Whatever was mid-flight is over: the visitor has pressed again, and
+       the frame they were watching is no longer the answer to anything. */
+    sliding?.cancel();
+
+    /* Wait for the decode, but not indefinitely. decode() can hang wherever
+       the decoding pipeline is not running — and the first version simply
+       awaited it, so the counter said 2 of 14 while the picture on screen
+       was still 1. The image is what the viewer is for; the animation is
+       not allowed to hold it hostage, and neither is the decode. */
+    const incoming = new Image();
+    incoming.src = href;
+    const decoded = await Promise.race([
+      incoming.decode().then(() => true).catch(() => false),
+      new Promise((r) => setTimeout(() => r(false), 220)),
+    ]);
+    if (at !== (i + pieces.length) % pieces.length) return;   /* pressed again */
+    if (!decoded) { stage.src = href; settle(); return; }
+
+    const ghost = el("img", { className: "gd-view__img gd-view__img--ghost",
+                              src: stage.currentSrc || stage.src, alt: "" });
+    ghost.setAttribute("aria-hidden", "true");
+    figure.append(ghost);
+    stage.src = href;
+    settle();
+
+    const D = 320;
+    const ease = "cubic-bezier(0.16, 1, 0.3, 1)";
+    const out = ghost.animate(
+      [{ transform: "none", opacity: 1 },
+       { transform: `translateX(${-42 * dir}px)`, opacity: 0 }],
+      { duration: D, easing: ease, fill: "forwards" });
+    const into = stage.animate(
+      [{ transform: `translateX(${42 * dir}px)`, opacity: 0 },
+       { transform: "none", opacity: 1 }],
+      { duration: D, easing: ease });
+
+    sliding = {
+      cancel() { out.cancel(); into.cancel(); ghost.remove(); sliding = null; },
+    };
+    Promise.allSettled([out.finished, into.finished]).then(() => {
+      ghost.remove();
+      if (sliding && sliding.cancel) sliding = null;
     });
   }
 
@@ -774,16 +858,19 @@ function mountViewer(project, index, fromEl, { morph = false } = {}) {
   scrim.addEventListener("click", () => closeViewer());
 
   const root = el("div", { className: "gd-view" }, scrim, panel);
+  /* Tells the stylesheet which of the two openings this is: one that grew
+     out of a card, or one that arrived on its own. */
+  root.dataset.morph = String(!!morph);
   root.setAttribute("role", "dialog");
   root.setAttribute("aria-modal", "true");
   root.setAttribute("aria-label", `${t(project.title)} — ${t(C.graphic.ui.thumbs)}`);
 
   const onKey = (e) => {
     if (e.key === "Escape") { e.preventDefault(); closeViewer(); return; }
-    if (e.key === "ArrowRight") { e.preventDefault(); show(at + 1); return; }
-    if (e.key === "ArrowLeft") { e.preventDefault(); show(at - 1); return; }
-    if (e.key === "Home") { e.preventDefault(); show(0); return; }
-    if (e.key === "End") { e.preventDefault(); show(pieces.length - 1); return; }
+    if (e.key === "ArrowRight") { e.preventDefault(); show(at + 1, { dir: 1 }); return; }
+    if (e.key === "ArrowLeft") { e.preventDefault(); show(at - 1, { dir: -1 }); return; }
+    if (e.key === "Home") { e.preventDefault(); show(0, { dir: -1 }); return; }
+    if (e.key === "End") { e.preventDefault(); show(pieces.length - 1, { dir: 1 }); return; }
     if (e.key !== "Tab") return;
     /* The trap. Without it, Tab walks out of the dialog and into a page the
        visitor cannot see, and every following keystroke goes somewhere
@@ -805,23 +892,57 @@ function mountViewer(project, index, fromEl, { morph = false } = {}) {
   close.focus({ preventScroll: true });
   attune.say(`${t(C.graphic.ui.opened)}: ${t(project.title)}. ${at + 1} ${t(ui.counter)} ${pieces.length}.`);
 
-  viewerOpen = { root, onKey, returnTo: fromEl?.closest("button"), slug: project.slug };
+  viewerOpen = { root, onKey, cover: fromEl,
+                 returnTo: fromEl?.closest("button"), slug: project.slug };
 }
 
 function closeViewer({ restoreFocus = true, pop = true } = {}) {
   if (!viewerOpen) return;
-  const { root, onKey, returnTo } = viewerOpen;
+  const { root, onKey, returnTo, cover } = viewerOpen;
   viewerOpen = null;
 
   document.removeEventListener("keydown", onKey);
-  delete document.documentElement.dataset.viewer;
-  root.remove();
-  if (restoreFocus) returnTo?.focus({ preventScroll: true });
-  attune.say(t(C.graphic.ui.closed));
 
+  const finish = () => {
+    delete document.documentElement.dataset.viewer;
+    root.remove();
+    if (cover) cover.style.viewTransitionName = "";
+    if (restoreFocus) returnTo?.focus({ preventScroll: true });
+  };
+
+  attune.say(t(C.graphic.ui.closed));
   /* The push that opened it is undone, so the address bar and the history
      agree with what is on the screen. */
   if (pop && location.hash.startsWith("#/graphic/")) history.back();
+
+  /* CLOSING IS THE OPENING BACKWARDS.
+     The picture goes back to the card it came out of, which answers the
+     question a closing dialog always raises: where did the thing I was
+     looking at go. Same guard as opening — if no frame arrives, the viewer
+     still closes, because a dialog that cannot be dismissed is worse than
+     one that is dismissed without ceremony. */
+  const stage = root.querySelector(".gd-view__img");
+  const canMorph = !prefersStill() && document.startViewTransition && cover && stage &&
+                   document.visibilityState === "visible" && cover.isConnected;
+  if (!canMorph) { finish(); return; }
+
+  let done = false;
+  const once = () => { if (!done) { done = true; finish(); } };
+  try {
+    stage.style.viewTransitionName = "gd-hero";
+    cover.style.viewTransitionName = "gd-hero";
+    /* Both ends cannot carry the name at the same moment — the old frame is
+       the stage, the new frame is the cover. */
+    settleTransition(
+      document.startViewTransition(() => {
+        stage.style.viewTransitionName = "";
+        once();
+      }),
+      () => { if (cover) cover.style.viewTransitionName = ""; });
+    setTimeout(once, 700);
+  } catch {
+    once();
+  }
 }
 
 /* Back, or a swipe back, closes the viewer rather than leaving the page. */
