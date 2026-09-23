@@ -40,28 +40,28 @@ export const audiences = [
     label:  { en: "I'm hiring",          nl: "Ik werf" },
     detail: { en: "Forty seconds. Outcomes first, then the work, then how to reach me.",
               nl: "Veertig seconden. Eerst resultaten, dan het werk, dan hoe je me bereikt." },
-    order: ["index", "work", "cv", "skills", "contact"],
+    order: ["index", "work", "graphic", "cv", "skills", "contact"],
   },
   {
     id: "designer",
     label:  { en: "I'm a designer",      nl: "Ik ben ontwerper" },
     detail: { en: "Process, decisions, and the accessibility work underneath all of it.",
               nl: "Proces, keuzes, en het toegankelijkheidswerk daaronder." },
-    order: ["work", "process", "accessibility", "lab", "detail-index", "about", "contact"],
+    order: ["work", "process", "accessibility", "lab", "graphic", "detail-index", "about", "contact"],
   },
   {
     id: "client",
     label:  { en: "I have a project",    nl: "Ik heb een opdracht" },
     detail: { en: "What I do, how I work, and what it asks of you.",
               nl: "Wat ik doe, hoe ik werk, en wat het van jou vraagt." },
-    order: ["index", "skills", "work", "process", "contact"],
+    order: ["index", "skills", "work", "graphic", "process", "contact"],
   },
   {
     id: "curious",
     label:  { en: "Just looking",        nl: "Ik kijk even rond" },
     detail: { en: "No order imposed. Everything is open.",
               nl: "Geen volgorde opgelegd. Alles staat open." },
-    order: ["work", "about", "process", "accessibility", "lab", "skills", "detail-index", "contact"],
+    order: ["work", "about", "process", "accessibility", "lab", "graphic", "skills", "detail-index", "contact"],
   },
 ];
 
@@ -571,6 +571,207 @@ export const process = {
   ],
 };
 
+/* -------------------------------------------------------------------------
+   GRAPHIC DESIGN
+   The work that is not a product: identity, campaign, editorial, type. It
+   sits apart from Work because it is read differently — a case study is an
+   argument you follow from problem to result, and a set of social carousels
+   is a body of work you look at.
+
+   The images come out of "Digital design/" through tools/graphic-assets.mjs,
+   which resizes them, renders PDF carousels a page at a time, and prints a
+   manifest to check this list against. The originals are not committed;
+   what is here is what a visitor's phone has to download.
+
+   ALL COPY BELOW IS A DRAFT. It was written from what is visibly in the
+   images — the client, the medium, the number of pieces — and nothing else.
+   Safa: the titles, the summaries and the alt text are yours to correct, and
+   the two things I could not read off the work are marked TODO.
+   ------------------------------------------------------------------------- */
+export const graphic = {
+  lead: {
+    en: "Identity, campaign and editorial work. Pick a project, or several, and open one to read it at size.",
+    nl: "Identiteits-, campagne- en redactioneel werk. Kies een project, of meerdere, en open er een om het op formaat te bekijken.",
+  },
+
+  projects: [
+    {
+      slug: "instituut-marie",
+      chip:  { en: "Instituut Marie", nl: "Instituut Marie" },
+      title: { en: "Instituut Marie", nl: "Instituut Marie" },
+      client:{ en: "Instituut Marie · Amsterdam", nl: "Instituut Marie · Amsterdam" },
+      discipline: { en: "Editorial · Social carousels", nl: "Redactioneel · Social carrousels" },
+      year: "2026",
+      summary: {
+        en: "Two educational carousels for a holistic dental practice — fourteen pages explaining what a biological mouth is, and what half an hour in a plasma field does. Serif headlines on slate and cream, diagrams drawn rather than stock.",
+        nl: "Twee educatieve carrousels voor een holistische tandartspraktijk — veertien pagina's over wat een biologische mond is, en wat een half uur in een plasmaveld doet. Schreefletters op leisteen en crème, diagrammen getekend in plaats van stock.",
+      },
+      /* The carousels people actually swipe through, kept as they were made. */
+      downloads: [
+        { file: "instituut-marie-(1)-1.pdf", label: { en: "Carousel 1 (PDF)", nl: "Carrousel 1 (pdf)" } },
+        { file: "instituut-marie-(2)-1.pdf", label: { en: "Carousel 2 (PDF)", nl: "Carrousel 2 (pdf)" } },
+      ],
+      pieces: [
+        { alt: { en: "Cover: Holistische tandheelkunde — what makes this approach different, beside a tooth labelled whole body, biocompatibel, fluoridevrij and metaalvrij",
+                 nl: "Omslag: Holistische tandheelkunde — wat maakt onze aanpak anders, naast een kies met de labels whole body, biocompatibel, fluoridevrij en metaalvrij" } },
+        { alt: { en: "What is in a conventional mouth: amalgam, titanium implants, BPA composite and fluoride, set around a dial",
+                 nl: "Wat zit er in een conventionele mond: amalgaam, titanium implantaten, composiet met BPA en fluoride, rond een wijzerplaat" } },
+        { alt: { en: "The biological mouth: ceramic composite, zirconia implants, BPA-free materials and fluoride-free prevention, labelled on a tooth",
+                 nl: "De biologische mond: ceramic composiet, keramische implantaten, BPA-vrije materialen en fluoridevrije preventie, benoemd op een kies" } },
+        { alt: { en: "Fillings compared in three columns: amalgam, standard composite, and Sarenco ceramic composite",
+                 nl: "Vullingen in drie kolommen vergeleken: amalgaam, standaard composiet en Sarenco ceramic composiet" } },
+        { alt: { en: "Implants: titanium and zirconia ceramic drawn side by side with their properties",
+                 nl: "Implantaten: titanium en zirconia keramiek naast elkaar getekend, met hun eigenschappen" } },
+        { alt: { en: "CBCT scanning: a radial diagram of 3D imaging, nerve paths, bone quality and hidden inflammation",
+                 nl: "CBCT-scan: een radiaal diagram van 3D-beeld, zenuwbanen, botkwaliteit en verborgen ontstekingen" } },
+        { alt: { en: "PRF in four steps: blood draw, centrifuge, concentrate, application",
+                 nl: "PRF in vier stappen: bloedafname, centrifuge, concentraat, toepassing" } },
+        { alt: { en: "Whole Body Dentistry: a tooth at the centre of immune system, gut, hormones, nervous system and energy",
+                 nl: "Whole Body Dentistry: een kies in het midden van immuunsysteem, darmen, hormoonhuishouding, zenuwstelsel en energieniveau" } },
+        { alt: { en: "Cover: what happens when you lie in a plasma field for thirty minutes",
+                 nl: "Omslag: wat gebeurt er als je 30 minuten in een plasmaveld ligt" } },
+        { alt: { en: "Step one, arrival: the medical spa on Reinwardtstraat in Amsterdam-Oost",
+                 nl: "Stap 1, aankomst: de medische spa aan de Reinwardtstraat in Amsterdam-Oost" } },
+        { alt: { en: "Step two, thirty minutes in the field — not invasive, no pain, no side effects",
+                 nl: "Stap 2, dertig minuten in het veld — niet invasief, geen pijn, geen bijwerkingen" } },
+        { alt: { en: "What the plasma field does: cell regeneration, circulation, inflammation, energy",
+                 nl: "Wat het plasmaveld doet: celregeneratie, circulatie, ontsteking, energie" } },
+        { alt: { en: "After the session: four client quotes set in boxes",
+                 nl: "Na de sessie: vier cliëntcitaten in kaders" } },
+        { alt: { en: "The last step: experience it yourself, over a drawn seed-of-life figure",
+                 nl: "De laatste stap: ervaar het zelf, over een getekende levensbloem" } },
+      ],
+    },
+
+    {
+      slug: "velotech-brand",
+      chip:  { en: "VeloTech", nl: "VeloTech" },
+      title: { en: "VeloTech.AI brand guidelines", nl: "VeloTech.AI-merkrichtlijnen" },
+      client:{ en: "VeloTech.AI", nl: "VeloTech.AI" },
+      discipline: { en: "Brand identity · Guidelines", nl: "Merkidentiteit · Richtlijnen" },
+      year: "2025 — 2026",
+      summary: {
+        en: "The identity underneath the dashboard case: the mark and its construction, a four-colour palette, Montserrat over Manrope, and the applications that prove it survives a street sweeper and a billboard.",
+        nl: "De identiteit onder de dashboardcase: het merkteken en zijn constructie, een vierkleurenpalet, Montserrat boven Manrope, en de toepassingen die bewijzen dat het een veegwagen en een billboard overleeft.",
+      },
+      /* The case study for this client is on the Work tab; the brand book is
+         the other half of the same engagement. */
+      caseSlug: "velotech",
+      pieces: [
+        { alt: { en: "Cover slide: BRAND GUIDELINES set in light grey on deep navy",
+                 nl: "Omslagslide: BRAND GUIDELINES in lichtgrijs op donkerblauw" } },
+        { alt: { en: "Index: 01 Introduction, 02 Logo, 03 Colors, 04 Typography",
+                 nl: "Inhoud: 01 Introduction, 02 Logo, 03 Colors, 04 Typography" } },
+        { alt: { en: "Vision slide: what the company does, beside the word VISION set large",
+                 nl: "Visieslide: wat het bedrijf doet, naast het woord VISION groot gezet" } },
+        { alt: { en: "The diamond mark beside the VELOTECH.AI wordmark, measured as mark and main logo",
+                 nl: "Het ruitvormige merkteken naast het VELOTECH.AI-woordmerk, opgemeten als mark en main logo" } },
+        { alt: { en: "Colour: four blocks with their hex values — #6399DF, #10377E, #EBEBEB, #1C2A33",
+                 nl: "Kleur: vier vlakken met hun hexwaarden — #6399DF, #10377E, #EBEBEB, #1C2A33" } },
+        { alt: { en: "The wordmark drawn as an outline with its construction points marked",
+                 nl: "Het woordmerk als contour met zijn constructiepunten gemarkeerd" } },
+        { alt: { en: "Title typeface: Montserrat from Thin to Black, with a large Aa",
+                 nl: "Titelletter: Montserrat van Thin tot Black, met een grote Aa" } },
+        { alt: { en: "Body typeface: Manrope from Light to Bold, the alphabet set at each weight",
+                 nl: "Broodtekstletter: Manrope van Light tot Bold, het alfabet per gewicht gezet" } },
+        { alt: { en: "Applications: the identity on a street sweeper with a tablet, and on a city billboard beside tram tracks",
+                 nl: "Toepassingen: de identiteit op een veegwagen met tablet en op een stadsbillboard langs de tramrails" } },
+        { alt: { en: "Applications: the app on a tablet held in two hands, beside the mark at size",
+                 nl: "Toepassingen: de app op een tablet in twee handen, naast het merkteken op formaat" } },
+      ],
+    },
+
+    {
+      slug: "medialab-social",
+      chip:  { en: "MediaLab", nl: "MediaLab" },
+      title: { en: "MediaLab campaign graphics", nl: "MediaLab-campagnebeelden" },
+      client:{ en: "MediaLab", nl: "MediaLab" },
+      discipline: { en: "Social · Campaign", nl: "Social · Campagne" },
+      year: "2024 — 2025",
+      summary: {
+        en: "Launch and event graphics for a media platform that works in sport: an ecosystem diagram that has to hold twenty logos and stay readable, and campaign posts set on cycling and the Invictus Games.",
+        nl: "Lancerings- en eventbeelden voor een mediaplatform in de sport: een ecosysteemdiagram dat twintig logo's moet dragen en leesbaar blijven, en campagneposts rond wielrennen en de Invictus Games.",
+      },
+      caseSlug: "medialab",
+      pieces: [
+        { alt: { en: "The MediaLab ecosystem: sources including Dropbox, Premiere, Avid and MASV feeding in on the left, AI enhancement, transcoding and delivery going out on the right",
+                 nl: "Het MediaLab-ecosysteem: bronnen als Dropbox, Premiere, Avid en MASV links naar binnen, AI-verbetering, transcoding en levering rechts naar buiten" } },
+        { alt: { en: "NIBC Tour of Holland: the MediaLab gallery laid over a cycling peloton",
+                 nl: "NIBC Tour of Holland: de MediaLab-galerij over een wielerpeloton" } },
+        { alt: { en: "Invictus Games Birmingham 2027: the gallery over wheelchair athletes, powered by Fabriq Media Group",
+                 nl: "Invictus Games Birmingham 2027: de galerij over rolstoelatleten, powered by Fabriq Media Group" } },
+        { alt: { en: "#NOCAP: unlimited media management for sport, with a QR code and the product over a road race",
+                 nl: "#NOCAP: onbeperkt mediabeheer voor sport, met een QR-code en het product over een wegwedstrijd" } },
+        { alt: { en: "New partnership: the MediaLab and MASV logos crossing on black",
+                 nl: "Nieuwe samenwerking: de logo's van MediaLab en MASV die elkaar kruisen op zwart" } },
+        { alt: { en: "Think Outside The Frame: MediaLab at the DPP Leaders' Briefing in London, over Westminster at dusk",
+                 nl: "Think Outside The Frame: MediaLab op de DPP Leaders' Briefing in Londen, over Westminster in de schemering" } },
+      ],
+    },
+
+    {
+      slug: "pulse-social",
+      chip:  { en: "Pulse", nl: "Pulse" },
+      title: { en: "Pulse Sport campaign", nl: "Pulse Sport-campagne" },
+      client:{ en: "Pulse Sport Amsterdam", nl: "Pulse Sport Amsterdam" },
+      discipline: { en: "Social · Sport", nl: "Social · Sport" },
+      year: "2023 — 2024",
+      summary: {
+        en: "Social posts for the club whose coach dashboard is on the CV. Black, white and one wordmark, with the product's own questionnaire screens dropped into the photography.",
+        nl: "Socialposts voor de club waarvan het coachdashboard op het cv staat. Zwart, wit en één woordmerk, met de vragenlijstschermen van het product in de fotografie gelegd.",
+      },
+      pieces: [
+        { alt: { en: "Did you know? A sprinter in a dark tunnel, over a note that every athlete has different training needs",
+                 nl: "Wist je dat? Een sprinter in een donkere tunnel, met de notitie dat elke atleet andere trainingsbehoeften heeft" } },
+        { alt: { en: "Food enjoyment question: the in-app questionnaire with star-rated answers, over a road cyclist",
+                 nl: "Vraag over eetplezier: de vragenlijst in de app met sterbeoordelingen, over een wielrenner" } },
+        { alt: { en: "Reminder to fill in the questionnaire after a training session, over a gym scene",
+                 nl: "Herinnering om de vragenlijst na een training in te vullen, over een sportschoolscène" } },
+        { alt: { en: "What you need to know about nutrition: a plated salad annotated with protein, complex carbs and taste",
+                 nl: "Wat je moet weten over voeding: een bord salade met aanwijzingen naar eiwitten, complexe koolhydraten en smaak" } },
+      ],
+    },
+
+    {
+      slug: "type-specimen",
+      chip:  { en: "Type", nl: "Letter" },
+      title: { en: "ITC Benguiat specimen", nl: "ITC Benguiat-letterproef" },
+      /* TODO (Safa): who this was made for — a course, a client, your own
+         shelf. The typeface names itself at the top of the page, so that one
+         is not a guess; this one would be. */
+      client:{ en: "TODO", nl: "TODO" },
+      discipline: { en: "Typography · Long-form page", nl: "Typografie · Longread" },
+      summary: {
+        en: "A specimen page for ITC Benguiat, built as one long scroll: Ed Benguiat's face at display size, where it works, three lock-ups using it, the full character set, and an anatomy diagram naming what makes it itself — including the Stranger Things logo, which is the reason most people can already picture it.",
+        nl: "Een letterproef voor ITC Benguiat, gebouwd als één lange scroll: de letter van Ed Benguiat op displaygrootte, waar hij werkt, drie lockups ermee, de volledige tekenset, en een anatomiediagram dat benoemt wat hem zichzelf maakt — inclusief het Stranger Things-logo, de reden dat de meeste mensen hem al voor zich zien.",
+      },
+      pieces: [
+        { tall: true,
+          alt: { en: "The full ITC Benguiat specimen page: the face named beside a photograph of Ed Benguiat, letterform samples called dynamic and suited to logos, three sample lock-ups, the Stranger Things logo as a horror example, the character set in blue and in black, and an anatomy diagram over the word Typography naming the angled top serifs, large x-height, short descenders, small loop on the g and hooked tail on the y",
+                 nl: "De volledige ITC Benguiat-letterproef: de letter benoemd naast een foto van Ed Benguiat, letterstalen omschreven als dynamisch en geschikt voor logo's, drie voorbeeldlockups, het Stranger Things-logo als horrorvoorbeeld, de tekenset in blauw en in zwart, en een anatomiediagram over het woord Typography dat de schuine bovenschreven, grote x-hoogte, korte staarten, kleine lus op de g en gehaakte staart op de y benoemt" } },
+      ],
+    },
+  ],
+
+  ui: {
+    filter:    { en: "Filter",          nl: "Filter" },
+    all:       { en: "Everything",      nl: "Alles" },
+    showing:   { en: "Showing",         nl: "Getoond" },
+    pieces:    { en: "pieces",          nl: "stuks" },
+    piece:     { en: "piece",           nl: "stuk" },
+    open:      { en: "Open",            nl: "Open" },
+    close:     { en: "Close",           nl: "Sluiten" },
+    next:      { en: "Next image",      nl: "Volgende afbeelding" },
+    prev:      { en: "Previous image",  nl: "Vorige afbeelding" },
+    counter:   { en: "of",              nl: "van" },
+    thumbs:    { en: "All images",      nl: "Alle afbeeldingen" },
+    scrollHint:{ en: "A long page — scroll inside the frame",
+                 nl: "Een lange pagina — scroll in het kader" },
+    opened:    { en: "Opened", nl: "Geopend" },
+    closed:    { en: "Viewer closed.", nl: "Weergave gesloten." },
+  },
+};
+
 export const skills = {
   columns: [
     { key: "A", eyebrow: { en: "Methodology", nl: "Methodologie" },
@@ -723,6 +924,7 @@ export const ui = {
     "detail-index":{ en: "Every decision on this site", nl: "Elke keuze op deze site" },
     cv:            { en: "Curriculum vitae", nl: "Curriculum vitae" },
     lab:           { en: "Lab",              nl: "Lab" },
+    graphic:       { en: "Graphic design",   nl: "Grafisch ontwerp" },
     contact:       { en: "Contact",        nl: "Contact" },
   },
   caseLabels: {

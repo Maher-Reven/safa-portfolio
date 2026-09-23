@@ -205,6 +205,100 @@ const SECTIONS = {
     return wrap;
   },
 
+  /* =======================================================================
+     GRAPHIC DESIGN
+     Work that is looked at rather than argued through. A case study earns a
+     page of prose; a set of carousels earns a wall, a way to say which wall
+     you want, and a way to get close to one piece.
+     ======================================================================= */
+  graphic: () => {
+    const wrap = section("graphic",
+      el("p", { className: "intro__sub", textContent: t(C.graphic.lead) }));
+
+    const grid = el("ul", { className: "gd" });
+
+    const cards = C.graphic.projects.map((project) => {
+      const count = project.pieces.length;
+      /* "1 pieces" is the sound of a template. */
+      const pieceWord = t(count === 1 ? C.graphic.ui.piece : C.graphic.ui.pieces);
+      const cover = el("img", {
+        src: `assets/graphic/${project.slug}/01.jpg`,
+        alt: "",                      /* the button beside it carries the name */
+        loading: "lazy", decoding: "async",
+      });
+
+      const open = el("button", { type: "button", className: "gd__card hoverable" },
+        el("span", { className: "gd__cover" }, cover),
+        el("span", { className: "gd__body" },
+          el("span", { className: "gd__meta" },
+            el("span", { className: "gd__client",
+                         textContent: t(project.client) === "TODO" ? "" : t(project.client) }),
+            el("span", { className: "gd__count", textContent: `${count} ${pieceWord}` })),
+          el("span", { className: "gd__title", textContent: t(project.title) }),
+          el("span", { className: "gd__where", textContent: t(project.discipline) }),
+          el("span", { className: "gd__summary", textContent: t(project.summary) })));
+
+      /* The name a screen reader reads for the control, rather than the four
+         spans it is built from read end to end. */
+      open.setAttribute("aria-label",
+        `${t(C.graphic.ui.open)}: ${t(project.title)} — ${count} ${pieceWord}`);
+      open.setAttribute("aria-haspopup", "dialog");
+      open.addEventListener("click", () => openViewer(project, 0, cover));
+
+      const item = el("li", { className: "gd__item" }, open);
+      item.dataset.slug = project.slug;
+      return item;
+    });
+
+    /* THE FILTER, MULTI-SELECT.
+       The Lab's filter is one topic at a time, because its topics are a
+       taxonomy and you are asking a question of it. These are five clients,
+       and "the two social ones" is a perfectly ordinary thing to want to
+       see, so the chips are toggles and Everything is the way back. */
+    const selected = new Set();
+    const chips = [];
+
+    const apply = (label) => {
+      let shown = 0;
+      cards.forEach((c) => {
+        const on = selected.size === 0 || selected.has(c.dataset.slug);
+        c.hidden = !on;
+        if (on) shown++;
+      });
+      chips.forEach((c) => c.setAttribute("aria-pressed",
+        String(c.dataset.filter === "all" ? selected.size === 0 : selected.has(c.dataset.filter))));
+      attune.say(`${t(C.graphic.ui.showing)}: ${label} — ${shown}`);
+    };
+
+    const chip = (id, label) => {
+      const b = el("button", { type: "button", className: "lab__chip", textContent: label });
+      b.dataset.filter = id;
+      b.setAttribute("aria-pressed", String(id === "all"));
+      b.addEventListener("click", () => {
+        if (id === "all") selected.clear();
+        else if (selected.has(id)) selected.delete(id);
+        else selected.add(id);
+        apply(id === "all" ? t(C.graphic.ui.all) : label);
+      });
+      chips.push(b);
+      return b;
+    };
+
+    const choices = el("div", { className: "lab__choices" },
+      chip("all", t(C.graphic.ui.all)),
+      ...C.graphic.projects.map((p) => chip(p.slug, t(p.chip))));
+    choices.setAttribute("role", "group");
+    choices.setAttribute("aria-label", t(C.graphic.ui.filter));
+
+    const bar = el("div", { className: "lab__filter" },
+      el("span", { className: "lab__filter-label", textContent: t(C.graphic.ui.filter) }),
+      choices);
+
+    grid.append(...cards);
+    wrap.append(bar, grid);
+    return wrap;
+  },
+
   /* THE CV.
      Built from the same content as the rest of the site, so a case study and
      the CV can never disagree, and printed by the browser rather than
@@ -511,6 +605,239 @@ function deviceRail(shots, slug) {
   }, { passive: true });
 
   return el("div", { className: "screens" }, head, region);
+}
+
+/* =========================================================================
+   THE VIEWER
+   One piece at size, the rest of the set along the bottom, and a way out.
+   -------------------------------------------------------------------------
+   It is a dialog, not a page: aria-modal, focus moved in and given back,
+   Escape, and the tab order held inside it. Everything a modal owes you and
+   almost none of them pay.
+
+   THE URL CHANGES BUT THE ROUTE DOES NOT. Opening pushes #/graphic/<slug>
+   with pushState, which fires no hashchange, so the router never re-renders
+   the wall underneath — and Back closes the viewer instead of leaving the
+   page, which is what Back means when something is open on top. The id is a
+   real route as well, so the link survives being sent to somebody.
+
+   THE HERO. The cover morphs into the stage through a view transition,
+   named on both ends, so the picture you pressed is visibly the picture you
+   are now looking at. Where the API is missing it simply appears, and where
+   stillness was asked for it is never animated at all.
+   ========================================================================= */
+let viewerOpen = null;
+
+function openViewer(project, index = 0, fromEl = null, { push = true } = {}) {
+  if (viewerOpen) closeViewer({ restoreFocus: false, pop: false });
+
+  /* THE CONTENT IS NOT THE ANIMATION'S TO WITHHOLD.
+     startViewTransition runs its callback at the next rendering opportunity,
+     and a document that is not being rendered — a background tab, a headless
+     browser, a machine too busy to paint — may not have one soon. The first
+     version put the whole mount inside that callback, so the viewer simply
+     never appeared: the address bar said a set was open and the screen said
+     nothing was. The mount is guarded and also scheduled directly, so the
+     transition can only ever make the opening prettier, never optional. */
+  let mounted = false;
+  let morphing = false;
+  const mount = () => {
+    if (mounted) return;
+    mounted = true;
+    mountViewer(project, index, fromEl, { morph: morphing });
+  };
+
+  /* A NAMED ELEMENT IS NOT PAINTED IN PLACE.
+     For the duration of a view transition the browser paints the snapshot
+     instead of the element, so anything still carrying a view-transition-name
+     after the transition ends — or one that never ended — is simply invisible.
+     That is exactly what happened: the viewer opened, the strip and the
+     chrome were there, and the picture in the middle was a grey rectangle.
+     Both ends of the morph are therefore released here, from whichever
+     signal arrives first. */
+  const release = () => {
+    if (fromEl) fromEl.style.viewTransitionName = "";
+    const stage = document.querySelector(".gd-view__img");
+    if (stage) stage.style.viewTransitionName = "";
+  };
+
+  if (push) history.pushState({ graphic: project.slug }, "", `#/graphic/${project.slug}`);
+
+  const canMorph = !prefersStill() && document.startViewTransition && fromEl &&
+                   document.visibilityState === "visible";
+  if (!canMorph) { mount(); return; }
+
+  try {
+    morphing = true;
+    fromEl.style.viewTransitionName = "gd-hero";
+    const vt = document.startViewTransition(mount);
+    vt.finished.catch(() => {}).finally(release);
+    /* If no frame ever comes — a background tab, a machine mid-stall — the
+       viewer still opens, and it opens visible. */
+    setTimeout(() => { mount(); release(); }, 700);
+  } catch {
+    mount();
+    release();
+  }
+}
+
+function mountViewer(project, index, fromEl, { morph = false } = {}) {
+  const ui = C.graphic.ui;
+  const pieces = project.pieces;
+  const src = (i, thumb) =>
+    `assets/graphic/${project.slug}/${String(i + 1).padStart(2, "0")}${thumb ? "-t" : ""}.jpg`;
+
+  let at = Math.max(0, Math.min(index, pieces.length - 1));
+
+  /* No decoding="async" here. On the wall it is right — a dozen covers
+     decoding off the main thread is exactly what it is for. In the viewer
+     the image IS the page, and an asynchronously decoded swap can paint the
+     frame before the picture, which reads as the viewer being broken for
+     one frame every time you press next. */
+  const stage = el("img", { className: "gd-view__img" });
+  const figure = el("figure", { className: "gd-view__figure" }, stage);
+  const counter = el("p", { className: "gd-view__count" });
+  const caption = el("figcaption", { className: "gd-view__caption" });
+  figure.append(caption);
+
+  const strip = el("div", { className: "gd-view__strip" });
+  strip.setAttribute("role", "group");
+  strip.setAttribute("aria-label", t(ui.thumbs));
+
+  const thumbs = pieces.map((piece, i) => {
+    const b = el("button", { type: "button", className: "gd-view__thumb" },
+      el("img", { src: src(i, true), alt: "", loading: "lazy", decoding: "async" }));
+    b.setAttribute("aria-label", `${i + 1} ${t(ui.counter)} ${pieces.length}`);
+    b.addEventListener("click", () => show(i));
+    return b;
+  });
+  strip.append(...thumbs);
+
+  const nav = (dir, label) => {
+    const b = el("button", { type: "button", className: "gd-view__nav" },
+      el("span", { "aria-hidden": "true", textContent: dir < 0 ? "\u2190" : "\u2192" }));
+    b.setAttribute("aria-label", label);
+    b.dataset.dir = String(dir);
+    b.addEventListener("click", () => show(at + dir));
+    return b;
+  };
+
+  function show(i, { announce = true } = {}) {
+    at = (i + pieces.length) % pieces.length;
+    const piece = pieces[at];
+    stage.src = src(at);
+    stage.alt = t(piece.alt);
+    stage.removeAttribute("width");
+    figure.dataset.tall = String(!!piece.tall);
+    caption.textContent = piece.tall ? t(ui.scrollHint) : "";
+    caption.hidden = !piece.tall;
+    counter.textContent = `${at + 1} ${t(ui.counter)} ${pieces.length}`;
+    thumbs.forEach((b, i2) => {
+      if (i2 === at) b.setAttribute("aria-current", "true");
+      else b.removeAttribute("aria-current");
+    });
+    thumbs[at]?.scrollIntoView({ inline: "center", block: "nearest",
+                                behavior: prefersStill() ? "auto" : "smooth" });
+    /* The stage is one image swapping its src; without this a screen reader
+       is told nothing at all when the picture changes. */
+    if (announce) attune.say(`${at + 1} ${t(ui.counter)} ${pieces.length}. ${t(piece.alt)}`);
+    /* The one either side, fetched now so pressing next is instant. */
+    [at + 1, at - 1].forEach((j) => {
+      const k = (j + pieces.length) % pieces.length;
+      if (k !== at) new Image().src = src(k);
+    });
+  }
+
+  const close = el("button", { type: "button", className: "gd-view__close" },
+    el("span", { "aria-hidden": "true", textContent: "\u2715" }));
+  close.setAttribute("aria-label", t(ui.close));
+  close.addEventListener("click", () => closeViewer());
+
+  const downloads = (project.downloads || []).map((d) =>
+    el("a", { className: "gd-view__download",
+              href: `assets/graphic/${project.slug}/${d.file}`,
+              textContent: t(d.label), download: "" }));
+
+  const panel = el("div", { className: "gd-view__panel" },
+    el("header", { className: "gd-view__head" },
+      el("div", { className: "gd-view__id" },
+        el("h2", { className: "gd-view__title", textContent: t(project.title) }),
+        el("p", { className: "gd-view__where", textContent: graphicWhere(project) })),
+      counter, close),
+    el("div", { className: "gd-view__stage" },
+      nav(-1, t(ui.prev)), figure, nav(1, t(ui.next))),
+    el("footer", { className: "gd-view__foot" },
+      strip,
+      ...(downloads.length ? [el("p", { className: "gd-view__downloads" }, ...downloads)] : [])));
+
+  const scrim = el("div", { className: "gd-view__scrim" });
+  scrim.addEventListener("click", () => closeViewer());
+
+  const root = el("div", { className: "gd-view" }, scrim, panel);
+  root.setAttribute("role", "dialog");
+  root.setAttribute("aria-modal", "true");
+  root.setAttribute("aria-label", `${t(project.title)} — ${t(C.graphic.ui.thumbs)}`);
+
+  const onKey = (e) => {
+    if (e.key === "Escape") { e.preventDefault(); closeViewer(); return; }
+    if (e.key === "ArrowRight") { e.preventDefault(); show(at + 1); return; }
+    if (e.key === "ArrowLeft") { e.preventDefault(); show(at - 1); return; }
+    if (e.key === "Home") { e.preventDefault(); show(0); return; }
+    if (e.key === "End") { e.preventDefault(); show(pieces.length - 1); return; }
+    if (e.key !== "Tab") return;
+    /* The trap. Without it, Tab walks out of the dialog and into a page the
+       visitor cannot see, and every following keystroke goes somewhere
+       invisible. */
+    const focusables = panel.querySelectorAll("button, a[href]");
+    if (!focusables.length) return;
+    const first = focusables[0], last = focusables[focusables.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  };
+  document.addEventListener("keydown", onKey);
+
+  document.body.append(root);
+  document.documentElement.dataset.viewer = "open";   /* the page behind stops scrolling */
+  show(at, { announce: false });
+  /* The receiving end of the morph, named only while there is a transition
+     to receive. The name is taken off again by openViewer, not here. */
+  if (morph) stage.style.viewTransitionName = "gd-hero";
+  close.focus({ preventScroll: true });
+  attune.say(`${t(C.graphic.ui.opened)}: ${t(project.title)}. ${at + 1} ${t(ui.counter)} ${pieces.length}.`);
+
+  viewerOpen = { root, onKey, returnTo: fromEl?.closest("button"), slug: project.slug };
+}
+
+function closeViewer({ restoreFocus = true, pop = true } = {}) {
+  if (!viewerOpen) return;
+  const { root, onKey, returnTo } = viewerOpen;
+  viewerOpen = null;
+
+  document.removeEventListener("keydown", onKey);
+  delete document.documentElement.dataset.viewer;
+  root.remove();
+  if (restoreFocus) returnTo?.focus({ preventScroll: true });
+  attune.say(t(C.graphic.ui.closed));
+
+  /* The push that opened it is undone, so the address bar and the history
+     agree with what is on the screen. */
+  if (pop && location.hash.startsWith("#/graphic/")) history.back();
+}
+
+/* Back, or a swipe back, closes the viewer rather than leaving the page. */
+addEventListener("popstate", () => {
+  if (viewerOpen && !location.hash.startsWith("#/graphic/")) {
+    closeViewer({ pop: false });
+  }
+});
+
+/* A field Safa has not filled in yet is a note to her, not a line for a
+   visitor to read. The placeholder stays in content.js, where she will see
+   it; the page simply says one thing less until it is written. */
+function graphicWhere(project) {
+  return [t(project.client), t(project.discipline)]
+    .filter((x) => x && x !== "TODO")
+    .join(" · ");
 }
 
 function prefersStill() {
@@ -890,6 +1217,7 @@ export const ROUTES = [
   { id: "access",  label: { en: "Access",   nl: "Toegang" }, sections: ["accessibility", "detail-index"] },
   { id: "skills",  label: { en: "Skills",   nl: "Kunde" },   sections: ["skills"] },
   { id: "lab",     label: { en: "Lab",      nl: "Lab" },     sections: ["lab"] },
+  { id: "graphic", label: { en: "Graphic design", nl: "Grafisch ontwerp" }, sections: ["graphic"] },
   { id: "cv",      label: { en: "CV",       nl: "CV" },      sections: ["cv"] },
   { id: "contact", label: { en: "Contact",  nl: "Contact" }, sections: ["contact"] },
 ];
@@ -897,7 +1225,11 @@ export const ROUTES = [
 /* Every case is a real route with a real address, so a single project can be
    sent to someone on its own. */
 const CASE_IDS = C.projects.map((p) => `work/${p.slug}`);
-const ROUTE_IDS = [...ROUTES.map((r) => r.id), ...CASE_IDS];
+/* A graphic project opens on top of the wall rather than replacing it, but
+   it still gets an address — so a single set can be sent to somebody, and so
+   reloading with one open does not dump the reader back at the top. */
+const GRAPHIC_IDS = C.graphic.projects.map((p) => `graphic/${p.slug}`);
+const ROUTE_IDS = [...ROUTES.map((r) => r.id), ...CASE_IDS, ...GRAPHIC_IDS];
 
 /* Who the visitor said they were still decides order — it now orders the
    tabs rather than a scroll. Home and Contact are pinned: the first is
@@ -1173,6 +1505,21 @@ function fallBackToDrawing(host) {
 function renderRoute(id) {
   const view = document.getElementById("view");
 
+  /* Arriving straight at a set: the wall is rendered first, so closing the
+     viewer leaves the visitor somewhere rather than nowhere, and the viewer
+     opens on top of it without a hero — there is nothing on screen yet for
+     the picture to have come from. */
+  if (id.startsWith("graphic/")) {
+    const slug = id.slice(8);
+    const project = C.graphic.projects.find((x) => x.slug === slug);
+    renderRoute("graphic");
+    if (project) {
+      requestAnimationFrame(() => openViewer(project, 0, null, { push: false }));
+      document.title = `${t(project.title)} — ${C.meta.name}, ${t(C.meta.role)}`;
+    }
+    return;
+  }
+
   if (id.startsWith("work/")) {
     cat?.destroy(); cat = null;
     paws?.destroy(); paws = null;
@@ -1193,6 +1540,9 @@ function renderRoute(id) {
   paws?.destroy(); paws = null;
   swarm?.destroy(); swarm = null;
   halftone?.destroy(); halftone = null;
+  /* A dialog outliving the page it was opened from would be a modal over a
+     document that never contained it. */
+  if (viewerOpen) closeViewer({ restoreFocus: false, pop: false });
   /* A vision simulation that outlived its own page would leave the whole
      site blurred with no visible way to undo it. */
   visionLab?.destroy(); visionLab = null;

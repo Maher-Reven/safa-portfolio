@@ -316,6 +316,79 @@ The filter sits on `<body>` rather than `<html>`: a filter on an ancestor makes
 it a containing block, and every `position: fixed` element on the site would
 jump.
 
+## Graphic design
+
+Thirty-five pieces across five sets: two educational carousels for a dental
+practice, a brand book, campaign graphics, a social campaign, and a specimen
+page for ITC Benguiat. It is a separate tab from Work because it is read
+differently — a case study is an argument you follow from problem to result,
+and a set of carousels is a body of work you look at.
+
+**The filter is multi-select**, unlike the Lab's. The Lab's topics are a
+taxonomy and you ask it one question at a time; these are five clients, and
+"the two social ones" is an ordinary thing to want. Chips toggle, Everything
+is the way back, and the count is announced, because filtering a list a
+screen reader cannot see change is the same as doing nothing.
+
+**Opening a set** morphs its cover into the viewer through a view transition
+named on both ends, so the picture you pressed is visibly the picture you are
+looking at. The viewer is a real dialog: `aria-modal`, focus moved in and
+given back to the card you came from, Escape, arrows, Home and End, and the
+tab order held inside it. The strip along the bottom is the whole set, the
+current one marked by a border as well as opacity.
+
+**The URL changes but the route does not.** Opening pushes `#/graphic/<slug>`
+with `pushState`, which fires no `hashchange`, so the wall underneath is never
+re-rendered — and Back closes the viewer rather than leaving the page, which
+is what Back means when something is open on top. The id is a real route as
+well, so the link survives being sent to somebody.
+
+Two things this page had to learn the hard way, both of which looked like the
+viewer being broken:
+
+- **A view transition is an enhancement, not a delivery mechanism.** The first
+  version mounted the viewer inside the `startViewTransition` callback, which
+  runs at the next rendering opportunity — and a document that is not being
+  painted may not have one soon. The address bar said a set was open and the
+  screen said nothing was. The mount is now guarded and also scheduled
+  directly, so the transition can only make the opening prettier.
+- **An element carrying a `view-transition-name` is not painted in place.**
+  The browser paints its snapshot instead, so a name left on after the
+  transition — or one that never ended — is an invisible element. That was a
+  grey rectangle where the picture should have been, with every piece of
+  chrome around it correct.
+
+### The pictures
+
+```sh
+node tools/graphic-assets.mjs      # Digital design/ -> assets/graphic/
+```
+
+Safa drops work into `Digital design/` at whatever size it left Figma, Canva
+or a phone — 16MB, four times the rest of the site. The tool resizes each
+piece to a viewing image and a thumbnail, renders PDF carousels a page at a
+time through PDFKit (`tools/pdf-pages.swift`), copies the original PDFs
+through as downloads, and prints a manifest to check `content.js` against.
+The originals are gitignored; what is committed is what somebody downloads.
+
+It uses `sips` and PDFKit because both are already on the machine. A
+portfolio that runs with no build step should not need a toolchain to add
+pictures to it.
+
+A long page is the exception to all of it. The specimen is 1920×8370, and
+capping its long edge like everything else took it to 367px wide — every word
+in it gone, to save bytes on a file whose entire content is words. Anything
+taller than 2.5:1 is sized by width instead and scrolls inside its frame in
+the viewer, the way the page it is a picture of would.
+
+### The copy is a draft
+
+Every title, summary and piece of alt text in `graphic` was written from what
+is visibly in the images and nothing else, and says so in `content.js`. One
+field is marked TODO — who the Benguiat specimen was made for — and a TODO is
+a note to Safa, so the page renders one line less rather than printing the
+word at a visitor.
+
 ## The CV
 
 A `#/cv` route assembled from the same content as the rest of the site, so a
@@ -549,6 +622,9 @@ styles/tokens.css     every design decision, with the reason written next to it
 styles/base.css       reset + the accessibility primitives everything assumes
 styles/layout.css     structure shared by both modes
 tools/contrast.mjs    every pairing in four palettes, measured from the tokens
+tools/graphic-assets.mjs  the graphic design folder, made web-weight
+tools/pdf-pages.swift     a PDF carousel, one image per page
+styles/graphic.css    the wall and the viewer
 styles/full.css       art direction one — the live surface
 styles/calm.css       art direction two — the printed piece
 styles/attune.css     the panel

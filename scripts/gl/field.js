@@ -166,7 +166,7 @@ void main() {
      this file. The cool tone only ever appears in the turbulent half, so
      resolving the field literally drains the confusion out of it.
 
-     THE MARK IS MIXED IN, NOT ADDED ON. This was `col += accent * mesh`,
+     THE MARK IS MIXED IN, NOT ADDED ON. This was "col += accent * mesh",
      which is the same thing as mixing while the ground is near-black, and
      nothing at all once the ground is paper: adding lime to #f4f0e8 pushes
      every channel to 1.0 and the mesh disappears into white. mix() draws

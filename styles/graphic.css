@@ -1,0 +1,331 @@
+/* =========================================================================
+   graphic.css — the wall, and the viewer that opens on top of it.
+   -------------------------------------------------------------------------
+   Every colour here is a token, so this page is dark, light, high-contrast
+   and printed without a single value being written twice. The one exception
+   is the scrim, which is a shadow rather than a surface: it is black in both
+   themes, because dimming a page toward white does not dim it.
+   ========================================================================= */
+
+/* -------------------------------------------------------------------------
+   THE WALL
+   Cards, not a masonry grid. The pieces inside a set are all shapes — 16:9
+   slides, square carousels, a page eight screens tall — and a wall that
+   reflowed to each one would be a wall that moves while you read it. Each
+   card gets the same frame and the cover sits inside it.
+   ------------------------------------------------------------------------- */
+.gd {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 21rem), 1fr));
+  gap: var(--s-md);
+  margin: var(--s-lg) 0 0;
+  padding: 0;
+  list-style: none;
+}
+.gd__item { max-width: none; }
+
+.gd__card {
+  display: grid;
+  width: 100%;
+  padding: 0;
+  overflow: hidden;
+  text-align: start;
+  border: var(--rule-edge);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  color: inherit;
+  cursor: pointer;
+  transition: transform var(--dur-quick) var(--ease-out),
+              border-color var(--dur-quick) var(--ease-out);
+}
+.gd__card:hover { border-color: var(--accent-text); }
+[data-mode="full"] .gd__card:hover { transform: translateY(-3px); }
+
+.gd__cover {
+  display: block;
+  /* Every card the same window on to work of five different shapes. The
+     first attempt gave the big sets a double-width card, which made a wall
+     where two projects were visibly more important than the other three —
+     a hierarchy nobody had asked for, produced by counting files. */
+  aspect-ratio: 16 / 10;
+  max-height: 15rem;
+  overflow: hidden;
+  background: var(--ground);
+  border-block-end: var(--rule);
+}
+.gd__cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* The top of a piece is where its title is. Centring a 16:9 slide inside a
+     4:3 frame crops the headline off both ends of a deck; anchoring to the
+     top keeps the one part of every cover that names it. */
+  object-position: center top;
+  transition: scale var(--dur-calm) var(--ease-out);
+}
+[data-mode="full"] .gd__card:hover .gd__cover img { scale: 1.03; }
+
+.gd__body { display: grid; gap: var(--s-3xs); padding: var(--s-sm); }
+.gd__meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--s-2xs);
+  font-family: var(--face-detail);
+  font-size: var(--t-detail);
+  letter-spacing: 0.04em;
+  color: var(--text-faint);
+}
+.gd__count { color: var(--accent-text); }
+.gd__title { font-size: var(--t-md); line-height: 1.15; }
+.gd__where {
+  font-family: var(--face-detail);
+  font-size: var(--t-detail);
+  letter-spacing: 0.04em;
+  color: var(--text-soft);
+}
+.gd__summary {
+  margin-block-start: var(--s-2xs);
+  font-size: var(--t-sm);
+  color: var(--text-soft);
+  max-width: 46ch;
+}
+
+/* -------------------------------------------------------------------------
+   THE VIEWER
+   ------------------------------------------------------------------------- */
+[data-viewer="open"] body { overflow: hidden; }
+
+.gd-view {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-attune);
+  display: grid;
+  /* An explicitly clamped single cell. Left as an auto row, the row grew to
+     the height of a 1600px picture and the panel's max-height: 100% then
+     measured itself against that — so a dialog that was supposed to fit the
+     window was half a window taller than it, with the thumbnail strip
+     somewhere below the bottom of the screen. */
+  grid-template-rows: minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr);
+  place-items: center;
+  padding: clamp(0.5rem, 2vw, var(--s-md));
+}
+.gd-view__scrim {
+  position: absolute;
+  inset: 0;
+  /* Black in both themes: a scrim is the absence of the page, and paper with
+     the lights off is not a lighter paper. */
+  background: rgb(0 0 0 / 0.62);
+  backdrop-filter: blur(3px);
+}
+.gd-view__panel {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: var(--s-2xs);
+  width: min(100%, 78rem);
+  /* A grid item will not go below its own min-content width unless it is
+     told it may, and a thumbnail strip of fourteen is a wide min-content.
+     Without this the dialog was wider than a phone and its close button was
+     off the right-hand edge — the one control a modal may never lose. */
+  min-width: 0;
+  max-width: 100%;
+  max-height: 100%;
+  padding: var(--s-sm);
+  border: var(--rule-edge);
+  border-radius: var(--radius-lg);
+  background: var(--ground);
+  box-shadow: var(--shadow-lift);
+}
+
+.gd-view__head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-sm);
+  padding-block-end: var(--s-2xs);
+  border-block-end: var(--rule);
+}
+.gd-view__id { min-width: 0; flex: 1 1 auto; }
+.gd-view__title { margin: 0; font-size: var(--t-md); overflow-wrap: anywhere; }
+.gd-view__where {
+  margin: 0;
+  font-family: var(--face-detail);
+  font-size: var(--t-detail);
+  letter-spacing: 0.04em;
+  color: var(--text-faint);
+}
+.gd-view__count {
+  margin: 0;
+  flex: 0 0 auto;
+  font-family: var(--face-detail);
+  font-size: var(--t-sm);
+  color: var(--text-soft);
+  font-variant-numeric: tabular-nums;   /* so the number does not jog sideways */
+}
+.gd-view__close {
+  flex: 0 0 auto;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border: var(--rule-edge);
+  border-radius: var(--radius-pill);
+  color: var(--text);
+  font-size: var(--t-sm);
+}
+.gd-view__close:hover { background: var(--surface); }
+
+.gd-view__stage {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--s-2xs);
+  min-height: 0;
+}
+.gd-view__nav {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border: var(--rule-edge);
+  border-radius: var(--radius-pill);
+  color: var(--text-soft);
+  font-size: var(--t-body);
+}
+.gd-view__nav:hover { color: var(--text); border-color: var(--accent-text); }
+
+.gd-view__figure {
+  margin: 0;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  display: grid;
+  /* Clamped for the same reason the dialog is: a picture placed in an auto
+     row sizes the row to itself, and then its own max-height: 100% measures
+     against a row it has already stretched. Two nested grids, one mistake,
+     twice. */
+  grid-template-rows: minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr);
+  place-items: center;
+}
+.gd-view__img {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  object-fit: contain;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+}
+/* A long page is read by scrolling, so it is given a frame to scroll inside
+   rather than being shrunk until its type is a texture. */
+.gd-view__figure[data-tall="true"] {
+  display: block;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border: var(--rule);
+  border-radius: var(--radius-sm);
+}
+.gd-view__figure[data-tall="true"] .gd-view__img {
+  max-height: none;
+  width: 100%;
+  border-radius: 0;
+}
+.gd-view__caption {
+  position: sticky;
+  bottom: 0;
+  padding: var(--s-3xs) var(--s-2xs);
+  background: var(--ground);
+  font-family: var(--face-detail);
+  font-size: var(--t-detail);
+  color: var(--text-faint);
+}
+
+.gd-view__foot { display: grid; gap: var(--s-2xs); min-width: 0; }
+.gd-view__strip {
+  display: flex;
+  min-width: 0;
+  gap: var(--s-2xs);
+  overflow-x: auto;
+  padding-block-start: var(--s-2xs);
+  border-block-start: var(--rule);
+  scrollbar-width: thin;
+}
+.gd-view__thumb {
+  flex: 0 0 auto;
+  width: 4.5rem;
+  height: 3.2rem;
+  padding: 0;
+  overflow: hidden;
+  border: var(--rule);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  opacity: 0.55;
+  transition: opacity var(--dur-quick) var(--ease-out),
+              border-color var(--dur-quick) var(--ease-out);
+}
+.gd-view__thumb img { width: 100%; height: 100%; object-fit: cover; object-position: center top; }
+.gd-view__thumb:hover { opacity: 0.85; }
+/* The current one is marked by opacity AND a border, because opacity alone
+   is a difference somebody with low vision is entitled to miss. */
+.gd-view__thumb[aria-current="true"] {
+  opacity: 1;
+  border-color: var(--accent-text);
+  outline: 2px solid var(--accent-text);
+  outline-offset: -2px;
+}
+
+.gd-view__downloads {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2xs) var(--s-sm);
+  font-family: var(--face-detail);
+  font-size: var(--t-detail);
+}
+/* The site's own audit holds every control to 24px, and these were 16 — a
+   pair of text links in a row of their own, which is exactly the case
+   2.5.8 is about. Padding rather than a bigger font: the link should not
+   shout, it should just be possible to hit. */
+.gd-view__download {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  color: var(--accent-text);
+}
+
+/* The hero. Both ends carry the same name, so the browser tweens the cover
+   into the stage instead of cross-fading two unrelated rectangles. */
+::view-transition-old(gd-hero),
+::view-transition-new(gd-hero) {
+  animation-duration: 420ms;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (max-width: 52rem) {
+  .gd-view__panel { padding: var(--s-2xs); }
+  .gd-view__stage { grid-template-columns: 1fr; }
+  /* The arrows move under the picture on a phone, where the thumb that would
+     press them is holding the edge of the screen the picture needs. */
+  .gd-view__nav { position: absolute; bottom: 0; width: 40px; height: 40px; }
+  .gd-view__nav[data-dir="-1"] { inset-inline-start: var(--s-2xs); }
+  .gd-view__nav[data-dir="1"] { inset-inline-start: calc(var(--s-2xs) + 48px); }
+  .gd-view__stage { position: relative; padding-block-end: 46px; }
+  /* One row, always. Allowed to wrap, the close button dropped to a line of
+     its own under the title — a 44px control taking a whole row on the
+     screen with the least of them. The title wraps inside its own box
+     instead, which is what a title is for. */
+  .gd-view__head { flex-wrap: nowrap; align-items: center; }
+  .gd-view__title { font-size: var(--t-body); }
+}
+
+/* Print: the wall prints as a list of what is in it. A viewer cannot be
+   printed at all — it is a thing that is open, and paper has nothing open. */
+@media print {
+  .gd-view { display: none !important; }
+  .gd { grid-template-columns: 1fr 1fr; gap: 8pt; }
+  .gd__card { border: 1px solid #999; }
+  .gd__cover { aspect-ratio: 16 / 9; }
+  .gd__summary { display: none; }
+}
