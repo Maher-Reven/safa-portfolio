@@ -99,7 +99,7 @@ export const projects = [
     company:    { en: "VeloTech.AI · Freelance", nl: "VeloTech.AI · Freelance" },
     discipline: { en: "Dashboard · Civic infrastructure",
                   nl: "Dashboard · Publieke infrastructuur" },
-    role:       { en: "Product Designer", nl: "Product Designer" },
+    role:       { en: "Product & Brand Designer", nl: "Product & Brand Designer" },
     summary: {
       en: "Cities have a lot of infrastructure to maintain — road markings, street lights, signs. Inspecting all of it manually is slow, costly and hard to scale.",
       nl: "Steden hebben veel infrastructuur om te onderhouden — wegmarkeringen, straatverlichting, borden. Dit handmatig inspecteren is traag, duur en moeilijk schaalbaar.",
@@ -365,21 +365,31 @@ export const cv = {
       company:    { en: "Freelance", nl: "Freelance" },
       discipline: { en: "Identity · Visual communication",
                     nl: "Identiteit · Visuele communicatie" },
-      note: { en: "Identity and visual communication, and the content and campaigns that carry it across channels.",
-              nl: "Identiteit en visuele communicatie, en de content en campagnes die dat over de kanalen heen dragen." },
+      note: { en: "Identity and visual communication. Shaping content and campaigns across various channels.",
+              nl: "Identiteit en visuele communicatie. Content en campagnes vormgeven over verschillende kanalen." },
     },
     { from: "dentara" },
-    { from: "velotech" },
-    { from: "pubhubs" },
-    { from: "medialab" },
+    /* The four below are read out of their case studies, and where Safa's
+       CV describes the engagement differently from the way the case tells
+       its story, her line wins here: a case study explains what happened to
+       somebody who is reading it, and a CV line says what the job was. */
+    { from: "velotech",
+      note: { en: "Designed the company website and platform with a focus on usability and visual clarity, plus brand identity assets and digital materials for marketing and sales.",
+              nl: "Ontwierp de bedrijfswebsite en het platform met focus op usability en visuele helderheid, plus merkidentiteitsmiddelen en digitaal materiaal voor marketing en sales." } },
+    { from: "medialab",
+      note: { en: "Improved user flows and customer journeys, and contributed to the redesign of the mobile app's navigation, structure and usability within a cross-functional team, alongside marketing design.",
+              nl: "Verbeterde user flows en klantreizen, en droeg bij aan het herontwerp van de navigatie, structuur en usability van de mobiele app binnen een multidisciplinair team, naast marketingdesign." } },
+    { from: "pubhubs",
+      note: { en: "A community platform for companies and organisations: forum structure, search optimisation and UX/UI improvements.",
+              nl: "Een communityplatform voor bedrijven en organisaties: forumstructuur, zoekoptimalisatie en UX/UI-verbeteringen." } },
     {
       year: { en: "2023 — 2024", nl: "2023 — 2024" },
       role:  { en: "UX / UI & Marketing Designer", nl: "UX / UI & Marketing Designer" },
       title: { en: "Pulse Sport Amsterdam", nl: "Pulse Sport Amsterdam" },
       company:    { en: "Freelance", nl: "Freelance" },
       discipline: { en: "Dashboard · Social", nl: "Dashboard · Social" },
-      note: { en: "A coach dashboard that makes complex player data readable at a glance — information architecture and usability, plus the social content around the club.",
-              nl: "Een coachdashboard dat complexe spelersdata in één oogopslag leesbaar maakt — informatiearchitectuur en usability, plus de social content rondom de club." },
+      note: { en: "Designed a coach dashboard that clearly visualises complex player data — usability and information architecture, plus social media content and consistency.",
+              nl: "Ontwierp een coachdashboard dat complexe spelersdata helder visualiseert — usability en informatiearchitectuur, plus social-mediacontent en consistentie." },
     },
   ],
 
