@@ -17,16 +17,23 @@
 .gd {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 21rem), 1fr));
+  /* Every card the same size, across rows as well as within one. Left to
+     themselves the rows sized to their own tallest summary, so a set with
+     three sentences made a taller card than a set with two — a wall where
+     the work appears ranked by how much there was to say about it. */
+  grid-auto-rows: 1fr;
   gap: var(--s-md);
   margin: var(--s-lg) 0 0;
   padding: 0;
   list-style: none;
 }
-.gd__item { max-width: none; }
+.gd__item { max-width: none; display: grid; }
 
 .gd__card {
   display: grid;
+  grid-template-rows: auto 1fr;    /* the cover is fixed; the text takes the rest */
   width: 100%;
+  height: 100%;
   padding: 0;
   overflow: hidden;
   text-align: start;
@@ -65,7 +72,7 @@
 }
 [data-mode="full"] .gd__card:hover .gd__cover img { scale: 1.03; }
 
-.gd__body { display: grid; gap: var(--s-3xs); padding: var(--s-sm); }
+.gd__body { display: grid; align-content: start; gap: var(--s-3xs); padding: var(--s-sm); }
 .gd__meta {
   display: flex;
   flex-wrap: wrap;
@@ -89,6 +96,15 @@
   font-size: var(--t-sm);
   color: var(--text-soft);
   max-width: 46ch;
+  /* Three lines, then it stops. The whole summary is in the viewer's own
+     header; on the wall it is a taste of the set, and a taste that runs to
+     five lines on one card and two on the next is what made the cards
+     different sizes in the first place. */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  overflow: hidden;
 }
 
 /* -------------------------------------------------------------------------

@@ -683,6 +683,11 @@ export const graphic = {
 
     {
       slug: "medialab-social",
+      /* Which piece fronts the set. The first one is the default and is
+         usually right — a cover page is made to be a cover — but this set
+         opens on a diagram, and a diagram at card size is a grey mesh. The
+         Invictus frame is the one that reads at a glance. */
+      cover: 3,
       chip:  { en: "MediaLab", nl: "MediaLab" },
       title: { en: "MediaLab campaign graphics", nl: "MediaLab-campagnebeelden" },
       client:{ en: "MediaLab", nl: "MediaLab" },

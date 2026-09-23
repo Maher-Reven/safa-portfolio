@@ -221,8 +221,9 @@ const SECTIONS = {
       const count = project.pieces.length;
       /* "1 pieces" is the sound of a template. */
       const pieceWord = t(count === 1 ? C.graphic.ui.piece : C.graphic.ui.pieces);
+      const coverN = String(project.cover || 1).padStart(2, "0");
       const cover = el("img", {
-        src: `assets/graphic/${project.slug}/01.jpg`,
+        src: `assets/graphic/${project.slug}/${coverN}.jpg`,
         alt: "",                      /* the button beside it carries the name */
         loading: "lazy", decoding: "async",
       });
