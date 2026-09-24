@@ -554,6 +554,78 @@ the edge — and below 40rem the opener drops to its glyph, keeping its name in
 `aria-label`. It holds at 330px and at the largest text size, which the site
 offers and which makes every one of these numbers bigger.
 
+### A third palette: sealed
+
+Dark and light are the same site at two times of day. **Sealed** is a
+different object on the desk: near-black oxblood, deep wine, dried rose,
+walnut and aged brass, taken off a table of wax seals.
+
+It is there because a seal is a letter addressed to one person, which is the
+argument the whole site is making — *afstemmen*, tuning itself to whoever
+opened it. Choosing it is the visitor saying something about how they want to
+be written to.
+
+**`prefers-color-scheme` cannot reach it.** No operating system has an
+opinion about sealing wax, and a theme that arrives unasked is a theme
+nobody chose, which is the opposite of what this one is for. It is reachable
+only by pressing it, and it persists like every other axis.
+
+**Two of the five colours never carry a word.** Dried rose is 1.9:1 on the
+ground and walnut is 2.6:1 — beautiful, and unreadable. They tint, they rule,
+they sweep. Body text is parchment `#F3E6D8`, which is not in the moodboard
+and had to be invented: the lightest of the five is 6.5:1 on a card, a fine
+colour for a mark and a poor one for four hundred words.
+
+**Safa's lime survives**, in exactly two places — the focus ring, which
+belongs to the visitor rather than to the art direction, and the full stop
+that ends the headline, which is a signature. One thread back to her brand in
+a palette that is not hers.
+
+| role | value | on the ground / on a card |
+| --- | --- | --- |
+| `--ground` | `#200C0D` | oxblood |
+| `--surface` | `#331014` | wine — a card is a second layer of the same wax |
+| `--text` | `#F3E6D8` | 15.3 / 14.0 |
+| `--text-soft` | `#D8C0AA` | 10.8 / 9.8 |
+| `--text-faint` | `#AD8865` | 5.8 / **5.3** — measured on the card, where it lives |
+| `--edge` | brass at 62% | 3.4 / 3.3 |
+| `--accent` | `#BC997B` | the seal, and the fill |
+| `--accent-ink` | `#200C0D` | 7.1 on the brass |
+| `--accent-text` | `#BC997B` | 7.1 / 6.5 |
+| `--note` | `#9FC6CF` | 10.2 / 9.4 — cool, so an aside is never read as emphasis |
+| `--focus` | `#C8E65A` | 13.3 / 12.2 — hers |
+
+The two warm case colours pass on wax untouched; both blues were under the
+bar and are lifted, exactly as the light theme had to lift the warm ones.
+`node tools/contrast.mjs` checks six palettes now rather than four — 216
+pairings, sealed included, at both contrast settings.
+
+Neither canvas needed a line of code. Both decide how to draw from how dark
+the ground is and how light the text is, never from the theme's name, which
+was a choice made when light went in; sealed is the proof it was worth
+making.
+
+### Lab 07 — a palette you can put on
+
+The Lab's rule is instruments, not screenshots, so the palette is not a
+picture of sealed. Pressing **wear it** calls the same `attune.set` the
+header button calls: the page is genuinely in the theme, and what you are
+judging is what you would get.
+
+Which makes the other rule apply — an instrument that changes the page must
+be impossible to get stuck inside. Leaving the Lab puts the theme back and
+says so, unless you pressed **keep it**; keeping still leaves a way out on
+the card, because the card that talked you into something should not be the
+one place with no exit.
+
+The measurements underneath come from the live custom properties rather than
+from a table written here, so they report what the page *is* wearing. Switch
+to light in the header with the card open and every number moves. Each role
+is measured against the ground it actually sits on, the thresholds follow the
+contrast setting, and dried rose and walnut are printed with their real
+ratios and the verdict *decoration only — never a word*. A palette that hides
+its unusable colours is a moodboard.
+
 ### The accent is three roles
 
 The lime was one token doing two incompatible jobs. On the dark ground a single
