@@ -277,6 +277,93 @@
 }
 
 /* =========================================================================
+   THEME: sealed — oxblood and wax
+   A third palette, and the first one that is not a version of her own: dark
+   and light are the same site at two times of day, and this is a different
+   object on the desk. It comes from a table of wax seals — near-black
+   oxblood, deep wine, dried rose, walnut, aged brass — and it is chosen,
+   never inherited. prefers-color-scheme cannot ask for it, because no
+   operating system has an opinion about sealing wax.
+
+   WHY IT IS HERE AT ALL. A seal is a letter addressed to one person, which
+   is the argument this whole site is making: afstemmen, tuning itself to
+   whoever opened it. A visitor who picks this one has said something about
+   how they want to be written to, and the site has to be able to hear it.
+
+   TWO OF THE FIVE COLOURS NEVER CARRY A WORD. Dried rose is 1.9:1 on the
+   ground and walnut is 2.6:1 — beautiful, and unreadable. They tint, they
+   rule, they sweep; they never say anything. The Lab's palette instrument
+   prints that verdict next to them rather than quietly leaving them out.
+   ========================================================================= */
+[data-theme="sealed"] {
+  color-scheme: dark;
+
+  --ground: #200c0d;       /* near-black oxblood */
+  --surface: #331014;      /* deep wine — cards lift toward the darker red
+                              rather than toward grey, so a card reads as a
+                              second layer of the same wax */
+  /* Parchment, and not from the moodboard, because nothing in the moodboard
+     can be read at body size on this ground: the lightest of the five is tan
+     at 6.5:1 on a card, which is a fine colour for a mark and a poor one for
+     four hundred words. 15.3:1 on the ground, 14.0:1 on a card. */
+  --text: #f3e6d8;
+  --text-soft: #d8c0aa;    /* 10.8:1 / 9.8:1 — parchment pulled halfway to
+                              the brass, so secondary text warms rather than
+                              greys as it recedes */
+  /* 5.8:1 on the ground AND 5.3:1 on a card. Measured on the card first, for
+     the same reason the dark theme's faint was: almost every faint label on
+     this site sits on --surface, and a colour checked only against --ground
+     is a colour checked against the wrong thing. */
+  --text-faint: #ad8865;
+  --line: rgba(243, 230, 216, 0.10);
+  --line-strong: rgba(243, 230, 216, 0.22);
+  /* The edge of anything you can press, and the one line that has to prove
+     itself: 3.4:1 on the ground, 3.3:1 on a card. Walnut was the obvious
+     choice from the moodboard and measures 2.6:1 — under the bar on its own
+     ground. This is the brass at 62%, which keeps the warmth and clears
+     1.4.11 on both. */
+  --edge: rgba(188, 153, 123, 0.62);
+  --shadow-lift: 0 18px 50px rgb(12 3 4 / 0.62);
+  --shadow-pop:  0 6px 24px rgb(12 3 4 / 0.50);
+
+  --accent: #bc997b;       /* aged brass: the seal itself, and the fill */
+  --accent-ink: #200c0d;   /* 7.1:1 on the brass — the ground, pressed into it */
+  --accent-text: #bc997b;  /* 7.1:1 / 6.5:1. As on the dark theme, the fill and
+                              the mark can be one colour here; it is only on
+                              paper that they have to part company */
+
+  /* The detail layer keeps a cool voice, muted rather than sky: an
+     annotation must never be mistaken for emphasis, and in a palette this
+     warm the only tone that cannot be read as "seal" is a cold one. Rose
+     lifted to a legible weight sits a few degrees from the brass and would
+     have been exactly that mistake. 10.2:1 / 9.4:1. */
+  --note: #9fc6cf;
+  --note-soft: rgba(159, 198, 207, 0.10);
+
+  /* SAFA'S LIME SURVIVES, as the focus ring and the full stop in the
+     headline — one thread back to her own brand, in the one role where
+     being slightly foreign is the point. A focus ring belongs to the
+     browser and the visitor, not to the art direction. 13.3:1 on the
+     ground, 12.2:1 on a card. It is 1.9:1 against the brass, which would
+     matter if any ring landed on a filled pill; the one that does is inset
+     and takes --accent-ink at 7.1:1. */
+  --focus: #c8e65a;
+
+  /* The two warm cases pass on wax untouched. The two blues do not — the
+     true municipal blue is 2.5:1 here, darker against oxblood than it was
+     against near-black, so both are lifted until a rule can be seen and a
+     name can be read. */
+  --c-dentara:      #e8a598;   /* 9.2:1 / 8.4:1 */
+  --c-dentara-ink:  #e8a598;
+  --c-velotech:     #436d97;   /* 3.5:1 / 3.2:1 as a rule */
+  --c-velotech-ink: #6688aa;   /* 5.1:1 / 4.6:1 as a name */
+  --c-medialab:     #f2d4b0;   /* 13.2:1 / 12.1:1 */
+  --c-medialab-ink: #f2d4b0;
+  --c-pubhubs:      #4c6d8b;   /* 3.5:1 / 3.2:1 */
+  --c-pubhubs-ink:  #6d88a1;   /* 5.1:1 / 4.6:1 */
+}
+
+/* =========================================================================
    MODE: full — the screen object
    Motion, the live canvas, the grotesk. Says nothing about colour any
    more: this is a visitor in full mode on paper, or in calm mode on her
@@ -350,6 +437,34 @@
   --c-medialab-ink: #f2d4b0;
   --c-pubhubs:      #607d98;   /* 4.6:1 */
   --c-pubhubs-ink:  #889eb2;   /* 7.1:1 */
+}
+[data-theme="sealed"][data-contrast="high"] {
+  /* The wax, pressed harder. Everything here clears 7:1, which on this
+     palette means the ground goes deeper rather than the text going
+     brighter than parchment: raising the text alone would have bleached the
+     one thing the theme is for. */
+  --ground: #150607;
+  --surface: #1f0b0d;
+  --text: #fff6ec;         /* 18.5:1 / 17.7:1 */
+  --text-soft: #ebd9c6;    /* 14.4:1 / 13.7:1 */
+  --text-faint: #cba98c;   /*  9.0:1 /  8.6:1 — no longer faint, by design */
+  --line: rgba(255, 246, 236, 0.34);
+  --line-strong: rgba(255, 246, 236, 0.62);
+  --edge: rgba(217, 184, 148, 0.80);   /* 7.0:1 / 6.8:1 */
+  --accent: #d9b894;       /* the brass, brought up with the ground */
+  --accent-ink: #150607;   /* 10.6:1 on it */
+  --accent-text: #d9b894;  /* 10.6:1 / 10.1:1 */
+  --note: #bbd9e2;         /* 13.3:1 / 12.7:1 */
+  --focus: #d8f56a;        /* 16.2:1 / 15.5:1 — the lime, still hers */
+
+  --c-dentara:      #e8a598;   /*  9.7:1 /  9.2:1 */
+  --c-dentara-ink:  #e8a598;
+  --c-velotech:     #5d81a5;   /*  4.9:1 /  4.6:1 as a rule */
+  --c-velotech-ink: #87a1bc;   /*  7.4:1 /  7.1:1 as a name */
+  --c-medialab:     #f2d4b0;   /* 14.0:1 / 13.3:1 */
+  --c-medialab-ink: #f2d4b0;
+  --c-pubhubs:      #64819b;   /*  4.9:1 /  4.6:1 */
+  --c-pubhubs-ink:  #8ca1b4;   /*  7.4:1 /  7.1:1 */
 }
 [data-theme="light"][data-contrast="high"] {
   --ground: #ffffff;

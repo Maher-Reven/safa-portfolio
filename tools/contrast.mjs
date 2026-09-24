@@ -2,9 +2,9 @@
 /* =========================================================================
    tools/contrast.mjs — the palette, measured rather than believed.
    -------------------------------------------------------------------------
-   Reads styles/tokens.css, resolves the four palettes the site can actually
-   be in — dark and light, each at normal and high contrast — and checks
-   every pairing that ends up in front of a reader.
+   Reads styles/tokens.css, resolves the six palettes the site can actually
+   be in — dark, light and sealed, each at normal and high contrast — and
+   checks every pairing that ends up in front of a reader.
 
      node tools/contrast.mjs          the table, and a non-zero exit if
                                       anything fails
@@ -178,8 +178,13 @@ const all = blocks(readFileSync(CSS, "utf8"));
 let failures = 0;
 let checked = 0;
 
-for (const theme of ["dark", "light"]) {
-  for (const level of ["normal", "high"]) {
+/* Every palette the site can actually be in. A theme that is not in this
+   list is a theme nobody has measured. */
+const THEMES = ["dark", "light", "sealed"];
+const LEVELS = ["normal", "high"];
+
+for (const theme of THEMES) {
+  for (const level of LEVELS) {
     const p = palette(all, theme, level);
     const rows = checksFor(p, level);
     const bad = rows.filter((r) => r.target && r.ratio < r.target);
@@ -203,6 +208,6 @@ for (const theme of ["dark", "light"]) {
   }
 }
 
-console.log(`\n  ${checked} pairings checked across four palettes — ` +
+console.log(`\n  ${checked} pairings checked across ${THEMES.length * LEVELS.length} palettes — ` +
             (failures ? `${failures} FAILING` : "all pass") + "\n");
 process.exit(failures ? 1 : 0);
