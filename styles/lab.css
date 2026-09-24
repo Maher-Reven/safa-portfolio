@@ -299,3 +299,105 @@ body { filter: var(--vision-filter, none); }
   font-size: 11px;
   font-weight: 500;
 }
+
+/* =========================================================================
+   PALETTE — five seals, and the numbers underneath them.
+   ------------------------------------------------------------------------- 
+   The swatches are drawn as wax rather than as squares because a square of
+   #6D3131 is a colour and a seal of it is an argument: the palette came off
+   a table of them, and the point of the theme is that a seal is addressed
+   to somebody. The measurements below are the part that has to be sober, so
+   they are set in the detail face, in a row, like every other reading on
+   this site.
+   ========================================================================= */
+.pal__seals {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-sm);
+  margin: 0 0 var(--s-md);
+  padding: 0;
+  list-style: none;
+}
+.pal__seal {
+  display: grid;
+  justify-items: center;
+  gap: var(--s-3xs);
+  max-width: none;
+  font-family: var(--face-detail);
+  font-size: var(--t-detail);
+}
+.pal__wax {
+  width: 3.4rem;
+  height: 3.4rem;
+  border-radius: 50%;
+  background: var(--wax);
+  /* Pressed, not printed: a light catching the top-left rim and the middle
+     sinking away from it. One inset shadow does both. */
+  box-shadow: inset 0 2px 3px rgb(255 255 255 / 0.22),
+              inset 0 -3px 6px rgb(0 0 0 / 0.45),
+              0 1px 0 var(--line);
+  /* The two darkest seals are nearly the ground they sit on, and a disc that
+     blends into the page is not a sample of anything. */
+  outline: 1px solid var(--line-strong);
+  outline-offset: -1px;
+  transition: scale var(--dur-quick) var(--ease-out);
+}
+[data-mode="full"] .pal__seal:hover .pal__wax { scale: 1.06; }
+.pal__name { color: var(--text-soft); }
+.pal__hex { color: var(--text-faint); letter-spacing: 0.04em; }
+
+.pal__controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-2xs) var(--s-sm);
+  margin: 0 0 var(--s-sm);
+  max-width: none;
+}
+.pal__go[aria-pressed] { background: none; }
+.pal__go { border-color: var(--edge); color: var(--text); }
+.pal__go:hover, .pal__go:focus-visible { background: var(--accent); color: var(--accent-ink); }
+.pal__keep { border-color: var(--edge); }
+.pal__keep:hover, .pal__keep:focus-visible { color: var(--text); border-color: var(--accent-text); }
+.pal__back:hover, .pal__back:focus-visible { color: var(--text); border-color: var(--accent-text); }
+.pal__status { font-size: var(--t-sm); color: var(--text-faint); max-width: 40ch; }
+
+.pal__roles { margin: 0; padding: 0; list-style: none; display: grid; gap: 0; }
+.pal__roles > li {
+  display: grid;
+  grid-template-columns: minmax(7rem, auto) minmax(8rem, 1fr) auto auto auto;
+  gap: var(--s-2xs) var(--s-sm);
+  align-items: baseline;
+  padding-block: var(--s-2xs);
+  border-block-end: var(--rule);
+  max-width: none;
+  font-family: var(--face-detail);
+  font-size: var(--t-detail);
+}
+.pal__roles > li:last-child { border-block-end: none; }
+.pal__role { color: var(--text); }
+.pal__value, .pal__where { color: var(--text-faint); }
+.pal__ratio { color: var(--text-soft); font-variant-numeric: tabular-nums; }
+/* The verdict is a word as well as a colour, because a reading that only
+   signals in colour cannot be read by the people this instrument is for. */
+.pal__verdict { color: var(--text-soft); }
+.pal__roles > li[data-level="pass"] .pal__verdict { color: var(--accent-text); }
+.pal__roles > li[data-level="fail"] .pal__verdict {
+  color: var(--text);
+  text-decoration: underline;
+  text-underline-offset: 0.25em;
+}
+.pal__roles > li[data-level="note"] .pal__ratio,
+.pal__roles > li[data-level="note"] .pal__verdict { color: var(--text-faint); }
+
+.pal__live {
+  margin: var(--s-sm) 0 0;
+  font-size: var(--t-sm);
+  color: var(--text-faint);
+  max-width: 52ch;
+}
+
+@media (max-width: 48rem) {
+  .pal__roles > li { grid-template-columns: 1fr auto; }
+  .pal__where { display: none; }   /* the ground is in the token's own name */
+}

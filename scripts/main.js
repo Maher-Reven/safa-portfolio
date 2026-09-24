@@ -150,7 +150,8 @@ const SECTIONS = {
 
     const builders = { vision: buildVision, contrast: buildContrast,
                        halftone: buildHalftone, type: buildType,
-                       easing: buildEasing, focus: buildFocus };
+                       easing: buildEasing, focus: buildFocus,
+                       palette: buildPalette };
 
     const cards = C.lab.experiments.map((exp) => {
       const body = el("div", { className: "lab__body" });
@@ -614,6 +615,172 @@ function deviceRail(shots, slug) {
 
   return el("div", { className: "screens" }, head, region);
 }
+
+/* =========================================================================
+   PALETTE — a third theme, offered rather than described.
+   -------------------------------------------------------------------------
+   The Lab's rule is instruments, not screenshots, and the honest way to
+   show somebody a palette is to put them inside it. Pressing "wear it" does
+   not tint a preview box: it calls attune.set("theme", "sealed"), the same
+   line the header button calls, so what you are looking at is exactly what
+   a visitor who chose it would get, canvas and focus rings and all.
+
+   Which makes the second rule apply — an instrument that changes the page
+   must be impossible to get stuck inside. It puts itself back when you
+   leave the Lab, unless you said to keep it, and there is a way out on the
+   card at all times.
+
+   The table underneath is measured from the live custom properties, so it
+   reports what the page IS wearing rather than what this file believes it
+   should be. Switch to light with the header while it is open and every
+   number moves.
+   ========================================================================= */
+let palettePending = null;      /* the theme to go back to, or null */
+let paletteRepaint = null;
+let paletteOurs = false;        /* guards our own attune.set from the watcher */
+
+/* A token is either a hex or an rgba, and an rgba is never seen as itself —
+   only as whatever it is lying over. Both arrive here as three numbers. */
+function tokenRgb(name, over) {
+  const raw = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  if (raw.startsWith("#")) return labHex(raw);
+  const m = raw.match(/rgba?\(([^)]+)\)/);
+  if (!m) return null;
+  const n = m[1].split(/[,\s/]+/).filter(Boolean).map(Number);
+  const a = n.length > 3 ? n[3] : 1;
+  if (a >= 1 || !over) return [n[0], n[1], n[2]];
+  return [0, 1, 2].map((i) => Math.round(n[i] * a + over[i] * (1 - a)));
+}
+
+const themeName = (id) =>
+  C.ui[id === "light" ? "themeLight" : id === "sealed" ? "themeSealed" : "themeDark"];
+
+function buildPalette(host) {
+  const P = C.lab.palette;
+  const ui = P.ui;
+
+  /* ---- the moodboard, as five seals ---- */
+  const seals = el("ul", { className: "pal__seals" },
+    P.seals.map((seal) =>
+      el("li", { className: "pal__seal" },
+        el("span", { className: "pal__wax", style: `--wax: ${seal.hex}` }),
+        el("span", { className: "pal__name", textContent: t(seal.name) }),
+        el("span", { className: "pal__hex", textContent: seal.hex.toUpperCase() }))));
+  seals.dataset.cursor = t(ui.cursor);
+
+  /* ---- the measured roles ---- */
+  const rows = el("ul", { className: "pal__roles" });
+  rows.setAttribute("aria-label", t(ui.rolesLabel));
+
+  const paint = () => {
+    const high = document.documentElement.dataset.contrast === "high";
+    const TEXT = high ? 7 : 4.5;
+    const MARK = high ? 4.5 : 3;
+    const ground = tokenRgb("--ground");
+    const surface = tokenRgb("--surface");
+    const accent = tokenRgb("--accent");
+
+    /* Each role against the ground it actually sits on, not the flattering
+       one. --text-faint is measured on a card for the same reason the token
+       sheet measures it there: that is where it lives. */
+    const checks = [
+      ["--text",       "--ground",  ground,  TEXT, ui.onGround],
+      ["--text-soft",  "--ground",  ground,  TEXT, ui.onGround],
+      ["--text-faint", "--surface", surface, TEXT, ui.onCard],
+      ["--accent-text","--surface", surface, TEXT, ui.onCard],
+      ["--note",       "--surface", surface, TEXT, ui.onCard],
+      ["--accent-ink", "--accent",  accent,  TEXT, ui.onFill],
+      ["--edge",       "--surface", surface, MARK, ui.onCard],
+      ["--focus",      "--ground",  ground,  MARK, ui.onGround],
+    ];
+
+    const line = (label, value, where, r, need) => {
+      const li = el("li", {},
+        el("span", { className: "pal__role", textContent: label }),
+        el("span", { className: "pal__value", textContent: value }),
+        el("span", { className: "pal__where", textContent: t(where) }),
+        el("span", { className: "pal__ratio",
+                     textContent: r === null ? "—" : `${r.toFixed(2)} : 1` }),
+        el("span", { className: "pal__verdict",
+                     textContent: need === null ? t(ui.decoration)
+                                : `${r >= need ? "pass" : "fail"} · ${t(ui.needs)} ${need.toFixed(1)}` }));
+      li.dataset.level = need === null ? "note" : r >= need ? "pass" : "fail";
+      return li;
+    };
+
+    rows.replaceChildren(
+      ...checks.map(([token, against, bg, need, where]) => {
+        const fg = tokenRgb(token, bg);
+        const r = fg && bg ? labRatio(fg, bg) : null;
+        const raw = getComputedStyle(document.documentElement)
+          .getPropertyValue(token).trim();
+        return line(token, raw, where, r, need);
+      }),
+      /* The two the moodboard cannot spend on words. They are printed with
+         their real numbers rather than left out, because a palette that
+         hides its unusable colours is a moodboard, not an instrument. */
+      ...P.seals.filter((seal) => ["#6D3131", "#6D513B"].includes(seal.hex))
+        .map((seal) =>
+          line(seal.hex, t(seal.name), ui.onGround,
+               ground ? labRatio(labHex(seal.hex), ground) : null, null)),
+    );
+  };
+
+  /* ---- wearing it ---- */
+  const controls = el("p", { className: "pal__controls" });
+  const status = el("span", { className: "pal__status", role: "status" });
+
+  const button = (label, onClick, className) => {
+    const b = el("button", { type: "button", className: `lab__chip ${className}`,
+                             textContent: label });
+    b.addEventListener("click", onClick);
+    return b;
+  };
+
+  const render = () => {
+    const now = attune.get("theme");
+    const on = now === "sealed";
+    const back = palettePending;
+    controls.replaceChildren(
+      ...(on ? [] : [button(t(ui.try), () => {
+        palettePending = attune.get("theme");
+        paletteOurs = true;
+        attune.set("theme", "sealed");
+        paletteOurs = false;
+      }, "pal__go")]),
+      ...(on && back ? [
+        button(`${t(ui.back)} ${t(themeName(back))}`,
+               () => { const to = palettePending; palettePending = null;
+                       paletteOurs = true; attune.set("theme", to); paletteOurs = false; },
+               "pal__back"),
+        button(t(ui.keep), () => {
+          palettePending = null;
+          attune.say(t(ui.kept));
+          render();
+        }, "pal__keep"),
+      ] : []),
+      /* Kept, or arrived already wearing it. There is nothing to restore
+         and nothing to promise — but the card cannot be left with no way
+         out of the thing it talked you into, so the exit is the theme the
+         machine would have given you. */
+      ...(on && !back ? [
+        button(`${t(ui.back)} ${t(themeName(attune.systemDefaults.theme))}`,
+               () => { paletteOurs = true;
+                       attune.set("theme", attune.systemDefaults.theme);
+                       paletteOurs = false; },
+               "pal__back"),
+      ] : []),
+      status);
+    status.textContent = on ? (back ? t(ui.wearing) : t(ui.kept)) : "";
+  };
+
+  host.append(seals, controls, rows,
+    el("p", { className: "pal__live", textContent: t(ui.live) }));
+
+  paletteRepaint = () => { paint(); render(); };
+  paletteRepaint();
+}
+
 
 /* =========================================================================
    THE VIEWER
@@ -1912,6 +2079,26 @@ router = new Router({
 /* Tabs are painted before the first resolve so the active mark is correct
    on the very first frame, not one frame late. */
 router.addEventListener("navigate", renderTabs);
+
+/* THE WAY OUT.
+   An instrument that changes the whole page is only allowed to exist if
+   walking away from it is enough to undo it. Leaving the Lab restores the
+   theme the visitor arrived in — unless they pressed keep, which empties
+   this and makes the choice theirs and permanent. */
+router.addEventListener("navigate", (e) => {
+  const { id, from } = e.detail;
+  if (from === "lab" && id !== "lab") {
+    paletteRepaint = null;
+    if (palettePending) {
+      const back = palettePending;
+      palettePending = null;
+      paletteOurs = true;
+      attune.set("theme", back);
+      paletteOurs = false;
+      attune.say(`${t(C.lab.palette.ui.restored)} ${t(themeName(back))}.`);
+    }
+  }
+});
 renderTabs();
 renderLang();
 renderTheme();
@@ -1933,6 +2120,14 @@ attune.addEventListener("change", (e) => {
   /* The audit is only interesting if it responds: switch to high contrast
      and the contrast row has to move, or the claim is decoration. */
   if (auditRepaint) requestAnimationFrame(() => requestAnimationFrame(auditRepaint));
+  /* Same reason as the audit: an instrument that claims to measure the live
+     page has to move when the live page does. A contrast change re-renders
+     no route, so nothing else would tell it. */
+  if (paletteRepaint) requestAnimationFrame(() => requestAnimationFrame(paletteRepaint));
+  /* A visitor who reaches past the instrument and changes the theme in the
+     header has taken the decision back. Putting their choice away for them
+     when they later leave the Lab would be the page overruling them. */
+  if (changed === "theme" && !paletteOurs) palettePending = null;
   if (changed === "lang") {
     renderStatic(); renderAttune(); renderTabs(); renderLang(); renderTheme();
     renderRoute(router.current);

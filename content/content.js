@@ -493,6 +493,17 @@ export const lab = {
       },
     },
     {
+      id: "palette",
+      n: "07",
+      topic: "colour",
+      span: "wide",
+      title: { en: "Try a palette", nl: "Pas een palet toe" },
+      note: {
+        en: "A third palette, taken off a table of wax seals: oxblood, wine, dried rose, walnut, aged brass. A seal is a letter addressed to one person, which is the whole argument of a site that tunes itself to whoever opened it. Press it and this page becomes it — not a mock-up of it, it — and every pairing is measured while you look.",
+        nl: "Een derde palet, van een tafel met lakzegels: ossenbloed, wijn, gedroogde roos, walnoot, oud messing. Een zegel is een brief aan één persoon, en dat is precies het argument van een site die zich afstemt op wie hem opent. Druk erop en deze pagina wórdt het — geen mock-up ervan — en elke combinatie wordt gemeten terwijl je kijkt.",
+      },
+    },
+    {
       id: "focus",
       n: "06",
       topic: "access",
@@ -512,6 +523,39 @@ export const lab = {
     { id: "motion", label: { en: "Motion",     nl: "Beweging" } },
     { id: "print",  label: { en: "Print",      nl: "Druk" } },
   ],
+  /* The palette instrument. The five seals are the moodboard as it arrived;
+     the roles underneath are whatever the page is actually wearing when you
+     look at them. */
+  palette: {
+    seals: [
+      { hex: "#200C0D", name: { en: "oxblood",     nl: "ossenbloed" } },
+      { hex: "#331014", name: { en: "wine",        nl: "wijn" } },
+      { hex: "#6D3131", name: { en: "dried rose",  nl: "gedroogde roos" } },
+      { hex: "#6D513B", name: { en: "walnut",      nl: "walnoot" } },
+      { hex: "#BC997B", name: { en: "aged brass",  nl: "oud messing" } },
+    ],
+    ui: {
+      cursor:   { en: "Wax",                 nl: "Lak" },
+      try:      { en: "Wear it",             nl: "Draag het" },
+      keep:     { en: "Keep it",             nl: "Houden" },
+      back:     { en: "Back to",             nl: "Terug naar" },
+      kept:     { en: "Kept. It will still be here after a reload.",
+                  nl: "Bewaard. Het staat er na een herlaadbeurt nog." },
+      wearing:  { en: "This page is wearing it. It goes back when you leave the Lab.",
+                  nl: "Deze pagina draagt het. Bij het verlaten van het Lab gaat het terug." },
+      restored: { en: "Palette put back:",   nl: "Palet teruggezet:" },
+      live:     { en: "Measured on whatever this page is wearing right now, not on a table of what it should be.",
+                  nl: "Gemeten op wat deze pagina nu draagt, niet op een tabel van wat het zou moeten zijn." },
+      onGround: { en: "on the ground",       nl: "op de ondergrond" },
+      onCard:   { en: "on a card",           nl: "op een kaart" },
+      onFill:   { en: "on the fill",         nl: "op de vulling" },
+      needs:    { en: "needs",               nl: "nodig" },
+      decoration: { en: "decoration only — never a word",
+                    nl: "alleen decoratie — nooit een woord" },
+      rolesLabel: { en: "Roles, measured",   nl: "Rollen, gemeten" },
+    },
+  },
+
   ui: {
     filter:     { en: "Filter",            nl: "Filter" },
     showing:    { en: "Showing",           nl: "Getoond" },
