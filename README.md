@@ -613,10 +613,17 @@ header button calls: the page is genuinely in the theme, and what you are
 judging is what you would get.
 
 Which makes the other rule apply — an instrument that changes the page must
-be impossible to get stuck inside. Leaving the Lab puts the theme back and
-says so, unless you pressed **keep it**; keeping still leaves a way out on
-the card, because the card that talked you into something should not be the
-one place with no exit.
+be impossible to get stuck inside. The way out is a **Back to…** control
+that stays on the card for as long as the theme is on, plus the seal in the
+header.
+
+It is not a preview. Pressing it sets the theme for good, exactly as
+pressing the seal in the header does, and it survives leaving the Lab and
+reloading. The first version put the theme back when you walked away, which
+is a defensible thing for an instrument to do and the wrong thing for this
+one: somebody who presses a button labelled *wear it* and finds the page
+undressed two clicks later has not been protected from anything, they have
+been argued with.
 
 The measurements underneath come from the live custom properties rather than
 from a table written here, so they report what the page *is* wearing. Switch

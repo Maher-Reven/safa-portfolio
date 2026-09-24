@@ -537,13 +537,11 @@ export const lab = {
     ui: {
       cursor:   { en: "Wax",                 nl: "Lak" },
       try:      { en: "Wear it",             nl: "Draag het" },
-      keep:     { en: "Keep it",             nl: "Houden" },
       back:     { en: "Back to",             nl: "Terug naar" },
-      kept:     { en: "Kept. It will still be here after a reload.",
-                  nl: "Bewaard. Het staat er na een herlaadbeurt nog." },
-      wearing:  { en: "This page is wearing it. It goes back when you leave the Lab.",
-                  nl: "Deze pagina draagt het. Bij het verlaten van het Lab gaat het terug." },
-      restored: { en: "Palette put back:",   nl: "Palet teruggezet:" },
+      /* Pressing it is a decision, not a preview, and the card says so
+         rather than letting somebody find out by reloading. */
+      wearing:  { en: "The whole site is wearing it, and still will be after a reload.",
+                  nl: "De hele site draagt het, ook na een herlaadbeurt nog." },
       live:     { en: "Measured on whatever this page is wearing right now, not on a table of what it should be.",
                   nl: "Gemeten op wat deze pagina nu draagt, niet op een tabel van wat het zou moeten zijn." },
       onGround: { en: "on the ground",       nl: "op de ondergrond" },

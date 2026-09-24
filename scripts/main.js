@@ -626,18 +626,26 @@ function deviceRail(shots, slug) {
    a visitor who chose it would get, canvas and focus rings and all.
 
    Which makes the second rule apply — an instrument that changes the page
-   must be impossible to get stuck inside. It puts itself back when you
-   leave the Lab, unless you said to keep it, and there is a way out on the
-   card at all times.
+   must be impossible to get stuck inside. Pressing it is a decision, not a
+   preview: the theme is set for good, exactly as if the seal in the header
+   had been pressed, and it survives leaving the Lab and reloading. The way
+   out is a Back control that stays on the card, plus the header itself.
+
+   It did put itself back on leaving at first, which is a defensible thing
+   for an instrument to do and the wrong thing for this one. A visitor who
+   presses a button labelled "wear it" and then finds the page undressed two
+   clicks later has not been protected from anything; they have been
+   argued with.
 
    The table underneath is measured from the live custom properties, so it
    reports what the page IS wearing rather than what this file believes it
    should be. Switch to light with the header while it is open and every
    number moves.
    ========================================================================= */
-let palettePending = null;      /* the theme to go back to, or null */
+/* Where "back" goes, when we happen to know where the visitor came from.
+   Not a promise to take them there — see the note on the controls. */
+let paletteBack = null;
 let paletteRepaint = null;
-let paletteOurs = false;        /* guards our own attune.set from the watcher */
 
 /* A token is either a hex or an rgba, and an rgba is never seen as itself —
    only as whatever it is lying over. Both arrive here as three numbers. */
@@ -738,40 +746,24 @@ function buildPalette(host) {
   };
 
   const render = () => {
-    const now = attune.get("theme");
-    const on = now === "sealed";
-    const back = palettePending;
+    const on = attune.get("theme") === "sealed";
+    /* Where back goes: where they came from if this card sent them, and
+       otherwise whatever the machine would have given them — which is the
+       right answer for somebody who arrived already wearing it. */
+    const back = paletteBack && paletteBack !== "sealed"
+      ? paletteBack : attune.systemDefaults.theme;
+
     controls.replaceChildren(
-      ...(on ? [] : [button(t(ui.try), () => {
-        palettePending = attune.get("theme");
-        paletteOurs = true;
-        attune.set("theme", "sealed");
-        paletteOurs = false;
-      }, "pal__go")]),
-      ...(on && back ? [
-        button(`${t(ui.back)} ${t(themeName(back))}`,
-               () => { const to = palettePending; palettePending = null;
-                       paletteOurs = true; attune.set("theme", to); paletteOurs = false; },
-               "pal__back"),
-        button(t(ui.keep), () => {
-          palettePending = null;
-          attune.say(t(ui.kept));
-          render();
-        }, "pal__keep"),
-      ] : []),
-      /* Kept, or arrived already wearing it. There is nothing to restore
-         and nothing to promise — but the card cannot be left with no way
-         out of the thing it talked you into, so the exit is the theme the
-         machine would have given you. */
-      ...(on && !back ? [
-        button(`${t(ui.back)} ${t(themeName(attune.systemDefaults.theme))}`,
-               () => { paletteOurs = true;
-                       attune.set("theme", attune.systemDefaults.theme);
-                       paletteOurs = false; },
-               "pal__back"),
-      ] : []),
+      ...(on
+        ? [button(`${t(ui.back)} ${t(themeName(back))}`,
+                  () => { paletteBack = null; attune.set("theme", back); },
+                  "pal__back")]
+        : [button(t(ui.try), () => {
+            paletteBack = attune.get("theme");
+            attune.set("theme", "sealed");
+          }, "pal__go")]),
       status);
-    status.textContent = on ? (back ? t(ui.wearing) : t(ui.kept)) : "";
+    status.textContent = on ? t(ui.wearing) : "";
   };
 
   host.append(seals, controls, rows,
@@ -2080,24 +2072,13 @@ router = new Router({
    on the very first frame, not one frame late. */
 router.addEventListener("navigate", renderTabs);
 
-/* THE WAY OUT.
-   An instrument that changes the whole page is only allowed to exist if
-   walking away from it is enough to undo it. Leaving the Lab restores the
-   theme the visitor arrived in — unless they pressed keep, which empties
-   this and makes the choice theirs and permanent. */
+/* Leaving the Lab takes the instrument down and nothing else with it. The
+   theme it set is the visitor's now, the same as one set from the header,
+   and a page that quietly undid a choice on the way out of a room would be
+   a page that did not believe them. */
 router.addEventListener("navigate", (e) => {
   const { id, from } = e.detail;
-  if (from === "lab" && id !== "lab") {
-    paletteRepaint = null;
-    if (palettePending) {
-      const back = palettePending;
-      palettePending = null;
-      paletteOurs = true;
-      attune.set("theme", back);
-      paletteOurs = false;
-      attune.say(`${t(C.lab.palette.ui.restored)} ${t(themeName(back))}.`);
-    }
-  }
+  if (from === "lab" && id !== "lab") { paletteRepaint = null; paletteBack = null; }
 });
 renderTabs();
 renderLang();
@@ -2124,10 +2105,6 @@ attune.addEventListener("change", (e) => {
      page has to move when the live page does. A contrast change re-renders
      no route, so nothing else would tell it. */
   if (paletteRepaint) requestAnimationFrame(() => requestAnimationFrame(paletteRepaint));
-  /* A visitor who reaches past the instrument and changes the theme in the
-     header has taken the decision back. Putting their choice away for them
-     when they later leave the Lab would be the page overruling them. */
-  if (changed === "theme" && !paletteOurs) palettePending = null;
   if (changed === "lang") {
     renderStatic(); renderAttune(); renderTabs(); renderLang(); renderTheme();
     renderRoute(router.current);
