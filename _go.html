@@ -1,8 +1,0 @@
-<!doctype html><meta charset="utf-8">
-<style>html,body{margin:0;height:100%}iframe{border:0;width:100vw;height:100vh;display:block}</style>
-<script>
-const q = new URLSearchParams(location.search); const s = {};
-for (const [k,v] of q) { if (k !== "to") s[k] = v; }
-try { localStorage.setItem("afstemmen.v1", JSON.stringify(s)); } catch (e) {}
-document.write('<iframe src="index.html#/' + (q.get("to") || "home") + '"></iframe>');
-</script>
