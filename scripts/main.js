@@ -1399,11 +1399,13 @@ function routesForAudience() {
    reader goes looking for a language menu. It was in Attune and only in
    Attune, and the first person to want it could not find it.
 
-   TWO BUTTONS, NOT ONE SWITCH — the same argument the EN / NL pair makes.
-   A lone button showing a moon never says whether it means "you are in the
+   BUTTONS, NOT ONE SWITCH — the same argument the EN / NL pair makes. A
+   lone button showing a moon never says whether it means "you are in the
    dark theme" or "press for the dark theme", and the two readings are
-   opposites. A pair shows the choice and which half of it you are in, and
-   aria-pressed says so out loud.
+   opposites. A row shows the choice and which part of it you are in, and
+   aria-pressed says so out loud. It became three when sealed arrived, which
+   is the other reason a cycling toggle was never an option: a switch that
+   steps through three states tells you nothing about the third.
 
    The glyphs are drawn rather than typed. ☀ and ☾ are at the mercy of the
    platform's emoji font — the same character arrives as flat text on one
@@ -1418,7 +1420,35 @@ function themeIcon(kind) {
   svg.setAttribute("aria-hidden", "true");   /* the button carries the name */
   svg.setAttribute("focusable", "false");
 
-  if (kind === "light") {
+  if (kind === "sealed") {
+    /* A pressed seal: a disc with a notched rim and a mark struck into it.
+       Drawn rather than an emoji for the same reason the other two are —
+       a colour pictograph cannot take --accent-ink when its half is
+       filled. */
+    const rim = document.createElementNS(ns, "circle");
+    rim.setAttribute("cx", "12"); rim.setAttribute("cy", "12");
+    rim.setAttribute("r", "8.4"); rim.setAttribute("fill", "currentColor");
+    svg.append(rim);
+    for (let i = 0; i < 12; i++) {
+      const a = (i * Math.PI) / 6;
+      const notch = document.createElementNS(ns, "circle");
+      notch.setAttribute("cx", (12 + Math.cos(a) * 8.4).toFixed(2));
+      notch.setAttribute("cy", (12 + Math.sin(a) * 8.4).toFixed(2));
+      notch.setAttribute("r", "1.5");
+      notch.setAttribute("fill", "currentColor");
+      svg.append(notch);
+    }
+    /* The struck mark is a hole in the wax, so it is punched out with the
+       page behind it rather than painted a second colour. */
+    const mark = document.createElementNS(ns, "path");
+    mark.setAttribute("d", "M9.6 15.2V8.8h2.9a2.1 2.1 0 0 1 0 4.2H9.6");
+    mark.setAttribute("fill", "none");
+    mark.setAttribute("stroke", "var(--ground)");
+    mark.setAttribute("stroke-width", "1.7");
+    mark.setAttribute("stroke-linecap", "round");
+    mark.setAttribute("stroke-linejoin", "round");
+    svg.append(mark);
+  } else if (kind === "light") {
     const disc = document.createElementNS(ns, "circle");
     disc.setAttribute("cx", "12"); disc.setAttribute("cy", "12");
     disc.setAttribute("r", "4.6"); disc.setAttribute("fill", "currentColor");
@@ -1454,7 +1484,9 @@ function renderTheme() {
   group.setAttribute("role", "group");
   group.setAttribute("aria-label", t(C.ui.themeLabel));
 
-  for (const [value, label] of [["light", t(C.ui.themeLight)], ["dark", t(C.ui.themeDark)]]) {
+  for (const [value, label] of [["light",  t(C.ui.themeLight)],
+                                ["dark",   t(C.ui.themeDark)],
+                                ["sealed", t(C.ui.themeSealed)]]) {
     const on = attune.get("theme") === value;
     const btn = el("button", { type: "button" }, themeIcon(value));
     /* The glyph is the whole visible label, so the name has to be given.
@@ -1733,6 +1765,7 @@ function renderAttune() {
     axisGroup("theme", "themeLabel", [
       { value: "dark", label: t(C.ui.themeDark) },
       { value: "light", label: t(C.ui.themeLight) },
+      { value: "sealed", label: t(C.ui.themeSealed) },
     ]),
     axisGroup("mode", "modeLabel", [
       { value: "full", label: t(C.ui.modeFull) },

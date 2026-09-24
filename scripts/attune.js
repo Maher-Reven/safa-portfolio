@@ -4,7 +4,7 @@
    One store holds every way the site can adapt to the person reading it.
    Seven independent axes, composable in any combination:
 
-     theme     dark | light       what colour everything is
+     theme     dark|light|sealed  what colour everything is
      mode      full | calm        which of the two art directions
      audience  who is looking     reorders and re-depths the content
      reading   default | legible  Atkinson Hyperlegible for the text face
@@ -32,10 +32,11 @@ const AXES = {
      giving up her dark ground, and reading the site in daylight meant
      giving up the canvas. Nobody asked for either trade. */
   theme: {
-    values: ["dark", "light"],
+    values: ["dark", "light", "sealed"],
     announce: {
-      dark:  "Dark theme.",
-      light: "Light theme. The same work on paper.",
+      dark:   "Dark theme.",
+      light:  "Light theme. The same work on paper.",
+      sealed: "Sealed theme. Oxblood and brass, from a table of wax seals.",
     },
   },
   mode: {
@@ -82,7 +83,13 @@ function systemDefaults() {
        has said something, and arguing with it on the grounds that the brand
        is dark would be the site talking over the reader on its first
        sentence. Her dark ground is what a machine that said nothing gets,
-       and it is one press away from anywhere. */
+       and it is one press away from anywhere.
+
+       Sealed is never the default and cannot be reached from here. No
+       operating system has an opinion about sealing wax, and a theme that
+       arrives unasked is a theme nobody chose — which is the opposite of
+       what that one is for. It is reachable only by pressing it, and it
+       persists like every other axis. */
     theme:    prefersDark ? "dark" : "light",
     mode:     reducedMotion ? "calm" : "full",
     audience: "open",
@@ -217,7 +224,15 @@ class Attune extends EventTarget {
         if (untouched) this.set(axis, this.systemDefaults[axis]);
       });
     };
-    this._touched = new Set();
+    /* A choice made in an earlier visit counts as touched. This set only
+       ever knew about the current session, so a stored theme could be
+       overwritten by the operating system changing its mind an hour later —
+       and for sealed, which no operating system can ask for, that meant an
+       explicit choice being quietly thrown away by a sunset. Anything
+       already differing from what the machine asked for was asked for by
+       the person. */
+    this._touched = new Set(
+      Object.keys(AXES).filter((axis) => this.isOverridden(axis)));
     this.addEventListener("change", (e) => {
       if (e.detail.changed) this._touched.add(e.detail.changed);
     });

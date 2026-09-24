@@ -843,6 +843,7 @@ export const ui = {
   themeLabel:    { en: "Theme",             nl: "Thema" },
   themeDark:     { en: "Dark",              nl: "Donker" },
   themeLight:    { en: "Light",             nl: "Licht" },
+  themeSealed:   { en: "Sealed",            nl: "Verzegeld" },
   modeLabel:     { en: "Mode",              nl: "Modus" },
   modeFull:      { en: "Screen",            nl: "Scherm" },
   modeCalm:      { en: "Print",             nl: "Print" },
@@ -903,6 +904,8 @@ export const ui = {
       dark:  { en: "Dark theme.", nl: "Donker thema." },
       light: { en: "Light theme. The same work on paper.",
                nl: "Licht thema. Hetzelfde werk op papier." },
+      sealed: { en: "Sealed theme. Oxblood and brass, from a table of wax seals.",
+                nl: "Verzegeld thema. Ossenbloed en messing, van een tafel met lakzegels." },
     },
     mode: {
       full: { en: "Screen mode. Motion and the live canvas are on.",
