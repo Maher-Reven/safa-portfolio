@@ -335,8 +335,10 @@ export class PresenceField {
 
     /* Which way "quieter" points. The vignette pulls the corners away from
        the reader, and away is toward black on ink and toward the page on
-       paper — so it is read off the ground rather than assumed, and a
-       future theme gets the right answer without touching this file. */
+       paper — so it is read off the ground rather than assumed. This is
+       keyed to how dark the ground is, never to which theme is named, which
+       is why the third one needed nothing here: oxblood is a dark ground
+       and gets the dark answer without this file learning the word. */
     const l = 0.2126 * this.ground[0] + 0.7152 * this.ground[1] + 0.0722 * this.ground[2];
     this.corner = l < 0.5 ? [0, 0, 0] : [1, 1, 1];
   }

@@ -37,6 +37,19 @@
 /* The one lime full stop. It is the whole brand mark. */
 [data-mode="full"] .intro h1 .stop { color: var(--accent-text); }
 
+/* THE LIME, IN A THEME THAT IS NOT HERS.
+   On dark and light the full stop is the accent, because the accent is her
+   lime. On sealed the accent is brass, and the lime becomes something else:
+   the one thread back to the brand, kept in exactly two places — the focus
+   ring, which belongs to the visitor rather than to the art direction, and
+   this full stop, which is a signature.
+
+   :root on the front of it so it wins wherever it is loaded from. The two
+   rules it has to outrank are one attribute deep, exactly as this is, and
+   an override that depends on which stylesheet came last is an override
+   waiting to be reordered. */
+:root[data-theme="sealed"] .intro h1 .stop { color: var(--focus); }
+
 /* Arrival. Elements are placed, not faded — a fade says "loading", a rise
    says "this was always here, you have just reached it".
    Everything starts visible and is hidden only once JS confirms it can

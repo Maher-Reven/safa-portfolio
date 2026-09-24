@@ -1,0 +1,22 @@
+<!doctype html><meta charset="utf-8">
+<div id="out">…</div>
+<iframe src="index.html#/home" width="1300" height="800" style="border:0"></iframe>
+<script>
+const wait = ms => new Promise(r => setTimeout(r, ms));
+addEventListener("load", async () => {
+  const f = document.querySelector("iframe"), d = f.contentDocument, w = f.contentWindow;
+  await d.fonts.ready; await wait(1200);
+  const stopColour = () => { const el = d.querySelector(".intro h1 .stop");
+    return el ? w.getComputedStyle(el).color : "no .stop"; };
+  const out = [`dark: ${stopColour()}`];
+  for (const th of ["light", "sealed"]) {
+    d.querySelector(`.theme button[data-theme="${th}"]`).click(); await wait(600);
+    out.push(`${th}: ${stopColour()}`);
+  }
+  for (const m of ["calm"]) {
+    d.getElementById(`attune-mode-${m}`).click(); await wait(700);
+    out.push(`sealed+${m}: ${stopColour()}`);
+  }
+  document.getElementById("out").textContent = out.join(" ||| ");
+});
+</script>

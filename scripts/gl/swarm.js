@@ -321,9 +321,12 @@ export class Swarm {
        came out as two pale holes punched through the cat's face, because
        sixteen layers of #14120f add up to cream.
 
-       So the ground decides. On ink, particles build light; on paper, they
-       build ink, and the dense parts of the shape get their body from
-       opacity instead of from sum. */
+       So the ground decides — how light the text is, not what the theme is
+       called. Sealed is the proof that it was worth writing that way: it is
+       a third palette this file has never heard of, its text is parchment,
+       and it takes the dark answer correctly. On ink, particles build
+       light; on paper, they build ink, and the dense parts of the shape get
+       their body from opacity instead of from sum. */
     const onInk = 0.2126 * text[0] + 0.7152 * text[1] + 0.0722 * text[2] > 0.5;
 
     this.material = new THREE.ShaderMaterial({
