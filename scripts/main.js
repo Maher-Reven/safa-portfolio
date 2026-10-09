@@ -1960,7 +1960,16 @@ function renderAttune() {
     panel.dataset.open = String(open);
     scrim.dataset.open = String(open);
     opener.setAttribute("aria-expanded", String(open));
-    if (open) panel.querySelector("input")?.focus();
+    /* The checked one, not the first one. Opening the panel used to ring
+       the first radio in it — "Dark" — whatever the site was actually
+       wearing, so a visitor in sealed opened the settings and found the
+       highlight sitting on a theme they were not using. Two things wrong
+       with that at once: it reads as the panel disagreeing with the page,
+       and these are native radios, where the first arrow press moves from
+       wherever the focus is. Landing on the checked one makes the ring tell
+       the truth and makes the arrow keys start from the right place. */
+    if (open) (panel.querySelector("input:checked") ??
+               panel.querySelector("input"))?.focus();
     else opener.focus();
   };
   opener.onclick = () => setOpen(panel.dataset.open !== "true");
